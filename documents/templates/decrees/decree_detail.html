@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+    <!-- Include PDF.js Library -->
+    <script type="module" src="{% static 'pdfjs/build/pdf.mjs' %}"></script>
+    <script type="module">
+        import * as pdfjsLib from "{% static 'pdfjs/build/pdf.mjs' %}";
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "{% static 'pdfjs/build/pdf.worker.mjs' %}";
+
+        document.addEventListener("DOMContentLoaded", async function () {
+            {% if decree.pdf_file %}
+                const url = "{{ decree.pdf_file.url }}";
+                const canvas = document.getElementById("pdf-canvas");
+                const ctx = canvas.getContext("2d");
+
+                try {
+                    const pdf = await pdfjsLib.getDocument(url).promise;
+                    const page = await pdf.getPage(1);
+                    const viewport = page.getViewport({ scale: 0.8 });
+
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+
+                    const renderContext = { canvasContext: ctx, viewport: viewport };
+                    await page.render(renderContext);
+                } catch (error) {
+                    console.error("Error loading PDF:", error);
+                }
+            {% endif %}
+        });
+    </script>
+{% endblock %}
+
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Left Column: Decree Details -->
+        <div class="col-md-7">
+            <div class="card border-light shadow-sm">
+                <div class="card-header text-center pe-5">
+                    <h5 class="card-title mb-0">تفاصيل القرار</h5>
+                </div>
+
+                <div class="card-body">
+                    <p><strong>رقم الوثيقة: </strong> {{ decree.number|default:"-" }}</p>
+
+                    <p><strong>تاريخ الوثيقة: </strong> {{ decree.date|date:"Y-m-d" }}</p>
+
+                    <p><strong>الحالة: </strong> {{ decree.get_status_display|default:"-" }}</p>
+
+                    <p><strong>المقدم: </strong> {{ decree.applicant|default:"-" }}</p>
+
+                    <p><strong>الشركة: </strong> {{ decree.company|default:"-" }}</p>
+
+                    <p><strong>الدولة: </strong> {{ decree.country.ar_name|default:"-" }}</p>
+                    <p></p>
+
+                    <p><strong>تاريخ التقديم: </strong> {{ decree.date_applied|date:"Y-m-d" }}</p>
+                    <p></p>
+
+                    <p><strong>رقم التقديم: </strong> {{ decree.number_applied|default:"-" }}</p>
+                    <p></p>
+
+                    <p><strong>العلامة التجارية (عربي): </strong> {{ decree.ar_brand|default:"-" }}</p>
+                    <p></p>
+
+                    <p><strong>العلامة التجارية (إنجليزي): </strong> {{ decree.en_brand|default:"-" }}</p>
+                    <p></p>
+
+                    <p><strong>الفئة: </strong> {{ decree.category.number|default:"-" }}</p>
+                    <p></p>
+
+                    {% if decree.attach %}
+                        <p><strong>الملف المرفق: </strong></p>
+                        <a href="{{ decree.attach.url }}" class="btn btn-outline-primary btn-sm" download>تحميل المرفق</a>
+                    {% endif %}
+                    <br></br>
+                    <p><strong>ملاحظات:</strong></p>
+                    <p>{{ decree.notes|default:"-" }}</p>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a href="{% url 'edit_decree' decree.id %}" class="btn btn-primary">تعديل</a>
+                <a href="javascript:history.back()" class="btn btn-secondary">إلغاء</a>
+            </div>
+        </div>
+
+        <!-- Right Column: PDF Preview -->
+        <div class="col">
+            <div class="card border-light shadow-sm">
+                <div class="card-header text-center pe-5">
+                    <h5 class="card-title mb-0">معاينة ملف القرار</h5>
+                </div>
+                <div class="card-body">
+                    {% if decree.pdf_file %}
+                        <div id="pdf-viewer-container" class="border rounded p-2">
+                            <canvas id="pdf-canvas" class="w-100"></canvas>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">لا يوجد ملف PDF لهذه الوثيقة</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

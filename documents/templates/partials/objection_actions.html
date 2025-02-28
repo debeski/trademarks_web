@@ -1,0 +1,67 @@
+{% load static %}
+{% if request.user.is_authenticated %}
+<div class="d-flex gap-2 align-items-center justify-content-end">
+    {% if record.is_paid %}
+        <span title="هذه المعارضة مرفقة بإيصال دفع يحتاج الى تأكيد"><i class="bi bi-exclamation-circle text-warning"></i> </span> <!-- Display an asterisk with alt text -->
+    {% endif %}
+    {% if record.status == 3 %}
+        <span title="هذه المعارضة تم مراجهة ايصال الدفع الخاص بها وتبينت صحته"><i class="bi bi-check-circle-fill text-success"></i> </span> <!-- Display an asterisk with alt text -->
+    {% endif %}
+    {% if record.status == 5 %}
+        <span title="هذه المعارضة تم رفضها"><i class="bi bi-x-circle-fill text-danger"></i> </span> <!-- Display an asterisk with alt text -->
+    {% endif %}
+    <!-- PDF Icon (Always Visible) -->
+    {% if record.pdf_file %}
+        <a href="{% url 'download_objection' record.id %}" title="تحميل">
+            <i class="bi bi-file-earmark-pdf-fill" style="font-size: 36px;"></i>
+        </a>
+    {% else %}
+        <span title="لا يوجد ملف pdf" class="disabled">
+            <i class="bi bi-file-earmark-pdf-fill" style="opacity: 0.4; font-size: 36px;"></i>
+        </span>
+    {% endif %}
+    {% comment %} {% if perms.documents.confirm_objection_fee %}
+        {% if record.status == 2 %}
+            <!-- Modal Trigger for Status Change -->
+            <a title="تأكيد صلاحية ايصال الدفع المرفق" href="#" data-bs-toggle="modal" data-bs-target="#statusModal"
+            data-doc-id="{{ record.id }}" data-doc-number="{{ record.number }}">
+            <i class="bi bi-check2-circle text-success" style="font-size: 36px;"></i>
+            </a>
+
+            <a title="رفض ايصال الدفع" href="#" data-bs-toggle="modal" data-bs-target="#statusModal2"
+            data-doc-id="{{ record.id }}" data-doc-number="{{ record.number }}">
+            <i class="bi bi-x-circle text-danger" style="font-size: 36px;"></i>
+            </a>
+        {% endif %}
+    {% endif %} {% endcomment %}
+    <!-- Dropdown for additional actions -->
+    <div class="dropdown-center">
+        <a href="#" class="action-icon" id="actionDropdown{{ record.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-three-dots-vertical text-dark"></i>
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="actionDropdown{{ record.id }}">
+            <!-- View Action -->
+            <li>
+                <a class="dropdown-item" href="{% url 'view_objection' record.id %}" title="عرض">
+                    <i class="bi bi-binoculars-fill text-dark me-1" style="font-size: 22px;"></i> عرض
+                </a>
+            </li>
+            <!-- Edit Action -->
+            {% if user.is_superuser %}
+            <li>
+                <a class="dropdown-item" href="{% url 'edit_objection' record.id %}" title="تعديل">
+                    <i class="bi bi-pencil-square text-dark me-1" style="font-size: 22px;"></i> تعديل
+                </a>
+            </li>
+            <!-- Delete Action -->
+            <li>
+                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                    data-doc-id="{{ record.id }}" data-doc-number="{{ record.name }}">
+                    <i class="bi bi-x-octagon text-danger me-1" style="font-size: 22px;"></i> حذف
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+{% endif %}

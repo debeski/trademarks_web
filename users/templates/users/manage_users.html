@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load django_tables2 %}
+{% load crispy_forms_tags %}
+
+{% block title %}الاعدادت - إدارة المستخدمين{% endblock %}
+
+{% block content %}
+    <form method="get" class="mb-3">
+        {% crispy filter.form %}
+    </form>
+
+    <div class="card border-light shadow">
+        <div class="card-header text-center pe-5 bg-transparent">
+            <h3 class="card-title">إدارة المستخدمين</h3>
+        </div>
+        <div class="card-body p-0">
+            <!-- Render the table -->
+            {% render_table table %}
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a href="{% url 'create_user' %}" class="btn btn-primary active">إضافة مستخدم جديد</a>
+    </div>
+
+    <!-- Delete Modal -->
+    {% if request.user.is_superuser %}
+    <div class="modal fade" id="deleteModal{{ user.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ user.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel{{ user.id }}">تأكيد الحذف</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    هل انت متأكد انك تريد حذف العضو {{ user.username }}?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">الغاء</button>
+                    <form method="post" action="{% url 'delete_user' user.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">حذف</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}

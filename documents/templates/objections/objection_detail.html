@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+    <!-- Include PDF.js Library -->
+    <script type="module" src="{% static 'pdfjs/build/pdf.mjs' %}"></script>
+    <script type="module">
+        import * as pdfjsLib from "{% static 'pdfjs/build/pdf.mjs' %}";
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "{% static 'pdfjs/build/pdf.worker.mjs' %}";
+
+        document.addEventListener("DOMContentLoaded", async function () {
+            {% if objection.pdf_file %}
+                const url = "{{ objection.pdf_file.url }}";
+                const canvas = document.getElementById("pdf-canvas");
+                const ctx = canvas.getContext("2d");
+
+                try {
+                    const pdf = await pdfjsLib.getDocument(url).promise;
+                    const page = await pdf.getPage(1);
+                    const viewport = page.getViewport({ scale: 0.8 });
+
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+
+                    const renderContext = { canvasContext: ctx, viewport: viewport };
+                    await page.render(renderContext);
+                } catch (error) {
+                    console.error("Error loading PDF:", error);
+                }
+            {% endif %}
+        });
+    </script>
+{% endblock %}
+
+
+{% block content %}
+
+
+    <!-- Dynamic Card Container for Publication Details -->
+    <div id="publication-objection" class="container-fluid mb-3">
+        <div class="card border-light shadow mb-3">
+            <div class="card-header text-dark text-center pe-5 {% if objection.status == 3 %}bg-info{% elif objection.status == 4 %}bg-success{% elif objection.status == 5 %}bg-danger{% else %}bg-warning{% endif %}">
+                    <h4 class="card-title pt-1">حالة الاعتراض: <strong>{{ objection.get_status_display }}</strong></h4>
+            </div>
+            <div class="card-body d-flex">
+            {% if perms.documents.confirm_objection_fee %}
+                {% if objection.status == 2 %}
+
+                    <!-- Modal Trigger for Status Change -->
+                <div class="flex-fill btn btn-primary">
+                    <a title="تأكيد صلاحية ايصال الدفع المرفق" href="#" data-bs-toggle="modal" data-bs-target="#statusModal"
+                    data-doc-id="{{ objection.id }}" data-doc-number="{{ objection.number }}">
+                    <i class="bi bi-check2-circle text-white" style="font-size: 36px;"><span class="ms-2">تأكيد ايصال الدفع</span></i>
+                    </a>
+                </div>
+
+                <div class="flex-fill btn btn-danger">
+                    <a title="رفض ايصال الدفع" href="#" data-bs-toggle="modal" data-bs-target="#statusModal2"
+                    data-doc-id="{{ objection.id }}" data-doc-number="{{ objection.number }}">
+                    <span class="text-white" style="font-size: 36px;">رفض ايصال الدفع <i class="bi bi-x-circle me-2"></i></span>
+                    </a>
+                </div>
+
+                {% endif %}
+            {% endif %}
+            </div>
+        </div>
+
+        <div class="card border-light shadow">
+            <div class="card-header text-center pe-5">
+                    <h5 class="card-title mt-1">تفـــاصيل الاشهـــار المعترض عليه</h5>
+            </div>
+            <div class="card-body row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5><strong>رقم الاشهار:</strong> {{ objection.pub.number }}</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><strong>رقم القرار:</strong> {{ objection.pub.decree.number }}</h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5><strong>مقدم الطلب:</strong> {{ objection.pub.applicant }}</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><strong>مالك العلامة:</strong> {{ objection.pub.owner }}</h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5><strong>الدولة:</strong> {{ objection.pub.country.ar_name }}</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><strong>العنوان:</strong> {{ objection.pub.address }}</h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5><strong>تاريخ الطلب:</strong> {{ objection.pub.created_at|date:"Y-m-d" }}</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><strong>التصنيف:</strong> {{ objection.pub.category }}</h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5><strong>العلامة التجارية (AR):</strong> {{ objection.pub.ar_brand }}</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <h5><strong>العلامة التجارية (EN):</strong> {{ objection.pub.en_brand }}</h5>
+                        </div>
+                    </div>
+                    <h5><strong>تاريخ الاشهار:</strong> {{ objection.pub.created_at }}</h5>
+                </div>
+            {% if objection.pub.img_file %}
+                <div class="col-md-4 d-flex align-items-center justify-content-center">
+                    <img src="{{ objection.pub.img_file.url }}" class="img-fluid mt-2" alt="Brand Image" style="max-height: 220px;">
+                </div>
+            {% else %}
+                <p class="text-muted">لا يوجد صورة لهذه الوثيقة</p>
+            {% endif %}
+            </div>
+        </div>
+        <hr>
+    </div>
+
+
+    <!-- Row for Objection Details and PDF -->
+    <div class="row">
+        <!-- Left Column: Objection Details -->
+        <div class="col-md-7">
+            <div class="card border-light shadow">
+                <div class="card-header text-center pe-5">
+                    <h5 class="card-title mb-0">تفاصيل الاعتراض</h5>
+                </div>
+                <div class="card-body">
+                    <h5><strong>رقم الاعتراض: </strong> {{ objection.number }}</h5>
+                    <h5><strong>اسم مقدم الاعتراض: </strong> {{ objection.name }}</h5>
+                    <h5><strong>المهنة: </strong> {{ objection.job }}</h5>
+                    <h5><strong>الجنسية: </strong> {{ objection.nationality }}</h5>
+                    <h5><strong>محل الاقامة: </strong> {{ objection.address }}</h5>
+                    <h5><strong>رقم الهاتف: </strong> {{ objection.phone }}</h5>
+
+                    <h5><strong>اسم الشركة: </strong> {{ objection.com_name }}</h5>
+                    <h5><strong>غرض الشركة: </strong> {{ objection.com_job }}</h5>
+                    <h5><strong>عنوان الشركة: </strong> {{ objection.com_address }}</h5>
+                    <h5><strong>عنوان المقر الرئيسي: </strong> {{ objection.com_og_address }}</h5>
+                    <h5><strong>عنوان البريد لاستلام المكاتبات: </strong> {{ objection.com_mail_address }}</h5>
+
+                    <h5><strong>ملاحظات: </strong> {{ objection.notes|default:"-" }}</h5>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: PDF -->
+        <div class="col">
+            <div class="card border-light shadow">
+                <div class="card-header text-center pe-5">
+                    <h5 class="card-title mb-0">معاينة الملف المرفق بالاعتراض</h5>
+                </div>
+                <div class="card-body">
+                        {% if objection.pdf_file %}
+                        <canvas id="pdf-canvas" class="img-fluid"></canvas>
+                    {% else %}
+                        <p class="text-muted">لا يوجد ملف PDF لهذا الاعتراض</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+	<!-- Status Change Modal -->
+	<form id="statusForm" method="post">
+		{% csrf_token %}
+		<div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="statusModalLabel">تأكيد قبول الاعتراض!</h5>
+					</div>
+					<div class="modal-body">
+						<p>هل أنت متأكد أنك تريد تأكيد ايصال دفع للاعتراض رقم <span id="documentNumber"></span> ؟</p>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-success">نعم، تأكيد</button>
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+
+	<!-- Status Decline Modal -->
+	<form id="statusForm2" method="post">
+		{% csrf_token %}
+		<div class="modal fade" id="statusModal2" tabindex="-1" role="dialog" aria-labelledby="statusModal2Label" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="statusModal2Label">تأكيد رفض الاعتراض!</h5>
+					</div>
+					<div class="modal-body">
+						<p>هل أنت متأكد أنك تريد رفض ايصال الدفع للاعتراض رقم <span id="documentNumber"></span> ؟</p>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-danger">نعم، ارفض</button>
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+
+{% endblock %}
+
+{% block scripts %}
+
+	<!-- JavaScript for the Change Status Modal -->
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			const statusModal = document.getElementById("statusModal");
+			const statusForm = document.getElementById("statusForm");
+			const documentNumber = document.getElementById("documentNumber");
+		
+			statusModal.addEventListener("show.bs.modal", function (event) {
+				let button = event.relatedTarget; // The button that triggered the modal
+				let docId = button.getAttribute("data-doc-id");
+				let docNumber = button.getAttribute("data-doc-number");
+		
+				// Update the confirmation message
+				documentNumber.textContent = docNumber;
+		
+				// Set the form action dynamically
+				statusForm.setAttribute("action", `/confirm-objection-fee/${docId}/`);
+			});
+		});
+	</script>
+
+	<!-- JavaScript for the Change Status Modal -->
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			const statusModal = document.getElementById("statusModal2");
+			const statusForm = document.getElementById("statusForm2");
+			const documentNumber = document.getElementById("documentNumber");
+		
+			statusModal.addEventListener("show.bs.modal", function (event) {
+				let button = event.relatedTarget; // The button that triggered the modal
+				let docId = button.getAttribute("data-doc-id");
+				let docNumber = button.getAttribute("data-doc-number");
+		
+				// Update the confirmation message
+				documentNumber.textContent = docNumber;
+		
+				// Set the form action dynamically
+				statusForm.setAttribute("action", `/decline-objection-fee/${docId}/`);
+			});
+		});
+	</script>
+
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block title %}التقارير - الاعتراضات{% endblock %}
+
+{% block content %}
+
+    <div class="card border-light shadow mt-2">
+        <div class="card-header pe-5">
+            <h4 class="card-title">اختر السنة</h4>
+        </div>
+        <div class="card-body">
+            <form method="get">
+                <div class="form-group">
+                    <select id="year" name="year" class="form-control" onchange="this.form.submit()">
+                        <option value="">-------</option>
+                        {% for year in years %}
+                            <option value="{{ year.year }}" {% if year.year|stringformat:"s" == selected_year %}selected{% endif %}>{{ year.year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+
+            {% if report_data %}
+            <hr>
+            <h2>تقرير عن الاعتراضات لسنة {{ selected_year }}:</h2>
+            <ul class="list-group">
+                <h3 class="mt-4">إجمالي الاعتراضات للسنة: <strong>{{ report_data.total_objections }}</strong></h3>
+                <h3 class="mt-2">أول اعتراض برقم: <strong>{{ report_data.first_objection_number }}</strong> وهو بتاريخ <strong>{{ report_data.first_objection_date|date:"d-m-Y" }}</strong></h3>
+                <h3 class="mt-2">آخر اعتراض برقم: <strong>{{ report_data.last_objection_number }}</strong> وهو بتاريخ <strong>{{ report_data.last_objection_date|date:"d-m-Y" }}</strong></h3>
+                <h3 class="mt-2">إجمالي الاعتراضات المفقودة: <strong>{{ report_data.total_missing }}</strong></h3>
+                <h3 class="mt-2">الأرقام المفقودة: <strong>{{ report_data.formatted_missing_objections|safe }}</strong></h3>
+                <h3 class="mt-2">إجمالي الاعتراضات التي بدون ملف مرفق: <strong>{{ report_data.total_without_pdf }}</strong></h3>
+                <h3 class="mt-2">إجمالي الاعتراضات التي بدون ملف ايصال دفع: <strong>{{ report_data.total_without_receipt }}</strong></h3>
+                <h3 class="mt-2">إجمالي الاعتراضات التي بدون بيانات: <strong>{{ report_data.total_without_data }}</strong></h3>
+                <h3 class="mt-2">إجمالي الاعتراضات في انتظار الدفع: <strong>{{ report_data.status_pending_count }}</strong></h3>
+                <h3 class="mt-2">إجمالي الاعتراضات في انتظار تأكيد ايصال الدفع: <strong>{{ report_data.status_unconfirm_count }}</strong></h3>
+                <h3 class="mt-2">إجمالي الاعتراضات التي تم دفع رسومها: <strong>{{ report_data.status_paid_count }}</strong></h3>
+                <h3 class="mt-2">إجمالي الاعتراضات المقبولة: <strong>{{ report_data.status_accept_count }}</strong></h3>
+                <h3 class="mt-2">إجمالي الاعتراضات المرفوضة: <strong>{{ report_data.status_reject_count }}</strong></h3>
+
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

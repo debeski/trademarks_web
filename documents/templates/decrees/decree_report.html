@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block title %}التقارير - القرارات{% endblock %}
+
+{% block content %}
+
+    <div class="card border-light shadow mt-2">
+        <div class="card-header pe-5">
+            <h4 class="card-title">اختر السنة</h4>
+        </div>
+        <div class="card-body">
+            <form method="get">
+                <div class="form-group">
+
+                    <select id="year" name="year" class="form-control" onchange="this.form.submit()">
+                        <option value="">-------</option>
+                        {% for year in years %}
+                            <option value="{{ year.year }}" {% if year.year|stringformat:"s" == selected_year %}selected{% endif %}>{{ year.year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+
+            {% if report_data %}
+            <hr>
+            <h2>تقرير عن قرارات العلامات التجارية لسنة {{ selected_year }}:</h2>
+            <ul class="list-group">
+                <h3 class="mt-4">إجمالي القرارات للسنة: <strong>{{ report_data.total_decrees }}</strong></h3>
+                <h3 class="mt-2">أول قرار برقم: <strong>{{ report_data.first_decree_number }}</strong> وهو بتاريخ <strong>{{ report_data.first_decree_date|date:"d-m-Y" }}</strong></h3>
+                <h3 class="mt-2">آخر قرار برقم: <strong>{{ report_data.last_decree_number }}</strong> وهو بتاريخ <strong>{{ report_data.last_decree_date|date:"d-m-Y" }}</strong></h3>
+                <h3 class="mt-2">إجمالي القرارات المفقودة: <strong>{{ report_data.total_missing }}</strong></h3>
+                <h3 class="mt-2">الأرقام المفقودة: <strong>{{ report_data.formatted_missing_decrees|safe }}</strong></h3>
+                <h3 class="">إجمالي القرارات التي بدون ملف PDF هو: <strong>{{ report_data.total_without_pdf }}</strong></h3>
+                <h3 class="mt-2">إجمالي القرارات التي بدون بيانات: <strong>{{ report_data.total_without_data }}</strong></h3>
+                <h3 class="mt-2">إجمالي القرارات المقبولة: <strong>{{ report_data.status_1_count }}</strong></h3>
+                <h3 class="mt-2">إجمالي القرارات المرفوضة: <strong>{{ report_data.status_2_count }}</strong></h3>
+                <h3 class="mt-2">إجمالي القرارات المسحوبة: <strong>{{ report_data.status_3_count }}</strong></h3>
+                <h3 class="mt-2">إجمالي القرارات الملغية: <strong>{{ report_data.status_4_count }}</strong></h3>
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

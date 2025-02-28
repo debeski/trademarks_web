@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+{% load django_tables2 %}
+{% load crispy_forms_tags %}
+
+{% comment %} {% block extra_head %}
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			var tabs = document.querySelectorAll("#publicationTabs a");
+		
+			// Retrieve the last active status from localStorage
+			var lastStatus = localStorage.getItem("last_active_status");
+		
+			// Get current status from URL
+			var urlParams = new URLSearchParams(window.location.search);
+			var currentStatus = urlParams.get("status");
+		
+			// If there's a stored status and no status in URL, update the URL instantly
+			if (lastStatus && !currentStatus) {
+				window.location.replace(window.location.pathname + "?status=" + lastStatus);
+			} else {
+				// Show the content only after JS updates the tab
+				document.getElementById("publicationTabsContent").style.visibility = "visible";
+			}
+		
+			// Add event listener to store the selected tab in localStorage
+			tabs.forEach(function (tab) {
+				tab.addEventListener("click", function () {
+					var selectedStatus = new URL(tab.href).searchParams.get("status");
+					localStorage.setItem("last_active_status", selectedStatus);
+				});
+			});
+		});
+	</script>
+	
+{% endblock %} {% endcomment %}
+
+{% block title %}اشهارات العلامات التجارية{% endblock %}
+
+{% block content %}
+
+	{% if messages %}
+	<div class="alert-container position-absolute top-0 start-0 w-100">
+		{% for message in messages %}
+			<div class="alert alert-{{ message.tags }} text-center" style="opacity: 95%;">
+				{{ message }}
+			</div>
+		{% endfor %}
+	</div>
+	{% endif %}
+
+	<!-- Filtering Form -->
+	<form method="get" class="mb-4 row">
+		{% crispy filter.form %}
+	</form>
+
+    <!-- Bootstrap Tabs -->
+    <ul class="nav nav-tabs" id="publicationTabs" role="tablist">
+        <!-- "ALL" Tab -->
+        <li class="nav-item" role="presentation">
+            <a class="nav-link {% if current_status is None %}active{% endif %}" 
+               href="?{% for key, value in request.GET.items %}{% if key != 'status' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                الكل
+            </a>
+        </li>
+        <!-- Dynamic Tabs Based on Status Choices -->
+        {% for choice in status_choices %}
+            <li class="nav-item" role="presentation">
+                <a class="nav-link {% if current_status == choice.0 %}active{% endif %}" 
+                   href="?status={{ choice.0 }}{% for key, value in request.GET.items %}{% if key != 'status' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                    {{ choice.1 }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Bootstrap Tabs Content -->
+    <div class="tab-content" id="publicationTabsContent">
+        <div class="tab-pane fade show active" id="allStatus" role="tabpanel">
+            <div class="card border-light shadow mt-3">
+                <div class="card-header text-center pe-5 bg-transparent">
+                    <h3 class="card-title">الاشهارات</h3>
+                </div>
+                <div class="card-body p-0">
+                    {% render_table table %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<!-- Delete Modal -->
+	{% if request.user.is_authenticated %}
+		<form id="deleteForm" method="post">
+			{% csrf_token %}
+			<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="deleteModalLabel">تأكيد الحذف!</h5>
+						</div>
+						<div class="modal-body">
+							<p>هل أنت متأكد من حذف الاشهار رقم <span id="documentNumber"></span>؟</p>
+						</div>
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-danger">نعم، احذف</button>
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	{% endif %}
+
+	<!-- Status Change Modal -->
+	<form id="statusForm" method="post">
+		{% csrf_token %}
+		<div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="statusModalLabel">تأكيد تغيير الحالة!</h5>
+					</div>
+					<div class="modal-body">
+						<p>هل أنت متأكد من تغيير حالة الاشهار رقم <span id="documentNumber"></span> من 'مبدئي' إلى 'نهائي'؟</p>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-success">نعم، تغيير الحالة</button>
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+
+{% endblock %}
+
+{% block scripts %}
+
+	<!-- JavaScript for the Change Status Modal -->
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			const statusModal = document.getElementById("statusModal");
+			const statusForm = document.getElementById("statusForm");
+			const documentNumber = document.getElementById("documentNumber");
+		
+			statusModal.addEventListener("show.bs.modal", function (event) {
+				let button = event.relatedTarget; // The button that triggered the modal
+				let docId = button.getAttribute("data-doc-id");
+				let docNumber = button.getAttribute("data-doc-number");
+		
+				// Update the confirmation message
+				documentNumber.textContent = docNumber;
+		
+				// Set the form action dynamically
+				statusForm.setAttribute("action", `/update-status/${docId}/`);
+			});
+		});
+	</script>
+
+	<!-- JavaScript for the Delete Modal -->
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			var deleteModal = document.getElementById("deleteModal");
+			var deleteForm = document.getElementById("deleteForm");
+
+			deleteModal.addEventListener("show.bs.modal", function(event) {
+				var button = event.relatedTarget;
+				var docId = button.getAttribute("data-doc-id");
+				var docNumber = button.getAttribute("data-doc-number");
+				var deleteUrl = "{% url 'delete_publication' 0 %}".replace('0', docId);
+
+				document.getElementById("documentNumber").textContent = docNumber;
+				deleteForm.setAttribute("action", deleteUrl);
+			});
+
+			deleteForm.addEventListener("submit", function(event) {
+				event.preventDefault();  // Prevent default form submission
+				
+				fetch(deleteForm.action, {
+					method: "POST",
+					headers: {
+						"X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+						"Content-Type": "application/x-www-form-urlencoded"
+					}
+				})
+				.then(response => response.json())
+				.then(data => {
+					if (data.success) {
+						location.reload();  // Reload page after successful deletion
+					} else {
+						alert("Error: " + data.error);
+					}
+				})
+				.catch(error => console.error("Error:", error));
+			});
+		});
+	</script>
+
+	<!-- JavaScript for the Advanced Search -->
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			// Get elements
+			var advancedSearch = document.getElementById("advanced-search");
+			var advancedSearchToggle = document.querySelector('[data-bs-target="#advanced-search"]');
+		
+			if (!advancedSearch || !advancedSearchToggle) {
+				console.error("Advanced search elements not found.");
+				return; // Stop execution if elements are missing
+			}
+		
+			// Restore state from LocalStorage
+			var advancedSearchState = localStorage.getItem("advanced_search_expanded");
+			if (advancedSearchState === "true") {
+				advancedSearch.classList.add("show");
+			} else {
+				advancedSearch.classList.remove("show");
+			}
+		
+			// Toggle state and update LocalStorage
+			advancedSearchToggle.addEventListener("click", function() {
+				console.log("Toggle button clicked!");
+				setTimeout(function() {
+					var isExpanded = advancedSearch.classList.contains("show");
+					localStorage.setItem("advanced_search_expanded", isExpanded ? "true" : "false");
+				}, 500);
+			});
+		});
+	</script>
+
+	{% comment %} <!-- JavaScript for the Active Tab -->
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			// Get all tab buttons
+			var tabButtons = document.querySelectorAll('#publicationTabs button');
+			tabButtons.forEach(function(button) {
+				button.addEventListener('shown.bs.tab', function(event) {
+					// Get the active tab ID from the data-bs-target attribute (e.g. "#status2")
+					var activeTab = event.target.getAttribute('data-bs-target').replace('#', '');
+					// Update the hidden field value
+					document.getElementById('active_tab').value = activeTab;
+				});
+			});
+		});
+	</script> {% endcomment %}
+
+{% endblock %}

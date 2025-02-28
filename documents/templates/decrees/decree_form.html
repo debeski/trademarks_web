@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+  {% if form.instance.id %}تعديل{% else %}إضافة{% endif %} قرار
+{% endblock %}
+
+{% block header %}
+  {% if form.instance.id %} - تعديل{% else %} - إضافة{% endif %} قرار
+{% endblock %}
+
+{% block content %}
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  {% crispy form %}
+</form>
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const statusField = document.getElementById("id_status");
+        const numberCanceledField = document.getElementById("id_number_canceled");
+        const numberCanceledLabel = document.querySelector('label[for="id_number_canceled"]'); // Get the label for the field
+        const fieldsToHide = [
+            "id_applicant", "id_company", "id_country",
+            "id_date_applied", "id_number_applied",
+            "id_ar_brand", "id_en_brand", "id_category"
+        ];
+        const isWithdrawnField = document.getElementById("id_is_withdrawn");
+        const isCanceledField = document.getElementById("id_is_canceled");
+
+        function toggleFields() {
+            let status = parseInt(statusField.value, 10);
+
+            if (status === 3 || status === 4) {
+                // Hide other fields
+                fieldsToHide.forEach(fieldId => {
+                    let field = document.getElementById(fieldId);
+                    if (field) {
+                        field.closest(".mb-3")?.classList.add("d-none");
+                        field.removeAttribute("required");
+                    }
+                });
+
+                // Show `number_canceled` input and label
+                if (numberCanceledField) {
+                    numberCanceledField.type = "text";  // Make it visible
+                    numberCanceledField.setAttribute("required", "required");
+                    if (numberCanceledLabel) {
+                        numberCanceledLabel.style.display = 'block'; // Show the label
+                    }
+                    initializeDecreeAutocomplete(numberCanceledField); // Initialize autocomplete
+                }
+
+                // Set boolean fields
+                if (status === 3 && isWithdrawnField) isWithdrawnField.checked = true;
+                if (status === 4 && isCanceledField) isCanceledField.checked = true;
+
+            } else {
+                // Show all hidden fields
+                fieldsToHide.forEach(fieldId => {
+                    let field = document.getElementById(fieldId);
+                    if (field) {
+                        field.closest(".mb-3")?.classList.remove("d-none");
+                        field.setAttribute("required", "required");
+                    }
+                });
+
+                // Hide `number_canceled` input and label
+                if (numberCanceledField) {
+                    numberCanceledField.type = "hidden";  // Hide input
+                    numberCanceledField.removeAttribute("required");
+                    numberCanceledField.value = ''; // Empty the field
+                    if (numberCanceledLabel) {
+                        numberCanceledLabel.style.display = 'none'; // Hide the label
+                    }
+                }
+
+                // Reset boolean fields
+                if (isWithdrawnField) isWithdrawnField.checked = false;
+                if (isCanceledField) isCanceledField.checked = false;
+            }
+        }
+
+        // Function to initialize AJAX-based autocomplete
+        function initializeDecreeAutocomplete(field) {
+            field.addEventListener("input", function () {
+                let query = field.value;
+
+                if (query.length < 2) return;  // Avoid too many requests
+
+                fetch(`/decree-autocomplete/?q=${query}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        let datalist = document.getElementById("decree-options");
+                        datalist.innerHTML = ""; // Clear old options
+                        data.forEach(decree => {
+                            let option = document.createElement("option");
+                            option.value = decree.number; // Displayed value
+                            option.dataset.id = decree.id;  // Store the ID
+                            datalist.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error("Error fetching decrees:", error));
+            });
+
+            // Handle selection from the datalist
+            field.addEventListener("change", function () {
+                const selectedOption = Array.from(document.getElementById("decree-options").options)
+                    .find(option => option.value === field.value);
+                if (selectedOption) {
+                    numberCanceledField.value = selectedOption.dataset.id; // Store the decree ID
+                } else {
+                    numberCanceledField.value = ''; // Clear if no valid option
+                }
+            });
+        }
+
+
+        // Run on page load and status change
+        toggleFields();
+        statusField.addEventListener("change", toggleFields);
+    });
+</script>
+
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let enInputFields = ['id_en_brand'];
+            let arInputFields = ['id_ar_brand'];
+            let numberFields = ['id_number', 'id_number_applied', 'id_category'];
+    
+            // Function to allow only English letters, numbers and spaces
+            function enforceEnglish(input) {
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^a-zA-Z0-9\s]/g, '');
+                });
+    
+                input.addEventListener('focus', function() {
+                    this.setAttribute('lang', 'en');
+                });
+            }
+    
+            // Function to allow only Arabic letters, numbers and spaces
+            function enforceArabic(input) {
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^\u0600-\u06FF0-9\s]/g, '');
+                });
+    
+                input.addEventListener('focus', function() {
+                    this.setAttribute('lang', 'ar');
+                });
+            }
+    
+            // Function to allow only numbers
+            function enforceNumbers(input) {
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+    
+                input.addEventListener('focus', function() {
+                    this.setAttribute('inputmode', 'numeric');
+                });
+            }
+    
+            // Apply functions if the input fields exist for English, Arabic, and number fields
+            enInputFields.forEach(function(fieldId) {
+                let inputField = document.getElementById(fieldId);
+                if (inputField) {
+                    enforceEnglish(inputField);
+                }
+            });
+    
+            arInputFields.forEach(function(fieldId) {
+                let inputField = document.getElementById(fieldId);
+                if (inputField) {
+                    enforceArabic(inputField);
+                }
+            });
+    
+            numberFields.forEach(function(fieldId) {
+                let inputField = document.getElementById(fieldId);
+                if (inputField) {
+                    enforceNumbers(inputField);
+                }
+            });
+        });
+    </script>
+
+
+{% endblock %}

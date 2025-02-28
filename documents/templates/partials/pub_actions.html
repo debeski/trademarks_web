@@ -1,0 +1,44 @@
+{% load static %}
+<div class="d-flex gap-2 align-items-center justify-content-end">
+    <a href="{% url 'gen-pub-pdf' record.id %}" title="تحميل الملف المرفق"><i class="bi bi-file-earmark-pdf-fill" style="font-size: 36px;"></i>
+    </a>
+    {% if perms.documents.pub_change_status %}
+        {% if record.status == 1 %}
+            <!-- Modal Trigger for Status Change -->
+            <a title="تغيير حالة الاشهار من نشر مبدئي الى نشر نهائي" href="#" data-bs-toggle="modal" data-bs-target="#statusModal"
+            data-doc-id="{{ record.id }}" data-doc-number="{{ record.number }}">
+            <i class="bi bi-check2-circle text-success" style="font-size: 36px;"></i>
+            </a>
+        {% endif %}
+    {% endif %}
+    <!-- Use the icon itself as the dropdown trigger -->
+    <div class="dropdown-center">
+        <a href="#" class="action-icon" id="actionDropdown{{ record.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-three-dots-vertical text-dark"></i>
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="actionDropdown{{ record.id }}">
+            <li>
+                <a class="dropdown-item" href="{% url 'view_publication' record.id %}" title="عرض">
+                    <i class="bi bi-binoculars-fill text-dark me-1" style="font-size: 22px;"> </i> عرض
+                </a>
+            </li>
+            {% if record.status == 1 %}
+            {% if perms.documents.change_publication %}
+                <li>
+                    <a class="dropdown-item" href="{% url 'edit_publication' record.id %}" title="تعديل">
+                        <i class="bi bi-pencil-square text-dark me-1" style="font-size: 22px;"> </i> تعديل
+                    </a>
+                </li>
+                {% if user.is_superuser %}
+                <li>
+                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                        data-doc-id="{{ record.id }}" data-doc-number="{{ record.number }}">
+                        <i class="bi bi-x-octagon text-danger me-1" style="font-size: 22px;"> </i> حذف
+                    </a>
+                </li>
+                {% endif %}
+            {% endif %}
+            {% endif %}
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+  {% if form.instance.id %}تعديل{% else %}إضافة{% endif %} تشريع او نموذج
+{% endblock %}
+
+{% block header %}
+  {% if form.instance.id %} - تعديل{% else %} - إضافة{% endif %} تشريع او نموذج
+{% endblock %}
+
+{% block content %}
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  {% crispy form %}
+</form>
+{% endblock %}
+
+{% block scripts %}
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let numberFields = ['id_number'];
+    
+            // Function to allow only numbers
+            function enforceNumbers(input) {
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+    
+                input.addEventListener('focus', function() {
+                    this.setAttribute('inputmode', 'numeric');
+                });
+            }
+    
+            // Apply functions if the input fields exist for Number fields
+            numberFields.forEach(function(fieldId) {
+                let inputField = document.getElementById(fieldId);
+                if (inputField) {
+                    enforceNumbers(inputField);
+                }
+            });
+        });
+    </script>
+
+{% endblock %}

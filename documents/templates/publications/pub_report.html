@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block title %}التقارير - الاشهارات{% endblock %}
+
+{% block content %}
+
+    <div class="card border-light shadow mt-2">
+        <div class="card-header pe-5">
+            <h4 class="card-title">اختر السنة</h4>
+        </div>
+        <div class="card-body">
+            <form method="get">
+                <div class="form-group">
+                    <select id="year" name="year" class="form-control" onchange="this.form.submit()">
+                        <option value="">-------</option>
+                        {% for year in years %}
+                            <option value="{{ year.year }}" {% if year.year|stringformat:"s" == selected_year %}selected{% endif %}>{{ year.year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+
+            {% if report_data %}
+            <hr>
+            <h2>تقرير عن اشهارات العلامات التجارية لسنة {{ selected_year }}:</h2>
+            <ul class="list-group">
+                <h3 class="mt-4">إجمالي الاشهارات للسنة: <strong>{{ report_data.total_publications }}</strong></h3>
+                <h3 class="mt-2">أول اشهار برقم: <strong>{{ report_data.first_publication_number }}</strong> وهو بتاريخ <strong>{{ report_data.first_publication_date|date:"d-m-Y" }}</strong></h3>
+                <h3 class="mt-2">آخر اشهار برقم: <strong>{{ report_data.last_publication_number }}</strong> وهو بتاريخ <strong>{{ report_data.last_publication_date|date:"d-m-Y" }}</strong></h3>
+                <h3 class="mt-2">إجمالي الاشهارات المفقودة: <strong>{{ report_data.total_missing }}</strong></h3>
+                <h3 class="mt-2">الأرقام المفقودة: <strong>{{ report_data.formatted_missing_publications|safe }}</strong></h3>
+                <h3 class="">إجمالي الاشهارات التي بدون صورة: <strong>{{ report_data.total_without_img }}</strong></h3>
+                <h3 class="mt-2">إجمالي الاشهارات التي بدون ملف مرفق: <strong>{{ report_data.total_without_pdf }}</strong></h3>
+                <h3 class="mt-2">إجمالي الاشهارات التي بدون بيانات: <strong>{{ report_data.total_without_data }}</strong></h3>
+                <h3 class="mt-2">إجمالي الاشهارات المنشورة مبدئيا: <strong>{{ report_data.status_1_count }}</strong></h3>
+                <h3 class="mt-2">إجمالي الاشهارات المتنازع عليها: <strong>{{ report_data.status_2_count }}</strong></h3>
+                <h3 class="mt-2">إجمالي الاشهارات المنشورة نهائيا: <strong>{{ report_data.status_3_count }}</strong></h3>
+                <h3 class="mt-2">إجمالي الاشهارات المسحوبة: <strong>{{ report_data.status_4_count }}</strong></h3>
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

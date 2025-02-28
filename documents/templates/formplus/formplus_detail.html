@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+    <!-- Include PDF.js Library -->
+    <script type="module" src="{% static 'pdfjs/build/pdf.mjs' %}"></script>
+    <script type="module">
+        import * as pdfjsLib from "{% static 'pdfjs/build/pdf.mjs' %}";
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "{% static 'pdfjs/build/pdf.worker.mjs' %}";
+
+        document.addEventListener("DOMContentLoaded", async function () {
+            {% if formplus.pdf_file %}
+                const url = "{{ formplus.pdf_file.url }}";
+                const canvas = document.getElementById("pdf-canvas");
+                const ctx = canvas.getContext("2d");
+
+                try {
+                    const pdf = await pdfjsLib.getDocument(url).promise;
+                    const page = await pdf.getPage(1);
+                    const viewport = page.getViewport({ scale: 0.8 });
+
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+
+                    const renderContext = { canvasContext: ctx, viewport: viewport };
+                    await page.render(renderContext);
+                } catch (error) {
+                    console.error("Error loading PDF:", error);
+                }
+            {% endif %}
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Left Column: FormPlus Details -->
+        <div class="col-md-6">
+            <h5 class="mb-3">تفاصيل الوثيقة</h5>
+            <div class="card">
+                <div class="card-body">
+                    <p><strong>رقم الوثيقة: </strong> {{ formplus.number|default:"-" }}</p>
+                    <p><strong>تاريخ الوثيقة: </strong> {{ formplus.date|date:"Y-m-d" }}</p>
+                    <p><strong>الحكومة: </strong> {{ formplus.government|default:"-" }}</p>
+                    <p><strong>العنوان: </strong> {{ formplus.title|default:"-" }}</p>
+                    <p><strong>الكلمات المفتاحية:</strong></p>
+                    <p>{{ formplus.keywords|default:"-" }}</p>
+                    <br>
+                </div>
+            </div>
+            <div class="mt-4">
+                <a href="{% url 'edit_formplus' formplus.id %}" class="btn btn-primary">تعديل</a>
+                <a href="javascript:history.back()" class="btn btn-secondary">إلغاء</a>
+            </div>
+        </div>
+
+        <!-- Right Column: PDF Preview -->
+        <div class="col">
+            <h5 class="mb-3">معاينة الوثيقة</h5>
+            {% if formplus.pdf_file %}
+                <div id="pdf-viewer-container" class="border rounded p-2">
+                    <canvas id="pdf-canvas" class="w-100"></canvas>
+                </div>
+            {% else %}
+                <p class="text-muted">لا يوجد ملف PDF لهذه الوثيقة</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

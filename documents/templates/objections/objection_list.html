@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+{% load django_tables2 %}
+{% load crispy_forms_tags %}
+
+{% block title %}الاعتراضات{% endblock %}
+
+{% block content %}
+
+    {% if messages %}
+    <div class="alert-container position-absolute top-0 start-0 w-100">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} text-center" style="opacity: 95%;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Filtering Form -->
+    <form method="get" class="mb-4 row">
+        {% crispy filter.form %}
+    </form>
+
+    <!-- Bootstrap Tabs -->
+    <ul class="nav nav-tabs" id="objectionTabs" role="tablist">
+        <!-- "ALL" Tab -->
+        <li class="nav-item" role="presentation">
+            <a class="nav-link {% if current_status is None %}active{% endif %}" 
+                href="?{% for key, value in request.GET.items %}{% if key != 'status' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                الكل
+            </a>
+        </li>
+        <!-- Dynamic Tabs Based on Status Choices -->
+        {% for choice in status_choices %}
+            <li class="nav-item" role="presentation">
+                <a class="nav-link {% if current_status == choice.0 %}active{% endif %}" 
+                    href="?status={{ choice.0 }}{% for key, value in request.GET.items %}{% if key != 'status' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                    {{ choice.1 }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Bootstrap Tabs Content -->
+    <div class="tab-content" id="objectionTabsContent">
+        <div class="tab-pane fade show active" id="allStatus" role="tabpanel">
+            <div class="card border-light shadow mt-3">
+                <div class="card-header text-center pe-5 bg-transparent">
+                    <h3 class="card-title">الاعتراضات</h3>
+                </div>
+                <div class="card-body p-0">
+                    {% render_table table %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    {% if request.user.is_authenticated %}
+        <form id="deleteForm" method="post">
+        {% csrf_token %}
+            <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel">تأكيد الحذف!</h5>
+                        </div>
+                        <div class="modal-body">
+                            <p>هل أنت متأكد من حذف الاعتراض رقم <span id="documentNumber"></span>؟</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger">نعم، احذف</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    {% endif %}
+
+    {% if request.user.is_authenticated %}
+        <form id="deleteForm" method="post">
+        {% csrf_token %}
+            <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel">تأكيد الحذف!</h5>
+                        </div>
+                        <div class="modal-body">
+                            <p>هل أنت متأكد من حذف الاعتراض رقم <span id="documentNumber"></span>؟</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger">نعم، احذف</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    {% endif %}
+
+	{% comment %} <!-- Status Change Modal -->
+	<form id="statusForm" method="post">
+		{% csrf_token %}
+		<div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="statusModalLabel">تأكيد قبول الاعتراض!</h5>
+					</div>
+					<div class="modal-body">
+						<p>هل أنت متأكد أنك تريد تأكيد ايصال دفع للاعتراض رقم <span id="documentNumber"></span> ؟</p>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-success">نعم، تأكيد</button>
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+
+	<!-- Status Decline Modal -->
+	<form id="statusForm2" method="post">
+		{% csrf_token %}
+		<div class="modal fade" id="statusModal2" tabindex="-1" role="dialog" aria-labelledby="statusModal2Label" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="statusModal2Label">تأكيد رفض الاعتراض!</h5>
+					</div>
+					<div class="modal-body">
+						<p>هل أنت متأكد أنك تريد رفض ايصال الدفع للاعتراض رقم <span id="documentNumber"></span> ؟</p>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-danger">نعم، ارفض</button>
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form> {% endcomment %}
+
+{% endblock %}
+
+{% block scripts %}
+{% comment %} 
+	<!-- JavaScript for the Change Status Modal -->
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			const statusModal = document.getElementById("statusModal");
+			const statusForm = document.getElementById("statusForm");
+			const documentNumber = document.getElementById("documentNumber");
+		
+			statusModal.addEventListener("show.bs.modal", function (event) {
+				let button = event.relatedTarget; // The button that triggered the modal
+				let docId = button.getAttribute("data-doc-id");
+				let docNumber = button.getAttribute("data-doc-number");
+		
+				// Update the confirmation message
+				documentNumber.textContent = docNumber;
+		
+				// Set the form action dynamically
+				statusForm.setAttribute("action", `/confirm-objection-fee/${docId}/`);
+			});
+		});
+	</script>
+
+	<!-- JavaScript for the Change Status Modal -->
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			const statusModal = document.getElementById("statusModal2");
+			const statusForm = document.getElementById("statusForm2");
+			const documentNumber = document.getElementById("documentNumber");
+		
+			statusModal.addEventListener("show.bs.modal", function (event) {
+				let button = event.relatedTarget; // The button that triggered the modal
+				let docId = button.getAttribute("data-doc-id");
+				let docNumber = button.getAttribute("data-doc-number");
+		
+				// Update the confirmation message
+				documentNumber.textContent = docNumber;
+		
+				// Set the form action dynamically
+				statusForm.setAttribute("action", `/decline-objection-fee/${docId}/`);
+			});
+		});
+	</script> {% endcomment %}
+
+    <!-- JavaScript for the Delete Modal -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var deleteModal = document.getElementById("deleteModal");
+            var deleteForm = document.getElementById("deleteForm");
+
+            deleteModal.addEventListener("show.bs.modal", function(event) {
+                var button = event.relatedTarget;
+                var docId = button.getAttribute("data-doc-id");
+                var docNumber = button.getAttribute("data-doc-number");
+                var deleteUrl = "{% url 'delete_objection' 0 %}".replace('0', docId);
+
+                document.getElementById("documentNumber").textContent = docNumber;
+                deleteForm.setAttribute("action", deleteUrl);
+            });
+
+            deleteForm.addEventListener("submit", function(event) {
+                event.preventDefault();  // Prevent default form submission
+                
+                fetch(deleteForm.action, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();  // Reload page after successful deletion
+                    } else {
+                        alert("Error: " + data.error);
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+            });
+        });
+    </script>
+
+    <!-- JavaScript for the Advanced Search -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get elements
+            var advancedSearch = document.getElementById("advanced-search");
+            var advancedSearchToggle = document.querySelector('[data-bs-target="#advanced-search"]');
+        
+            if (!advancedSearch || !advancedSearchToggle) {
+                console.error("Advanced search elements not found.");
+                return; // Stop execution if elements are missing
+            }
+        
+            // Restore state from LocalStorage
+            var advancedSearchState = localStorage.getItem("advanced_search_expanded");
+            if (advancedSearchState === "true") {
+                advancedSearch.classList.add("show");
+            } else {
+                advancedSearch.classList.remove("show");
+            }
+        
+            // Toggle state and update LocalStorage
+            advancedSearchToggle.addEventListener("click", function() {
+                console.log("Toggle button clicked!");
+                setTimeout(function() {
+                    var isExpanded = advancedSearch.classList.contains("show");
+                    localStorage.setItem("advanced_search_expanded", isExpanded ? "true" : "false");
+                }, 500);
+            });
+        });
+    </script>
+
+{% endblock %}

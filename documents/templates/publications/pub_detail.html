@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Left Column: publication Details -->
+        <div class="col-md-6">
+            <div class="card border-light shadow-sm">
+                <div class="card-header text-center pe-5">
+                    <h5 class="card-title mb-0">تفاصيل الاشهار</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>سنة الاشهار: </strong> {{ publication.year|default:"-" }}</p>
+
+                    <p><strong>رقم الاشهار: </strong> {{ publication.number|default:"-" }}</p>
+
+                    <p><strong>رقم القرار: </strong> {{ publication.decree|default:"-" }}
+                        {% if decree and decree.pdf_file %}
+                            <a href="{{ decree.pdf_file.url }}" class="ms-1" download>
+                            <i class="bi bi-file-earmark-pdf"></i>
+                            </a>
+                        {% endif %}
+                    </p>
+                    <p><strong>الحالة: </strong> {{ publication.get_status_display|default:"-" }}</p>
+
+                    <p><strong>طالب التسجيل: </strong> {{ publication.applicant|default:"-" }}</p>
+
+                    <p><strong>مالك العلامة: </strong> {{ publication.owner|default:"-" }}</p>
+
+                    <p><strong>الدولة: </strong> {{ publication.get_country_display|default:"-" }}</p>
+                    <p></p>
+
+                    <p><strong>تاريخ التقديم: </strong> {{ publication.date_applied|date:"Y-m-d" }}</p>
+                    <p></p>
+
+                    <p><strong>العلامة التجارية (عربي): </strong> {{ publication.ar_brand|default:"-" }}</p>
+                    <p></p>
+
+                    <p><strong>العلامة التجارية (إنجليزي): </strong> {{ publication.en_brand|default:"-" }}</p>
+                    <p></p>
+
+                    <p><strong>الفئة: </strong> {{ publication.category|default:"-" }}</p>
+                    <p></p>
+
+                    <p><strong>رقم النشرية: </strong> {{ publication.e_number|default:"-" }}</p>
+                    <p></p>
+
+                    <p><strong>تاريخ النشر: </strong> {{ publication.created_at|date:"Y-m-d" }}</p>
+                    <p></p>
+
+                    {% if publication.attach %}
+                        <p><strong>الملف المرفق: </strong></p>
+                        <a href="{{ publication.attach.url }}" class="btn btn-outline-primary btn-sm" download>تحميل المرفق</a>
+                    {% endif %}
+                    <br>
+                    <p><strong>ملاحظات:</strong></p>
+                    <p>{{ publication.notes|default:"" }}</p>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a href="{% url 'gen-pub-pdf' publication.id %}" class="btn btn-outline-primary">تحميل الاشهار <i class="bi bi-file-earmark-pdf"></i></a>
+
+                <a href="{% url 'edit_publication' publication.id %}" class="btn btn-primary">تعديل</a>
+                <a href="javascript:history.back()" class="btn btn-secondary">إلغاء</a>
+            </div>
+        </div>
+
+        <!-- Right Column: PDF Preview -->
+        <div class="col">
+            <div class="card border-light shadow-sm">
+                <div class="card-header text-center pe-5">
+                    <h5 class="card-title mb-0">معاينة صورة العلامة</h5>
+                </div>
+                <div class="card-body">
+                    {% if publication.img_file %}
+                        <div id="image-viewer-container" class="border rounded p-2 text-center">
+                            <img src="{{ publication.img_file.url }}" alt="معاينة الوثيقة" class="img-fluid rounded">
+                        </div>
+                    {% else %}
+                        <p class="text-muted">لا يوجد صورة لهذه الوثيقة</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

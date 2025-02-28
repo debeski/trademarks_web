@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% load django_tables2 %}
+{% load crispy_forms_tags %}
+
+{% block extra_head %}
+
+	<script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var tabs = document.querySelectorAll("#modelTabs a");
+        
+            // Retrieve the last active status from localStorage
+            var lastStatus = localStorage.getItem("last_active_model");
+        
+            // Get current status from URL
+            var urlParams = new URLSearchParams(window.location.search);
+            var currentStatus = urlParams.get("model");
+        
+            // If there's a stored status and no status in URL, update the URL while keeping existing parameters
+            if (lastStatus && !currentStatus) {
+                urlParams.set("model", lastStatus); // Add last active model to the URL parameters
+                urlParams.delete("page"); // Remove the page parameter when changing tabs
+                window.location.replace(window.location.pathname + "?" + urlParams.toString());
+            } else {
+                // Show the content only after JS updates the tab
+                document.getElementById("modelTabsContent").style.visibility = "visible";
+            }
+        
+            // Add event listener to store the selected tab in localStorage while keeping other parameters
+            tabs.forEach(function (tab) {
+                tab.addEventListener("click", function (event) {
+                    event.preventDefault(); // Prevent default navigation
+                    
+                    var selectedModel = new URL(tab.href).searchParams.get("model");
+                    localStorage.setItem("last_active_model", selectedModel);
+                    
+                    // Preserve all existing query parameters while updating the model
+                    var newUrlParams = new URLSearchParams(window.location.search);
+                    newUrlParams.set("model", selectedModel);
+                    newUrlParams.delete("page"); // Remove the 'page' parameter
+                    
+                    // Redirect with updated parameters
+                    window.location.href = window.location.pathname + "?" + newUrlParams.toString();
+                });
+            });
+        });
+        
+	</script>
+	
+{% endblock %}
+
+{% block title %} الاعدادت - ادارة الاقسام{% endblock %}
+
+{% block content %}
+
+    <!-- Bootstrap Tabs Navigation -->
+    <ul class="nav nav-tabs" id="modelTabs" role="tablist">
+      {% for model in models %}
+      <li class="nav-item" role="presentation">
+        <a class="nav-link {% if model.name == active_model %}active{% endif %}" 
+           href="?model={{ model.name }}" role="tab">
+          {{ model.ar_names }}
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <!-- Content Area for the Selected Model -->
+    <div id= "modelTabsContent" class="mt-4">
+        {% if perms.documents.edit_sections %}
+
+        <!-- Card 1: Form -->
+        <div class="card border-light shadow mb-5">
+            <div class="card-header text-center pe-5 bg-transparent">
+                <h3 class="card-title">{% if id %} تعديل {% else %} اضافة {% endif %}{{ ar_name }}</h3>
+            </div>
+            <div class="card-body">
+                {% csrf_token %}
+                {% crispy form %}
+            </div>
+        </div>
+        {% endif %}
+
+      <!-- Card 2: Filter & Table -->
+      <div class="card border-light shadow">
+            <div class="card-header text-center pe-5 bg-transparent">
+                <h3 class="card-title">قائمة {{ ar_names }}</h3>
+            </div>
+            <div class="card-body">
+                {% csrf_token %}
+                <!-- Filter Form -->
+                {% crispy filter.form %}
+                <!-- Table -->
+                {% render_table table %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts%}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let enInputField = document.getElementById('id_en_name');
+        let arInputField = document.getElementById('id_ar_name');
+
+        // Function to allow only English letters, numbers, and spaces
+        function enforceEnglish(input) {
+            input.addEventListener('input', function() {
+                this.value = this.value.replace(/[^a-zA-Z\s]/g, ''); // No numbers
+            });
+
+            input.addEventListener('focus', function() {
+                this.setAttribute('lang', 'en');
+            });
+        }
+
+        // Function to allow only Arabic letters and spaces
+        function enforceArabic(input) {
+            input.addEventListener('input', function() {
+                this.value = this.value.replace(/[^\u0600-\u06FF\s]/g, '');
+            });
+
+            input.addEventListener('focus', function() {
+                this.setAttribute('lang', 'ar');
+            });
+        }
+
+        // Apply the function if the input fields exist
+        if (enInputField) {
+            enforceEnglish(enInputField);
+        }
+
+        if (arInputField) {
+            enforceArabic(arInputField);
+        }
+    });
+</script>
+
+{% endblock %}

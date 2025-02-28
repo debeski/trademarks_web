@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load django_tables2 %}
+{% load crispy_forms_tags %}
+{% block title %}الاعدادت - السجل{% endblock %}
+
+{% block content %}
+
+    <div class="card border-light shadow">
+        <div class="card-header text-center pe-5 bg-transparent">
+            <h3 class="card-title">السجل</h3>
+        </div>
+        <div class="card-body p-0">
+            <!-- Render the table -->
+            {% render_table table %}
+        </div>
+    </div>
+
+{% endblock %}

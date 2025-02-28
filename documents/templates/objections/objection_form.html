@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if form.instance.id %}تعديل اعتراض{% else %}إضافة اعتراض{% endif %}
+{% endblock %}
+
+{% block header %}
+    {% if form.instance.id %} - تعديل اعتراض{% else %} - إضافة اعتراض{% endif %}
+{% endblock %}
+
+{% block content %}
+
+    <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+        <!-- year, pub_number, and hidden pub_id fields-->
+        <div class="row">
+            <div class="col-md-6">
+                {{ form.year|as_crispy_field }}
+            </div>
+            <div class="col-md-6">
+                {{ form.pub_number|as_crispy_field }}
+                {{ form.pub_id|as_crispy_field }}
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- Dynamic Card Container for Publication Details -->
+        <div id="publication-details" class="container-fluid mt-3 mb-3">
+            <div class="card">
+                <div class="card-header bg-primary text-white text-center">
+                    <h5 class="card-title mt-1">تفـــاصيل الاشهـــار</h5>
+                </div>
+                <div class="card-body row">
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>رقم الاشهار:</strong> <span id="pub-number"></span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>رقم القرار:</strong> <span id="pub-decree"></span></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>مقدم الطلب:</strong> <span id="pub-applicant"></span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>مالك العلامة:</strong> <span id="pub-owner"></span></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>الدولة:</strong> <span id="pub-country"></span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>العنوان:</strong> <span id="pub-address"></span></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>تاريخ الطلب:</strong> <span id="pub-date-applied"></span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>التصنيف:</strong> <span id="pub-category"></span></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>العلامة التجارية (AR):</strong> <span id="pub-ar-brand"></span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>العلامة التجارية (EN):</strong> <span id="pub-en-brand"></span></p>
+                            </div>
+                        </div>
+                        <p><strong>تاريخ الاشهار:</strong> <span id="pub-created"></span></p>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-center justify-content-center">
+                        <img id="pub-image" class="img-fluid mt-2" alt="Brand Image" style="max-height: 220px;">
+                    </div>
+                </div>
+            </div>
+            <hr>
+        </div>
+
+        <!-- name, job, and nationality fields-->
+        <div class="row">
+            <div class="col-md-4">
+                {{ form.name|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.job|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.nationality|as_crispy_field }}
+            </div>
+        </div>
+
+        <!-- address and phone fields-->
+        <div class="row">
+            <div class="col-md-6">
+                {{ form.address|as_crispy_field }}
+            </div>
+            <div class="col-md-6">
+                {{ form.phone|as_crispy_field }}
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- com_name, com_job, and com_address fields-->
+        <div class="row">
+            <div class="col-md-4">
+                {{ form.com_name|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.com_job|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.com_address|as_crispy_field }}
+            </div>
+        </div>
+
+        <!-- com_og_address and com_mail_address fields-->
+        <div class="row">
+            <div class="col-md-6">
+                {{ form.com_og_address|as_crispy_field }}
+            </div>
+            <div class="col-md-6">
+                {{ form.com_mail_address|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="row">
+                {{ form.is_paid|as_crispy_field }}
+            </div>
+            <div class="row" id="receipt-container" style="display: none;">
+                {{ form.receipt_file|as_crispy_field }}
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- PDF file field-->
+        <div class="row">
+            <div class="col-md-12">
+                {{ form.pdf_file|as_crispy_field }}
+            </div>
+        </div>
+
+        <!-- notes field-->
+        <div class="row">
+            <div class="col-md-12">
+                {{ form.notes|as_crispy_field }}
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">حفظ</button>
+
+    </form>
+
+{% endblock %}
+
+{% block scripts %}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let numberFields = ['id_year', 'id_pub_autocomplete', 'id_phone'];
+    
+            // Function to allow only numbers
+            function enforceNumbers(input) {
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+    
+                input.addEventListener('focus', function() {
+                    this.setAttribute('inputmode', 'numeric');
+                });
+            }
+    
+            // Apply functions if the input fields exist for Number fields
+            numberFields.forEach(function(fieldId) {
+                let inputField = document.getElementById(fieldId);
+                if (inputField) {
+                    enforceNumbers(inputField);
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let isPaidCheckbox = document.getElementById('id_is_paid');
+            let receiptContainer = document.getElementById('receipt-container');
+        
+            function toggleReceiptField() {
+                if (isPaidCheckbox.checked) {
+                    receiptContainer.style.display = 'block';
+                } else {
+                    receiptContainer.style.display = 'none';
+                }
+            }
+        
+            // Run on page load in case the checkbox is pre-checked
+            toggleReceiptField();
+        
+            // Add event listener to toggle receipt field when checkbox is clicked
+            isPaidCheckbox.addEventListener('change', toggleReceiptField);
+        });
+    </script>
+
+    <script>
+        $(function() {
+            function fetchPublicationData(pubNumber) {
+                var selectedYear = $("#id_year").val();
+                var detailsDiv = $("#publication-details");
+        
+                if (!pubNumber) {
+                    hidePublicationDetails();
+                    $("#id_pub_id").val("");
+                    return;
+                }
+        
+                $.ajax({
+                    url: "{% url 'pub-autocomplete' %}",
+                    dataType: "json",
+                    data: { q: pubNumber, year: selectedYear },
+                    success: function(data) {
+                        var found = false;
+        
+                        data.forEach(function(item) {
+                            if (item.number == pubNumber) {
+                                found = true;
+                                $("#pub-number").text(item.number);
+                                $("#pub-decree").text(item.decree);
+                                $("#pub-applicant").text(item.applicant);
+                                $("#pub-owner").text(item.owner);
+                                $("#pub-country").text(item.country);
+                                $("#pub-address").text(item.address);
+                                $("#pub-date-applied").text(item.date_applied || "غير متوفر");
+                                $("#pub-ar-brand").text(item.ar_brand);
+                                $("#pub-en-brand").text(item.en_brand);
+                                $("#pub-category").text(item.category);
+                                $("#pub-created").text(item.created_at || "غير متوفر");
+                                $("#id_pub_id").val(item.id);
+
+                                if (item.img_file) {
+                                    $("#pub-image").attr("src", item.img_file).removeClass("d-none");
+                                } else {
+                                    $("#pub-image").addClass("d-none");
+                                }
+
+                                showPublicationDetails();
+                            }
+                        });
+        
+                        if (!found) {
+                            hidePublicationDetails();
+                            $("#id_pub_id").val("");
+                        }
+                    }
+                });
+            }
+        
+            function showPublicationDetails() {
+                var detailsDiv = $("#publication-details");
+                detailsDiv.css("display", "block");
+                setTimeout(() => detailsDiv.addClass("show"), 50);
+            }
+        
+            function hidePublicationDetails() {
+                var detailsDiv = $("#publication-details");
+                detailsDiv.removeClass("show");
+                setTimeout(() => detailsDiv.css("display", "none"), 900);
+            }
+        
+            $("#id_pub_autocomplete").autocomplete({
+                source: function(request, response) {
+                    var selectedYear = $("#id_year").val();
+                    $.ajax({
+                        url: "{% url 'pub-autocomplete' %}",
+                        dataType: "json",
+                        data: { q: request.term, year: selectedYear },
+                        success: function(data) {
+                            response($.map(data, function(item) {
+                                return {
+                                    label: item.number + " - " + item.created_at,
+                                    value: item.number,
+                                    data: item
+                                };
+                            }));
+                        }
+                    });
+                },
+                minLength: 1,
+                select: function(event, ui) {
+                    var item = ui.item.data;
+                    $("#id_pub_autocomplete").val(item.number);
+                    fetchPublicationData(item.number);
+                    return false;
+                }
+            });
+        
+            $(document).ready(function() {
+                var existingPubNumber = $("#id_pub_autocomplete").val();
+                fetchPublicationData(existingPubNumber);
+            });
+        
+            $("#id_pub_autocomplete").on('change', function() {
+                fetchPublicationData($(this).val());
+            });
+        });
+        
+    </script>
+
+{% endblock %}

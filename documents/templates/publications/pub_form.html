@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if form.instance.id %}تعديل اشهار{% else %}إضافة اشهار{% endif %}
+{% endblock %}
+
+{% block header %}
+    {% if form.instance.id %} - تعديل اشهار{% else %} - إضافة اشهار{% endif %}
+{% endblock %}
+
+{% block content %}
+    <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% crispy form %}
+    </form>
+{% endblock %}
+
+{% block scripts %}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let enInputFields = ['id_en_brand'];
+            let arInputFields = ['id_ar_brand'];
+            let numberFields = ['id_number','id_e_number', 'id_category', 'id_year', 'id_decree_autocomplete'];
+
+            // Function to allow only English letters, numbers and spaces
+            function enforceEnglish(input) {
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^a-zA-Z0-9\s]/g, '');
+                });
+
+                input.addEventListener('focus', function() {
+                    this.setAttribute('lang', 'en');
+                });
+            }
+
+            // Function to allow only Arabic letters, numbers and spaces
+            function enforceArabic(input) {
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^\u0600-\u06FF0-9\s]/g, '');
+                });
+
+                input.addEventListener('focus', function() {
+                    this.setAttribute('lang', 'ar');
+                });
+            }
+
+            // Function to allow only numbers
+            function enforceNumbers(input) {
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+
+                input.addEventListener('focus', function() {
+                    this.setAttribute('inputmode', 'numeric');
+                });
+            }
+
+            // Apply functions if the input fields exist for English, Arabic, and number fields
+            enInputFields.forEach(function(fieldId) {
+                let inputField = document.getElementById(fieldId);
+                if (inputField) {
+                    enforceEnglish(inputField);
+                }
+            });
+
+            arInputFields.forEach(function(fieldId) {
+                let inputField = document.getElementById(fieldId);
+                if (inputField) {
+                    enforceArabic(inputField);
+                }
+            });
+
+            numberFields.forEach(function(fieldId) {
+                let inputField = document.getElementById(fieldId);
+                if (inputField) {
+                    enforceNumbers(inputField);
+                }
+            });
+        });
+    </script>
+
+
+    <script>
+        $(function() {
+            // Function to fetch decree data based on decreeId
+            function fetchDecreeData(decreeId) {
+                if (!decreeId) {
+                    // If no decreeId, clear fields
+                    clearFields();
+                    return;
+                }
+    
+                $.ajax({
+                    url: "{% url 'decree-autocomplete' %}",
+                    dataType: "json",
+                    data: { id: decreeId }, // Use decreeId to fetch data
+                    success: function(data) {
+                        var found = false;
+
+                        if (data) {
+                            // Populate fields with the returned data
+                            $("#id_owner").val(data.owner);
+                            $("#id_country").val(data.country);
+                            $("#id_date_applied").val(data.date_applied);
+                            $("#id_ar_brand").val(data.ar_brand);
+                            $("#id_en_brand").val(data.en_brand);
+                            $("#id_category").val(data.category);
+    
+                            // If year is empty, populate it with the year from the decree's date
+                            if (!$("#id_year").val() && data.date) {
+                                var decreeYear = new Date(data.date).getFullYear();
+                                $("#id_year").val(decreeYear);
+                            }
+
+                            found = true;
+                        }
+
+                        if (!found) {
+                            clearFields();
+                        }
+                    }
+                });
+            }
+    
+            // Function to clear all fields including decree_id
+            function clearFields() {
+                $("#id_owner, #id_country, #id_date_applied, #id_ar_brand, #id_en_brand, #id_category, #id_decree, #id_year").val('');
+            }
+    
+            // Initialize jQuery UI Autocomplete
+            $("#id_decree_autocomplete").autocomplete({
+                source: function(request, response) {
+                    var selectedYear = $("#id_year").val();
+                    $.ajax({
+                        url: "{% url 'decree-autocomplete' %}",
+                        dataType: "json",
+                        data: {
+                            q: request.term,
+                            year: selectedYear
+                        },
+                        success: function(data) {
+                            response($.map(data, function(item) {
+                                return {
+                                    label: item.number + " - " + item.date,
+                                    value: item.id,  // Store the ID instead of number
+                                    data: item
+                                };
+                            }));
+                        }
+                    });
+                },
+                minLength: 1,
+                select: function(event, ui) {
+                    var item = ui.item.data;
+                    $("#id_decree_autocomplete").val(item.number);
+                    $("#id_decree").val(item.id); // Store the decree ID
+                    fetchDecreeData(item.id); // Fetch data using the decree ID
+                    return false;
+                }
+            });
+    
+            // Auto-check existing decree number on page load
+            $(document).ready(function() {
+                var existingDecreeId = $("#id_decree").val();
+                fetchDecreeData(existingDecreeId);
+            });
+    
+            // Fetch decree data when the decree number field changes
+            $("#id_decree_autocomplete").on('change', function() {
+                var decreeNumber = $(this).val();
+                if (!decreeNumber) {
+                    clearFields();  // Clear fields if decree number is empty
+                } else {
+                    // Find the corresponding decreeId and fetch data
+                    $.ajax({
+                        url: "{% url 'decree-autocomplete' %}",
+                        dataType: "json",
+                        data: { q: decreeNumber },
+                        success: function(data) {
+                            if (data && data.length > 0) {
+                                fetchDecreeData(data[0].id);
+                            } else {
+                                clearFields();  // Clear fields if no decree found
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+        
+{% endblock %}
