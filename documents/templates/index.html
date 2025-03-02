@@ -59,8 +59,9 @@
             <div class="d-flex align-items-center">
                 <i class="bi bi-graph-up display-3 text-success me-3"></i> <!-- Bootstrap Icon -->
                 <div>
-                    <h5>اجمالي الاشهارات</h5>
-                    <p class="display-6 text-success">{{ total_pub_f }}</p>
+                    <h5>اجمالي القرارات <strong><span class="ps-2 card_text_big">{{ decree_total }}</span></strong></h5>
+                    <h5>قرارات القبول <strong><span class="text-success card_text_big ps-2">{{ decree_accept }}</span></strong></h5>
+                    <h5>قرارات الرفض <strong><span class="text-danger card_text_big ps-2">{{ decree_reject }}</span></strong></h5>
                 </div>
             </div>
         </div>
@@ -68,8 +69,9 @@
             <div class="d-flex align-items-center">
                 <i class="bi bi-diagram-3 display-3 text-primary me-3"></i>
                 <div>
-                    <h5>اشهارات ذات نشر مبدئي</h5>
-                    <p class="display-6 text-primary">{{ total_pub_i }}</p>
+                    <h5>اشهارات نشر مبدئي <strong><span class="ps-2 text-primary card_text_big">{{ pub_initial }}</span></strong></h5>
+                    <h5>اشهارات عليها معارضة <strong><span class="text-warning card_text_big ps-2">{{ pub_conflict }}</span></strong></h5>
+                    <h5>علامات مسجلة <strong><span class="text-success card_text_big ps-2">{{ pub_final }}</span></strong></h5>
                 </div>
             </div>
         </div>
@@ -77,8 +79,9 @@
             <div class="d-flex align-items-center">
                 <i class="bi bi-exclamation-triangle display-3 text-warning me-3"></i>
                 <div>
-                    <h5>اعتراضات تتطلب اجراء</h5>
-                    <p class="display-6 text-warning">{{ total_obj_pen }}</p>
+                    <h5>اعتراضات تتطلب اجراء <strong><span class="ps-2 text-warning card_text_big">{{ obj_pending }}</span></strong></h5>
+                    <h5>اعتراضات تم دفع رسومها <strong><span class="text-success card_text_big ps-2">{{ obj_paid }}</span></strong></h5>
+                    <h5>اعتراضات مقبولة <strong><span class="text-primary card_text_big ps-2">{{ obj_accept }}</span></strong></h5>
                 </div>
             </div>
         </div>
@@ -98,7 +101,7 @@
 
         <br>
 
-        <p class="lead"><small>جميع الحقوق محفوظة لوزارة الاقتصاد والتجارة © 2025 - الاصدار 0.9<small></p>
+        <p class="lead"><small>جميع الحقوق محفوظة لوزارة الاقتصاد والتجارة © 2025 - الاصدار 1.0<small></p>
     </div>
 </div>
 

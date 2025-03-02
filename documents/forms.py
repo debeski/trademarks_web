@@ -147,7 +147,7 @@ class DecreeForm(forms.ModelForm):
     # Decree number field for autocomplete
     number_canceled = forms.CharField(
         required=False,
-        label="رقم القرار الملغي",
+        label="رقم القرار المسحوب او الملغي",
         widget=forms.TextInput(attrs={'autocomplete': 'off', 'id': 'id_number_canceled'})
     )
     class Meta:

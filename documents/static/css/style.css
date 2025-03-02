@@ -343,3 +343,7 @@ form label {
 table {
     max-width: 100% !important;
 }
+
+.card_text_big {
+    font-size: 24px;
+}

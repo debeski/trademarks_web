@@ -256,20 +256,35 @@ def index(request):
     # Generate the chart HTML
     chart_html = create_chart([Publication])
 
+    decree = Decree.objects.filter(deleted_at__isnull=True)
+    decree_accept = decree.filter(status=1).count()
+    decree_reject = decree.filter(status=2).count()
+
+    
     # Get the total number of publications with status 'final'
     publications = Publication.objects.filter(deleted_at__isnull=True)
-    total_pub_final = publications.all().count()
-    total_pub_initial = publications.filter(status=1).count()
+    pub_initial = publications.filter(status=1).count()
+    pub_conflict = publications.filter(status=2).count()
+    pub_final = publications.filter(status=3).count()
 
     # Get the total number of objections with status 'pending'
-    total_objections_pending = Objection.objects.filter(Q(status=1) | Q(status=2)).count()
+    objections = Objection.objects.filter(deleted_at__isnull=True)
+    obj_pending = objections.filter(Q(status=1) | Q(status=2)).count()
+    obj_paid = objections.filter(status=3).count()
+    obj_accept = objections.filter(status=4).count()
 
     # Pass the values to the template context
     context = {
         'chart_html': chart_html,
-        'total_pub_f': total_pub_final,
-        'total_pub_i': total_pub_initial,
-        'total_obj_pen': total_objections_pending
+        'decree_accept': decree_accept,
+        'decree_reject': decree_reject,
+        'decree_total': decree.count(),
+        'pub_initial': pub_initial,
+        'pub_conflict': pub_conflict,
+        'pub_final': pub_final,
+        'obj_pending': obj_pending,
+        'obj_paid': obj_paid,
+        'obj_accept': obj_accept,
     }
 
     return render(request, 'index.html', context)
