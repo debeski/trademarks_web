@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}تعديل اشهار{% endblock %}
+
+{% block header %} - تعديل اشهار{% endblock %}
+
+{% block content %}
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% crispy form %}
+    </form>
+{% endblock %}
+
+{% block scripts %}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let enInputFields = ['id_en_brand'];
+            let arInputFields = ['id_ar_brand'];
+            let numberFields = ['id_number','id_e_number', 'id_category', 'id_year', 'id_decree_autocomplete'];
+
+            // Function to allow only English letters, numbers and spaces
+            function enforceEnglish(input) {
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^a-zA-Z0-9\s]/g, '');
+                });
+
+                input.addEventListener('focus', function() {
+                    this.setAttribute('lang', 'en');
+                });
+            }
+
+            // Function to allow only Arabic letters, numbers and spaces
+            function enforceArabic(input) {
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^\u0600-\u06FF0-9\s]/g, '');
+                });
+
+                input.addEventListener('focus', function() {
+                    this.setAttribute('lang', 'ar');
+                });
+            }
+
+            // Function to allow only numbers
+            function enforceNumbers(input) {
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+
+                input.addEventListener('focus', function() {
+                    this.setAttribute('inputmode', 'numeric');
+                });
+            }
+
+            // Apply functions if the input fields exist for English, Arabic, and number fields
+            enInputFields.forEach(function(fieldId) {
+                let inputField = document.getElementById(fieldId);
+                if (inputField) {
+                    enforceEnglish(inputField);
+                }
+            });
+
+            arInputFields.forEach(function(fieldId) {
+                let inputField = document.getElementById(fieldId);
+                if (inputField) {
+                    enforceArabic(inputField);
+                }
+            });
+
+            numberFields.forEach(function(fieldId) {
+                let inputField = document.getElementById(fieldId);
+                if (inputField) {
+                    enforceNumbers(inputField);
+                }
+            });
+        });
+    </script>
+
+{% endblock %}

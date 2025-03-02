@@ -188,7 +188,7 @@ class PublicationTable(tables.Table):
         model = Publication
         template_name = "django_tables2/bootstrap5.html"
         # List the fields you want to show in the table
-        fields = ('number', 'decree', 'applicant', 'country', 'address', 'date_applied', 'category', 'img_file', 'e_number', 'created_at', 'actions')
+        fields = ('number', 'decree', 'number_applied', 'applicant', 'country', 'address', 'date_applied', 'category', 'img_file', 'e_number', 'created_at', 'actions')
         attrs = {'class': 'table table-hover table-responsive align-middle'}
 
 
@@ -234,7 +234,7 @@ class ObjectionTable(tables.Table):
         model = Objection
         template_name = "django_tables2/bootstrap5.html"
         # List the fields you want to show in the table
-        fields = ('pub', 'name', 'job', 'nationality', 'status', 'created_at', 'unique_code', 'actions')
+        fields = ('number', 'pub', 'pub.number_applied', 'name', 'job', 'nationality', 'status', 'created_at', 'unique_code', 'actions')
         attrs = {'class': 'table table-hover table-responsive align-middle'}
 
     # Custom method to render the Date

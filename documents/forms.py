@@ -3,6 +3,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Submit, Field, Div, HTML
 from crispy_forms.bootstrap import FormActions
 from .models import Decree, Publication, FormPlus, Objection, Country, Government, ComType, DocType, DecreeCategory
+import datetime
 
 class CountryForm(forms.ModelForm):
     class Meta:
@@ -222,10 +223,9 @@ class DecreeForm(forms.ModelForm):
 
 class PublicationForm(forms.ModelForm):
     # Extra field to filter decrees by year
-    year = forms.CharField(required=False, label="سنة القرار")
+    year = forms.CharField(label="سنة القرار", initial=str(datetime.datetime.now().year))
     # For the decree field, we use a ModelChoiceField; its widget will be enhanced by JavaScript.
     decree_number = forms.CharField(
-        required=False,
         label="رقم القرار",
         widget=forms.TextInput(attrs={'autocomplete': 'off', 'id': 'id_decree_autocomplete'})
     )
@@ -235,7 +235,7 @@ class PublicationForm(forms.ModelForm):
         fields = [
             'year', 'number', 'decree_number',
             'applicant', 'owner', 'country',
-            'address', 'date_applied',
+            'address', 'date_applied', 'number_applied',
             'ar_brand', 'en_brand', 'category',
             'img_file', 'attach', 'e_number',
             'is_hidden', 'notes'
@@ -262,6 +262,7 @@ class PublicationForm(forms.ModelForm):
                 Div(Field('country', css_class='form-control'), css_class='col'),
                 Div(Field('address', css_class='form-control'), css_class='col'),
                 Div(Field('date_applied', css_class='form-control flatpickr'), css_class='col'),
+                Div(Field('number_applied', css_class='form-control'), css_class='col'),
                 Div(Field('ar_brand', css_class='form-control'), css_class='col'),
                 Div(Field('en_brand', css_class='form-control'), css_class='col'),
                 Div(Field('category', css_class='form-control'), css_class='col'),
@@ -285,7 +286,7 @@ class PublicationForm(forms.ModelForm):
 
 
 class ObjectionForm(forms.ModelForm):
-    year = forms.CharField(required=False, label="سنة الإشهار")
+    year = forms.CharField(required=False, label="سنة الإشهار", initial=str(datetime.datetime.now().year))
     pub_number = forms.CharField(
         required=True,
         label="رقم الإشهار",
@@ -293,7 +294,7 @@ class ObjectionForm(forms.ModelForm):
             'autocomplete': 'off',
             'id': 'id_pub_autocomplete',
             'pattern': '^[0-9]+$',  # only numbers
-            'title': 'Please enter only numbers.'
+            'title': 'يرجى اختيار رقم اشهار صالح.'
         })
     )
     notes = forms.CharField(

@@ -64,10 +64,26 @@
             </div>
 
             <div class="mt-4">
-                <a href="{% url 'gen-pub-pdf' publication.id %}" class="btn btn-outline-primary">تحميل الاشهار <i class="bi bi-file-earmark-pdf"></i></a>
-
-                <a href="{% url 'edit_publication' publication.id %}" class="btn btn-primary">تعديل</a>
-                <a href="javascript:history.back()" class="btn btn-secondary">إلغاء</a>
+                {% if publication.status <= 2 %}
+                <a class="btn btn-primary" href="{% url 'gen_pub_pdf' publication.id %}" title="تحميل الاشهــار">
+                    <i class="bi bi-file-earmark-pdf text-light me-1" style="font-size: 22px;"></i> تحميل الاشهــار
+                </a>
+                {% endif %}
+                {% if publication.status == 3 %}
+                <a class="btn btn-primary" href="{% url 'gen_final_pub_pdf' publication.id %}" title="تحميل شهادة التسجيــل">
+                    <i class="bi bi-file-earmark-check text-light me-1" style="font-size: 22px;"></i> تحميل شهادة التسجيــل
+                </a>
+                {% endif %}
+                {% if publication.status == 1 %}
+                    {% if perms.documents.change_publication %}
+                    <a class="btn btn-warning text-light" href="{% url 'edit_publication' publication.id %}" title="تعديــل">
+                        <i class="bi bi-pencil-square text-light me-1" style="font-size: 22px;"></i> تعديــل
+                    </a>
+                    {% endif %}
+                {% endif %}
+                <a class="btn btn-secondary" href="javascript:history.back()" title="رجـــوع">
+                    <i class="bi bi-arrow-return-left text-light me-1" style="font-size: 22px;"></i> رجـــوع
+                </a>
             </div>
         </div>
 

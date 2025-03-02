@@ -7,11 +7,11 @@
     <!-- PDF Icon (Always Visible) -->
     {% if perms.documents.download_doc %}
     {% if record.pdf_file %}
-        <a href="{% url 'download_decree' record.id %}" title="تحميل"><i class="bi bi-file-earmark-pdf-fill" style="font-size: 36px;"></i>
+        <a href="{% url 'download_decree' record.id %}" title="تحميل"><i class="bi bi-file-earmark-arrow-down-fill" style="font-size: 36px;"></i>
         </a>
     {% else %}
         <span title="لا يوجد ملف pdf" class="disabled">
-            <i class="bi bi-file-earmark-pdf-fill" style="opacity: 0.4; font-size: 36px;"></i>
+            <i class="bi bi-file-earmark-arrow-down-fill" style="opacity: 0.2; font-size: 36px;"></i>
         </span>
     {% endif %}
     {% endif %}

@@ -239,7 +239,7 @@ class Publication(models.Model):
     """Model representing a minister decree."""
     year = models.IntegerField(null=True, blank=True)
     number = models.IntegerField(blank=False, null=False, verbose_name="رقم الاشهار")
-    decree = models.ForeignKey(Decree, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="القرار")
+    decree = models.ForeignKey(Decree, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="رقم القرار")
     decree_number = models.IntegerField(blank=False, null=False, verbose_name="رقم القرار")
 
     applicant = models.CharField(max_length=255, blank=False, verbose_name="طالب التسجيل")
@@ -247,7 +247,7 @@ class Publication(models.Model):
     country = models.ForeignKey(Country, on_delete=models.PROTECT,  verbose_name="الدولة")
     address = models.CharField(max_length=255, blank=False, verbose_name="العنوان")
     date_applied = models.DateField(blank=False, verbose_name="تاريخ التقديم")
-    
+    number_applied = models.IntegerField(blank=False, verbose_name="رقم التسجيل")
     ar_brand = models.CharField(max_length=255, blank=False, verbose_name="العلامة (عربي)")
     en_brand = models.CharField(max_length=255, blank=False, verbose_name="العلامة (انجليزي)")
     category = models.ForeignKey(DecreeCategory, on_delete=models.PROTECT, verbose_name="الفئة")
@@ -297,7 +297,7 @@ class Publication(models.Model):
 
 class Objection(models.Model):
     """Model representing a minister decree."""
-    number = models.IntegerField(unique=True, blank=False, null=False, verbose_name="رقم المعارضة")
+    number = models.IntegerField(unique=True, blank=False, null=False, verbose_name="ر.ت")
     pub = models.ForeignKey(Publication, on_delete=models.PROTECT, verbose_name="الاشهار")
     name = models.CharField(max_length=64, blank=False, null=False, verbose_name="اسم ولقب مقدم الشكوى")
     job = models.CharField(max_length=24, blank=False, null=False, verbose_name="المهنة")
@@ -366,6 +366,7 @@ class Objection(models.Model):
         if context == "objection_pub_pick":
             return "documents.forms.ObjectionPubPickForm"
         return "documents.forms.ObjectionForm"
+
 
 class FormPlus(models.Model):
     """Ambiguous Model representing a report of some sort."""

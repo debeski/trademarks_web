@@ -13,15 +13,15 @@ class CustomUser(AbstractUser):
 
 class UserActivityLog(models.Model):
     ACTION_TYPES = [
-        ('LOGIN', 'دخول'),
-        ('LOGOUT', 'خروج'),
-        ('CREATE', 'انشاء'),
-        ('UPDATE', 'تعديل'),
-        ('DELETE', 'حذف'),
-        ('VIEW', 'عرض'),
+        ('LOGIN', 'تسجيل دخـول'),
+        ('LOGOUT', 'تسجيل خـروج'),
+        ('CREATE', 'انشـاء'),
+        ('UPDATE', 'تعديـل'),
+        ('DELETE', 'حــذف'),
+        ('VIEW', 'عـرض'),
         ('DOWNLOAD', 'تحميل'),
-        ('CONFIRM', 'تأكيد رسوم'),
-        ('REJECT', 'رفض رسوم'),
+        ('CONFIRM', 'تأكيـد'),
+        ('REJECT', 'رفــض'),
     ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name="اسم المستخدم", null=True, blank=True)

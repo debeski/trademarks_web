@@ -1,18 +1,14 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %}
-    {% if form.instance.id %}تعديل اشهار{% else %}إضافة اشهار{% endif %}
-{% endblock %}
+{% block title %}إضافة اشهار{% endblock %}
 
-{% block header %}
-    {% if form.instance.id %} - تعديل اشهار{% else %} - إضافة اشهار{% endif %}
-{% endblock %}
+{% block header %} - إضافة اشهار{% endblock %}
 
 {% block content %}
     <form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    {% crispy form %}
+        {% csrf_token %}
+        {% crispy form %}
     </form>
 {% endblock %}
 
@@ -108,6 +104,7 @@
                             $("#id_owner").val(data.owner);
                             $("#id_country").val(data.country);
                             $("#id_date_applied").val(data.date_applied);
+                            $("#id_number_applied").val(data.number_applied);
                             $("#id_ar_brand").val(data.ar_brand);
                             $("#id_en_brand").val(data.en_brand);
                             $("#id_category").val(data.category);
@@ -130,7 +127,7 @@
     
             // Function to clear all fields including decree_id
             function clearFields() {
-                $("#id_owner, #id_country, #id_date_applied, #id_ar_brand, #id_en_brand, #id_category, #id_decree, #id_year").val('');
+                $("#id_owner, #id_country, #id_date_applied, #id_number_applied #id_ar_brand, #id_en_brand, #id_category, #id_decree, #id_year").val('');
             }
     
             // Initialize jQuery UI Autocomplete
@@ -163,12 +160,6 @@
                     fetchDecreeData(item.id); // Fetch data using the decree ID
                     return false;
                 }
-            });
-    
-            // Auto-check existing decree number on page load
-            $(document).ready(function() {
-                var existingDecreeId = $("#id_decree").val();
-                fetchDecreeData(existingDecreeId);
             });
     
             // Fetch decree data when the decree number field changes

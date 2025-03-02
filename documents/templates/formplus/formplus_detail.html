@@ -17,7 +17,7 @@
                 try {
                     const pdf = await pdfjsLib.getDocument(url).promise;
                     const page = await pdf.getPage(1);
-                    const viewport = page.getViewport({ scale: 0.8 });
+                    const viewport = page.getViewport({ scale: 1 });
 
                     canvas.width = viewport.width;
                     canvas.height = viewport.height;
@@ -33,12 +33,14 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+
     <div class="row">
         <!-- Left Column: FormPlus Details -->
-        <div class="col-md-6">
-            <h5 class="mb-3">تفاصيل الوثيقة</h5>
-            <div class="card">
+        <div class="col-md-7">
+            <div class="card border-light shadow-sm">
+                <div class="card-header text-center pe-5">
+                    <h5 class="card-title mb-0">تفاصيل الوثيقة</h5>
+                </div>
                 <div class="card-body">
                     <p><strong>رقم الوثيقة: </strong> {{ formplus.number|default:"-" }}</p>
                     <p><strong>تاريخ الوثيقة: </strong> {{ formplus.date|date:"Y-m-d" }}</p>
@@ -50,22 +52,34 @@
                 </div>
             </div>
             <div class="mt-4">
-                <a href="{% url 'edit_formplus' formplus.id %}" class="btn btn-primary">تعديل</a>
-                <a href="javascript:history.back()" class="btn btn-secondary">إلغاء</a>
+                {% if perms.documents.change_formplus %}
+                <a class="btn btn-warning text-light" href="{% url 'edit_formplus' formplus.id %}" title="تعديل">
+                    <i class="bi bi-pencil-square text-light me-1" style="font-size: 22px;"></i> تعديل
+                </a>
+                {% endif %}
+                <a class="btn btn-secondary" href="javascript:history.back()" title="رجـــوع">
+                    <i class="bi bi-arrow-return-left text-light me-1" style="font-size: 22px;"></i> رجـــوع
+                </a>
             </div>
         </div>
 
         <!-- Right Column: PDF Preview -->
         <div class="col">
-            <h5 class="mb-3">معاينة الوثيقة</h5>
-            {% if formplus.pdf_file %}
-                <div id="pdf-viewer-container" class="border rounded p-2">
-                    <canvas id="pdf-canvas" class="w-100"></canvas>
+            <div class="card border-light shadow-sm">
+                <div class="card-header text-center pe-5">
+                    <h5 class="card-title mb-0">معاينة ملف الوثيقة</h5>
                 </div>
-            {% else %}
-                <p class="text-muted">لا يوجد ملف PDF لهذه الوثيقة</p>
-            {% endif %}
+                <div class="card-body">
+                    {% if formplus.pdf_file %}
+                    <div id="pdf-viewer-container" class="border rounded p-2">
+                        <canvas id="pdf-canvas" class="w-100"></canvas>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">لا يوجد ملف PDF لهذه الوثيقة</p>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
-</div>
+
 {% endblock %}

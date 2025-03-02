@@ -1,19 +1,19 @@
 {% load static %}
 <div class="d-flex gap-2 align-items-center justify-content-end">
     {% if record.pdf_file %}
-        <a href="{% url 'download_formplus' record.id %}" title="تحميل"><i class="bi bi-file-earmark-pdf-fill" style="font-size: 36px;"></i>
+        <a href="{% url 'download_formplus_pdf' record.id %}" title="تحميل"><i class="bi bi-file-earmark-arrow-down-fill" style="font-size: 36px;"></i>
         </a>
     {% else %}
         <span title="لا يوجد ملف pdf" class="disabled">
-            <i class="bi bi-file-earmark-arrow-down-fill" style="opacity: 0.4; font-size: 36px;"></i>
+            <i class="bi bi-file-earmark-arrow-down-fill" style="opacity: 0.2; font-size: 36px;"></i>
         </span>
     {% endif %}
     {% if record.word_file %}
-        <a href="{% url 'download_formplus' record.id %}" title="تحميل"><i class="bi bi-file-earmark-word-fill" style="font-size: 36px;"></i>
+        <a href="{% url 'download_formplus_word' record.id %}" title="تحميل"><i class="bi bi-file-earmark-word-fill" style="font-size: 36px;"></i>
         </a>
     {% else %}
         <span title="لا يوجد ملف word" class="disabled">
-            <i class="bi bi-file-earmark-word-fill" style="opacity: 0.4; font-size: 36px;"></i>
+            <i class="bi bi-file-earmark-word-fill" style="opacity: 0.2; font-size: 36px;"></i>
         </span>
     {% endif %}
     <!-- Dropdown Menu for Actions -->

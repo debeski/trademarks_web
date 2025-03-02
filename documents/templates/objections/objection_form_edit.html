@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}تعديل إعتراض{% endblock %}
+
+{% block header %} - تعديل إعتراض{% endblock %}
+
+{% block content %}
+
+    <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <!-- Dynamic Card Container for Publication Details -->
+    {% if publication %}
+        <div class="container-fluid mb-3">
+            <div class="card">
+                <div class="card-header bg-primary text-white text-center">
+                    <h5 class="card-title mt-1">تفـــاصيل الاشهـــار</h5>
+                </div>
+                <div class="card-body row">
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>رقم الاشهار:</strong> {{ publication.number }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>رقم القرار:</strong> {{ publication.decree }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>مقدم الطلب:</strong> {{ publication.applicant }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>مالك العلامة:</strong> {{ publication.owner }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>الدولة:</strong> {{ publication.country }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>العنوان:</strong> {{ publication.address }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>تاريخ الطلب:</strong> {{ publication.date_applied|default:"غير متوفر" }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>التصنيف:</strong> {{ publication.category }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>العلامة التجارية (AR):</strong> {{ publication.ar_brand }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>العلامة التجارية (EN):</strong> {{ publication.en_brand }}</p>
+                            </div>
+                        </div>
+                        <p><strong>تاريخ الاشهار:</strong> {{ publication.created_at|default:"غير متوفر" }}</p>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-center justify-content-center">
+                        {% if publication.img_file %}
+                            <img src="{{ publication.img_file.url }}" class="img-fluid mt-2" alt="Brand Image" style="max-height: 220px;">
+                        {% else %}
+                            <p class="text-muted">لا توجد صورة متاحة</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <hr>
+
+        <!-- name, job, and nationality fields-->
+        <div class="row">
+            <div class="col-md-4">
+                {{ form.name|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.job|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.nationality|as_crispy_field }}
+            </div>
+        </div>
+
+        <!-- address and phone fields-->
+        <div class="row">
+            <div class="col-md-6">
+                {{ form.address|as_crispy_field }}
+            </div>
+            <div class="col-md-6">
+                {{ form.phone|as_crispy_field }}
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- com_name, com_job, and com_address fields-->
+        <div class="row">
+            <div class="col-md-4">
+                {{ form.com_name|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.com_job|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+                {{ form.com_address|as_crispy_field }}
+            </div>
+        </div>
+
+        <!-- com_og_address and com_mail_address fields-->
+        <div class="row">
+            <div class="col-md-6">
+                {{ form.com_og_address|as_crispy_field }}
+            </div>
+            <div class="col-md-6">
+                {{ form.com_mail_address|as_crispy_field }}
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="row">
+                {{ form.is_paid|as_crispy_field }}
+            </div>
+            <div class="row" id="receipt-container" style="display: none;">
+                {{ form.receipt_file|as_crispy_field }}
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- PDF file field-->
+        <div class="row">
+            <div class="col-md-12">
+                {{ form.pdf_file|as_crispy_field }}
+            </div>
+        </div>
+
+        <!-- notes field-->
+        <div class="row">
+            <div class="col-md-12">
+                {{ form.notes|as_crispy_field }}
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">حفظ</button>
+        <a class="btn btn-secondary" href="{% url 'objection_list' %}">إلغاء</a>
+    </form>
+
+{% endblock %}
+
+{% block scripts %}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let numberFields = ['id_phone'];
+    
+            // Function to allow only numbers
+            function enforceNumbers(input) {
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+    
+                input.addEventListener('focus', function() {
+                    this.setAttribute('inputmode', 'numeric');
+                });
+            }
+    
+            // Apply functions if the input fields exist for Number fields
+            numberFields.forEach(function(fieldId) {
+                let inputField = document.getElementById(fieldId);
+                if (inputField) {
+                    enforceNumbers(inputField);
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let isPaidCheckbox = document.getElementById('id_is_paid');
+            let receiptContainer = document.getElementById('receipt-container');
+        
+            function toggleReceiptField() {
+                if (isPaidCheckbox.checked) {
+                    receiptContainer.style.display = 'block';
+                } else {
+                    receiptContainer.style.display = 'none';
+                }
+            }
+        
+            // Run on page load in case the checkbox is pre-checked
+            toggleReceiptField();
+        
+            // Add event listener to toggle receipt field when checkbox is clicked
+            isPaidCheckbox.addEventListener('change', toggleReceiptField);
+        });
+    </script>
+
+{% endblock %}

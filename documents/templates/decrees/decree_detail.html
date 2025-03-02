@@ -17,7 +17,7 @@
                 try {
                     const pdf = await pdfjsLib.getDocument(url).promise;
                     const page = await pdf.getPage(1);
-                    const viewport = page.getViewport({ scale: 0.8 });
+                    const viewport = page.getViewport({ scale: 1 });
 
                     canvas.width = viewport.width;
                     canvas.height = viewport.height;
@@ -31,7 +31,6 @@
         });
     </script>
 {% endblock %}
-
 
 {% block content %}
 
@@ -83,8 +82,14 @@
             </div>
 
             <div class="mt-4">
-                <a href="{% url 'edit_decree' decree.id %}" class="btn btn-primary">تعديل</a>
-                <a href="javascript:history.back()" class="btn btn-secondary">إلغاء</a>
+                {% if perms.documents.change_decree %}
+                <a class="btn btn-warning text-light" href="{% url 'edit_decree' decree.id %}" title="تعديــل">
+                    <i class="bi bi-pencil-square text-light me-1" style="font-size: 22px;"></i> تعديــل
+                </a>
+                {% endif %}
+                <a class="btn btn-secondary" href="javascript:history.back()" title="رجـــوع">
+                    <i class="bi bi-arrow-return-left text-light me-1" style="font-size: 22px;"></i> رجـــوع
+                </a>
             </div>
         </div>
 

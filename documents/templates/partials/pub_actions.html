@@ -1,7 +1,18 @@
 {% load static %}
 <div class="d-flex gap-2 align-items-center justify-content-end">
-    <a href="{% url 'gen-pub-pdf' record.id %}" title="تحميل الملف المرفق"><i class="bi bi-file-earmark-pdf-fill" style="font-size: 36px;"></i>
+    {% if record.status == 1 %}
+    <a href="{% url 'gen_pub_pdf' record.id %}" title="تحميل نموذج الاشهار المبدئي لهذه العلامة"><i class="bi bi-file-earmark-pdf-fill" style="font-size: 36px;"></i>
     </a>
+    {% endif %}
+    {% if record.status == 3 %}
+    <a href="{% url 'gen_final_pub_pdf' record.id %}" title="تحميل شهادة التسجيل لهذه العلامة"><i class="bi bi-file-earmark-check-fill text-success" style="font-size: 36px;"></i>
+    </a>
+    {% endif %}
+    {% if record.attach %}
+        <a href="{% url 'download_publication' record.id %}" title="تحميل">
+            <i class="bi bi-file-earmark-arrow-down-fill" style="font-size: 36px;"></i>
+        </a>
+    {% endif %}
     {% if perms.documents.pub_change_status %}
         {% if record.status == 1 %}
             <!-- Modal Trigger for Status Change -->

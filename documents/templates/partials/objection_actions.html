@@ -1,24 +1,21 @@
 {% load static %}
 {% if request.user.is_authenticated %}
 <div class="d-flex gap-2 align-items-center justify-content-end">
-    {% if record.is_paid %}
+    {% if record.status == 2 %}
         <span title="هذه المعارضة مرفقة بإيصال دفع يحتاج الى تأكيد"><i class="bi bi-exclamation-circle text-warning"></i> </span> <!-- Display an asterisk with alt text -->
     {% endif %}
     {% if record.status == 3 %}
-        <span title="هذه المعارضة تم مراجهة ايصال الدفع الخاص بها وتبينت صحته"><i class="bi bi-check-circle-fill text-success"></i> </span> <!-- Display an asterisk with alt text -->
+        <span title="هذه المعارضة تم مراجهة ايصال الدفع الخاص بها وتبينت صحته"><i class="bi bi-bag-check-fill text-success"></i> </span> <!-- Display an asterisk with alt text -->
+    {% endif %}
+    {% if record.status == 4 %}
+        <span title="هذه المعارضة تم قبولها"><i class="bi bi-check-circle-fill text-primary"></i> </span> <!-- Display an asterisk with alt text -->
     {% endif %}
     {% if record.status == 5 %}
         <span title="هذه المعارضة تم رفضها"><i class="bi bi-x-circle-fill text-danger"></i> </span> <!-- Display an asterisk with alt text -->
     {% endif %}
-    <!-- PDF Icon (Always Visible) -->
-    {% if record.pdf_file %}
-        <a href="{% url 'download_objection' record.id %}" title="تحميل">
-            <i class="bi bi-file-earmark-pdf-fill" style="font-size: 36px;"></i>
-        </a>
-    {% else %}
-        <span title="لا يوجد ملف pdf" class="disabled">
-            <i class="bi bi-file-earmark-pdf-fill" style="opacity: 0.4; font-size: 36px;"></i>
-        </span>
+    {% if objection.status <= 2 %}
+    <a href="{% url 'gen_obj_pdf' record.id %}" title="تحميل نموذج الاعتراض لهذه العلامة"><i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size: 36px;"></i>
+    </a>
     {% endif %}
     {% comment %} {% if perms.documents.confirm_objection_fee %}
         {% if record.status == 2 %}
@@ -46,8 +43,23 @@
                     <i class="bi bi-binoculars-fill text-dark me-1" style="font-size: 22px;"></i> عرض
                 </a>
             </li>
+            {% if record.receipt_file %}
+            <li>
+                <a class="dropdown-item" href="{% url 'download_objection_receipt' record.id %}" title="تحميل ايصال الدفع">
+                    <i class="bi bi-file-earmark-arrow-down-fill text-success me-1" style="font-size: 22px;"></i> تحميل الايصال
+                </a>
+            </li>
+            {% endif %}
+            {% if record.pdf_file %}
+            <li>
+                <a class="dropdown-item" href="{% url 'download_objection' record.id %}" title="تحميل الملف المرفق">
+                    <i class="bi bi-file-earmark-arrow-down-fill text-dark me-1" style="font-size: 22px;"></i> تحميل المرفق
+                </a>
+            </li>
+            {% endif %}
             <!-- Edit Action -->
             {% if user.is_superuser %}
+                {% if record.status <= 2 %}
             <li>
                 <a class="dropdown-item" href="{% url 'edit_objection' record.id %}" title="تعديل">
                     <i class="bi bi-pencil-square text-dark me-1" style="font-size: 22px;"></i> تعديل
@@ -60,6 +72,7 @@
                     <i class="bi bi-x-octagon text-danger me-1" style="font-size: 22px;"></i> حذف
                 </a>
             </li>
+                {% endif %}
             {% endif %}
         </ul>
     </div>
