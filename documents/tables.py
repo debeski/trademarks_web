@@ -148,14 +148,14 @@ class DecreeTable(tables.Table):
     class Meta:
         model = Decree
         template_name = "django_tables2/bootstrap5.html"
-        # List the fields you want to show in the table
         fields = ('number', 'date', 'status', 'applicant', 'company', 'country', 'ar_brand', 'en_brand', 'category__number', 'actions')
         attrs = {'class': 'table table-hover table-responsive align-middle'}
         
     # Custom method to render the Date
     def render_date(self, value):
-        # Format the date as desired (for example: dd-mm-yyyy)
+        # Format the date as desired
         return value.strftime('%Y-%m-%d') if value else ''
+
 
 class PublicationTable(tables.Table):
     # Define a custom column to display the image
@@ -171,23 +171,22 @@ class PublicationTable(tables.Table):
     # Custom method to render the image
     def render_img_file(self, value):
         if value:
-            # Assuming 'value' is a file field, you can generate the URL and return the image HTML
+            # Generate the URL and return the image HTML
             return mark_safe(f'<img src="{value.url}" alt="Publication Image" class="img-thumbnail" style="height: 80px; width: auto;">')
         return ''
     
     # Custom method to render the Date
     def render_date_applied(self, value):
-        # Format the date as desired (for example: dd-mm-yyyy)
+        # Format the date as desired
         return value.strftime('%Y-%m-%d') if value else ''
     
     def render_created_at(self, value):
-        # Format the date as desired (for example: dd-mm-yyyy)
+        # Format the date as desired
         return value.strftime('%Y-%m-%d') if value else ''
     
     class Meta:
         model = Publication
         template_name = "django_tables2/bootstrap5.html"
-        # List the fields you want to show in the table
         fields = ('number', 'decree', 'number_applied', 'applicant', 'country', 'address', 'date_applied', 'category', 'img_file', 'e_number', 'created_at', 'actions')
         attrs = {'class': 'table table-hover table-responsive align-middle'}
 
@@ -211,11 +210,11 @@ class ObjectionPubPickTable(tables.Table):
         
     # Custom method to render the Date
     def render_date_applied(self, value):
-        # Format the date as desired (for example: dd-mm-yyyy)
+        # Format the date as desired
         return value.strftime('%Y-%m-%d') if value else ''
     
     def render_created_at(self, value):
-        # Format the date as desired (for example: dd-mm-yyyy)
+        # Format the date as desired
         return value.strftime('%Y-%m-%d') if value else ''
     
     # def render_number(self, value, record):
@@ -223,9 +222,10 @@ class ObjectionPubPickTable(tables.Table):
     #     url = reverse("add_pub_objection", kwargs={"document_id": record.id})
     #     return mark_safe(f'<a href="{url}" class="row-link">{value}</a>')
 
+
 class ObjectionTable(tables.Table):
     actions = tables.TemplateColumn(
-        template_name='partials/objection_actions.html',  # You will need to create this template for actions like view, edit, delete
+        template_name='partials/objection_actions.html',
         orderable=False,
         verbose_name=''
     )
@@ -233,13 +233,12 @@ class ObjectionTable(tables.Table):
     class Meta:
         model = Objection
         template_name = "django_tables2/bootstrap5.html"
-        # List the fields you want to show in the table
         fields = ('number', 'pub', 'pub.number_applied', 'name', 'job', 'nationality', 'status', 'created_at', 'unique_code', 'actions')
         attrs = {'class': 'table table-hover table-responsive align-middle'}
 
     # Custom method to render the Date
     def render_created_at(self, value):
-        # Format the date as desired (for example: dd-mm-yyyy)
+        # Format the date as desired
         return value.strftime('%Y-%m-%d') if value else ''
 
 
@@ -258,5 +257,6 @@ class FormPlusTable(tables.Table):
 
     # Custom method to render the Date
     def render_date(self, value):
-        # Format the date as desired (for example: dd-mm-yyyy)
+        # Format the date as desired
         return value.strftime('%Y-%m-%d') if value else ''
+

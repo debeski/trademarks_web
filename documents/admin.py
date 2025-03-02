@@ -3,9 +3,6 @@ from .models import Decree, Publication, Objection
 # Register your models here.
 
 
-# admin.site.register(Decree)
-
-
 @admin.register(Decree)
 class ImportRecordAdmin(admin.ModelAdmin):
     list_display = ('number', 'date', 'status', 'applicant', 'company', 'country', 'ar_brand', 'en_brand', 'category', 'created_at', 'deleted_at')

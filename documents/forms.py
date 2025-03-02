@@ -152,7 +152,7 @@ class DecreeForm(forms.ModelForm):
     )
     class Meta:
         model = Decree
-        # List the fields you want to include (adjust as needed)
+        # List the fields you want to include in the form
         fields = [
             'number', 'date', 'status', 'applicant', 'company', 'country',
             'date_applied', 'number_applied', 'ar_brand', 'en_brand',
@@ -214,11 +214,10 @@ class DecreeForm(forms.ModelForm):
             except DecreeCategory.DoesNotExist:
                 raise forms.ValidationError("Invalid category. Please enter a valid category number.")
         
-        # If no category is provided, return it as is (or you can handle it differently)
+        # If no category is provided, return it as is
         return category
 
     def clean_number_canceled(self):
-        # Optional: Add validation for the number_canceled field if needed
         return self.cleaned_data.get("number_canceled")
 
 class PublicationForm(forms.ModelForm):
@@ -299,10 +298,10 @@ class ObjectionForm(forms.ModelForm):
     )
     notes = forms.CharField(
         widget=forms.Textarea(attrs={'rows': 2}),
-        required=False,  # Optional: if the field is not required
+        required=False,
         label="تفاصيل"
     )
-    pub_id = forms.IntegerField(widget=forms.HiddenInput(), required=True)  # Make sure it's an IntegerField
+    pub_id = forms.IntegerField(widget=forms.HiddenInput(), required=True)
 
     class Meta:
         model = Objection
@@ -324,10 +323,10 @@ class ObjectionForm(forms.ModelForm):
 class ObjectionPubPickForm(forms.ModelForm):
     notes = forms.CharField(
         widget=forms.Textarea(attrs={'rows': 2}),
-        required=False,  # Optional: if the field is not required
+        required=False,
         label="تفاصيل"
     )
-    # pub_id = forms.IntegerField(widget=forms.HiddenInput(), required=True)  # Make sure it's an IntegerField
+    # pub_id = forms.IntegerField(widget=forms.HiddenInput(), required=True)
 
     class Meta:
         model = Objection

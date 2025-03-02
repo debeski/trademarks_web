@@ -1,5 +1,5 @@
 from django.apps import AppConfig
-from django.utils.translation import gettext_lazy as _  # For translations
+from django.utils.translation import gettext_lazy as _
 
 class DocumentsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
@@ -7,7 +7,7 @@ class DocumentsConfig(AppConfig):
 
     def ready(self):
         """ Override Permission model's __str__ method after apps are ready """
-        from django.contrib.auth.models import Permission  # Import inside `ready()`
+        from django.contrib.auth.models import Permission
 
         def custom_permission_str(self):
             """ Custom Arabic translations for Django permissions """

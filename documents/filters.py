@@ -144,6 +144,7 @@ class DecreeCategoryFilter(django_filters.FilterSet):
 
 class DecreeFilter(django_filters.FilterSet):
 
+    # Define custom filters for search
     keyword = django_filters.CharFilter(
         method='filter_keyword',
         label='',
@@ -181,14 +182,20 @@ class DecreeFilter(django_filters.FilterSet):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
+        # Replace default "------" for the select fields
         set_first_choice(self.filters['status'].field, 'حالة الطلب')
         set_first_choice(self.filters['country'].field, 'الدولة')
+        
+        # Initialize Crispy Forms helper
         self.form.helper = FormHelper()
         self.form.helper.form_method = 'GET'
         self.form.helper.form_class = 'form-inline'
         self.form.helper.form_show_labels = False
+        
+        # Customize the layout
         self.form.helper.layout = Layout(
-            # Keyword search (Always visible)
+            # Row 1: Keyword search (always visible) plus Add button and basic controls.
             Row(
                 Column(HTML('{% if perms.documents.add_decree %} <a href="{% url "add_decree" %}" class="btn btn-primary active w-100"><i class="bi bi-plus-lg"></i> إضافة جديد</a> {% endif %}'), css_class='col-md-auto text-center'),
                 Column(Field('keyword', placeholder="البحث (رقم، مقدم الطلب، صاحب العلامة)"), css_class='form-group col-md-6'),
@@ -197,8 +204,8 @@ class DecreeFilter(django_filters.FilterSet):
                 Column(HTML('{% if request.GET and request.GET.keys|length > 1 %} <a href="{% url "decree_list" %}" class="btn btn-warning">clear</a> {% endif %}'), css_class='form-group col-md-auto text-center'),
                 css_class='form-row'
             ),
-            
-            # Advanced filters (Initially hidden, expands on button click)
+
+            # Row 2: Advanced filters (hidden by default)
             Div(
                 Row(
                     Column(Field('number', placeholder="رقم القرار", dir="rtl"), css_class='form-group col-md-1'),
@@ -217,7 +224,7 @@ class DecreeFilter(django_filters.FilterSet):
                     
                     css_class='form-row mt-2 align-items-center'
                 ),
-                css_class="collapse mt-3",  # Bootstrap collapse class
+                css_class="collapse mt-3",
                 id="advanced-search"
             ),
             Field('status', type='hidden', value=1)
@@ -247,7 +254,8 @@ class DecreeFilter(django_filters.FilterSet):
 
 
 class PublicationFilter(django_filters.FilterSet):
-    
+
+    # Define custom filters for search
     keyword = django_filters.CharFilter(
         method='filter_keyword',
         label='',
@@ -296,7 +304,8 @@ class PublicationFilter(django_filters.FilterSet):
         self.form.helper.form_method = 'GET'
         self.form.helper.form_class = 'form-inline'
         self.form.helper.form_show_labels = False
-
+        
+        # Customize the layout
         self.form.helper.layout = Layout(
             # Row 1: Keyword search (always visible) plus Add button and basic controls.
             Row(
@@ -307,7 +316,8 @@ class PublicationFilter(django_filters.FilterSet):
                 Column(HTML('{% if request.GET and request.GET.keys|length > 2 %} <a href="{% url "publication_list" %}?status={{ current_status }}" class="btn btn-warning">clear</a> {% endif %}'), css_class='form-group col-md-auto text-center'),
                 css_class='form-row'
             ),
-            # Advanced filters (hidden by default)
+
+            # Row 2: Advanced filters (hidden by default)
             Div(
                 Row(
                     Column(Field('number', placeholder="رقم النشر", dir="rtl"), css_class='form-group col-md-1'),
@@ -322,7 +332,7 @@ class PublicationFilter(django_filters.FilterSet):
                     Column(Field('date_applied__lte', css_class='flatpickr', placeholder="إلى تاريخ"), css_class='form-group col-md-1'),
                     css_class='form-row mt-2 align-items-center'
                 ),
-                css_class="collapse mt-3",  # Bootstrap collapse class
+                css_class="collapse mt-3",
                 id="advanced-search"
             ),
             Field('status', type='hidden', value=1)
@@ -360,13 +370,11 @@ class PublicationFilter(django_filters.FilterSet):
 
 class ObjectionFilter(django_filters.FilterSet):
     
-    # Define a custom filter for a keyword search
+    # Define custom filters for search
     keyword = django_filters.CharFilter(
         method='filter_keyword',
         label='',
     )
-    
-    # Define filters for some of the Objection fields
     created_at__year = django_filters.NumberFilter(
         field_name="created_at__year",
         lookup_expr="exact",
@@ -386,7 +394,7 @@ class ObjectionFilter(django_filters.FilterSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        # Customize the "select" field choices labels
+        # Replace default "------" for the select fields
         set_first_choice(self.filters['status'].field, 'حالة الاعتراض')
         set_first_choice(self.filters['nationality'].field, 'الدولة')
         
@@ -398,6 +406,7 @@ class ObjectionFilter(django_filters.FilterSet):
 
         # Customize the layout
         self.form.helper.layout = Layout(
+            # Row 1: Keyword search (always visible) plus Add button and basic controls.
             Row(
                 Column(HTML('{% if perms.documents.add_objection %} <a href="{% url "add_objection" %}" class="btn btn-primary active w-100"><i class="bi bi-plus-lg"></i> إضافة جديد</a> {% endif %}'), css_class='col-md-auto text-center'),
                 Column(Field('keyword', placeholder="البحث ( رقم، سنة، مقدم طلب، صاحب علامة.. )"), css_class='form-group col-md-6'),
@@ -406,7 +415,10 @@ class ObjectionFilter(django_filters.FilterSet):
                 Column(HTML('{% if request.GET and request.GET.keys|length > 2 %} <a href="{% url "objection_list" %}?status={{ current_status }}" class="btn btn-warning">clear</a> {% endif %}'), css_class='form-group col-md-auto text-center'),
                 css_class='form-row'
             ),
+
+            # Row 2: Advanced filters (hidden by default)
             Div(
+                
                 Row(
                     Column(Field('number', placeholder="رقم الاعتراض", dir="rtl"), css_class='form-group col-md-3'),
                     Column(Field('nationality', placeholder="الجنسية"), css_class='form-group col-md-3'),
@@ -414,7 +426,7 @@ class ObjectionFilter(django_filters.FilterSet):
                     Column(Field('com_name__icontains', placeholder="اسم الشركة"), css_class='form-group col-md-3'),
                     css_class='form-row mt-2'
                 ),
-                css_class="collapse mt-3",  # Bootstrap collapse class
+                css_class="collapse mt-3",
                 id="advanced-search"
             ),
             Field('status', type='hidden', value=1)
@@ -437,6 +449,7 @@ class ObjectionFilter(django_filters.FilterSet):
 
 class FormPlusFilter(django_filters.FilterSet):
 
+    # Define custom filters for search
     keyword = django_filters.CharFilter(
         method='filter_keyword',
         label='',
@@ -476,7 +489,7 @@ class FormPlusFilter(django_filters.FilterSet):
                 Column(HTML('{% if request.GET and request.GET.keys|length > 1 %} <a href="{% url "formplus_list" %}" class="btn btn-warning">clear</a> {% endif %}'), css_class='form-group col-md-auto text-center'),
                 css_class='form-row'
             ),
-            
+
             # Advanced filters (Initially hidden, expands on button click)
             Div(
                 Row(

@@ -16,7 +16,7 @@ def check_and_update_publication_status():
     affected_rows = Publication.objects.filter(
         created_at__lte=threshold_date,  
         status=1,  
-        objection__isnull=True  # No linked objections
+        objection__isnull=True
     ).update(status=3)
 
     return f"Updated {affected_rows} publications."
