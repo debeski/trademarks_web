@@ -17,7 +17,7 @@ urlpatterns = [
     path('decrees/detail/<int:document_id>/', views.decree_detail, name='view_decree'),
     path('decrees/download/<int:document_id>/', views.download_decree, name='download_decree'),
     path('decrees/delete/<int:document_id>/', views.soft_delete_decree, name='delete_decree'),
-    path('reports/decrees/', views.decree_report, name='decree_report'),
+    path('reports/decree/', views.decree_report, name='decree_report'),
     # path('reports/', views.reports_view, name='reports'),
     
     # AJAX autocomplete function for Publication model
@@ -32,7 +32,7 @@ urlpatterns = [
     path('publications/detail/<int:document_id>/', views.publication_detail, name='view_publication'),
     path('publications/download/<int:document_id>/', views.download_publication, name='download_publication'),
     path('publications/delete/<int:document_id>/', views.soft_delete_publication, name='delete_publication'),
-    path('reports/publications/', views.publication_report, name='publication_report'),
+    path('reports/publication/', views.publication_report, name='publication_report'),
 
     # AJAX Mark Complete functions
     path('update-status/<int:document_id>/', views.update_status, name='update_status'),
@@ -67,7 +67,7 @@ urlpatterns = [
     path('objections/download/<int:document_id>/', views.download_objection, name='download_objection'),
     path('objections/download_r/<int:document_id>/', views.download_objection_receipt, name='download_objection_receipt'),
     path('objections/delete/<int:document_id>/', views.soft_delete_objection, name='delete_objection'),
-    path('reports/objections/', views.objection_report, name='objection_report'),
+    path('reports/objection/', views.objection_report, name='objection_report'),
 
     # PDF generation for Objection model
     path('objections/pdf/<int:obj_id>/', views.gen_obj_pdf, name='gen_obj_pdf'),

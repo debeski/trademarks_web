@@ -35,3 +35,5 @@ class UserActivityLog(models.Model):
 
     def __str__(self):
         return f"{self.user} {self.action} {self.model_name or 'General'} at {self.timestamp}"
+
+

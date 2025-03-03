@@ -46,14 +46,15 @@ input[dir="rtl"]::placeholder {
 
 input[type="number"] {
     text-align: right !important;
-    direction: rtl !important; /* Force RTL for numeric input */
-    unicode-bidi: plaintext !important; /* Ensures proper bidi handling */
+    direction: rtl !important;
+    unicode-bidi: plaintext !important;
 }
 
 body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    max-width: 100% !important;
     background-color: var(--body);
 }
 
@@ -104,8 +105,6 @@ body {
 
 /* Container Fluid Layout */
 .layout {
-    /* display: flex; */
-    /* flex-direction: row; */
     flex-grow: 1;
 }
 
@@ -124,7 +123,7 @@ body {
     transition: width 0.5s ease-in-out;
     overflow: hidden;
     flex-grow: 0;
-    box-shadow: -2px 0 5px -4px rgba(81, 81, 81, 0.5); /* Left-pointing shadow */
+    box-shadow: -2px 0 5px -4px rgba(81, 81, 81, 0.5);
     white-space: nowrap;
     border-radius: 0 !important;
 }
@@ -150,66 +149,53 @@ body {
     border: none !important;
     height: 60px !important;
     align-items: center;
+}
 
-}
-.accordion-button:focus {
-    box-shadow: none !important;
-}
 
 .accordion-button:not(.collapsed) {
     background-color: var(--body) !important;
 }
 
-/* Sidebar Icons */
-.sidebar-icon {
-    width: 23px;
-    height: auto;
-    margin-right: 0px;
-    margin-left: 8px;
-    vertical-align: middle;
-    transition: margin 0.2s, width 0.2s;
-}
-
-/* Action Icons */
-.action-icon {
-    width: 40px;
-    height: auto;
-    vertical-align: middle;
-    transition: margin 0.2s, width 0.2s;
-}
 
 @media (max-width: 750px) {
     #sidebar {
-        width: 0; /* Start closed on small screens */
+        width: 0;
         overflow: hidden;
     }
 }
+
 
 .button-group{
     padding: 10px;
 }
 
+
 .checkbox-inline {
     display:inline-flex;
-    margin-left: 5px;  /* Optional: Add some space between checkboxes */
+    margin-left: 5px;
     margin-right: 10px;
 }
+
 
 .alert {
     opacity: 1;
     transition: opacity 0.5s ease-in-out;
 }
 
+
 #id_year {
     direction: rtl;
 }
 
+
 .option-separator {
-    border-bottom: 1px solid #ddd; /* Adds a thin line */
-    padding-bottom: 5px; /* Adds spacing below each option */
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
 }
+
+
 .option-separator:last-of-type {
-    border-bottom: none; /* Remove border for the last item */
+    border-bottom: none;
 }
 
 
@@ -225,24 +211,22 @@ body {
 
 .table>tbody>tr:nth-child(odd)>td, 
 .table>tbody>tr:nth-child(odd)>th {
-   --bs-table-bg-type: white;
- }
+    --bs-table-bg-type: white;
+}
 
- .table>tbody>tr:nth-child(even)>td, 
- .table>tbody>tr:nth-child(even)>th {
+
+.table>tbody>tr:nth-child(even)>td, 
+.table>tbody>tr:nth-child(even)>th {
     --bs-table-bg-type: whitesmoke;
-  }
+}
 
-/* .table a {
-    color: inherit;
-    text-decoration:none;
-  } */
 
 .table thead th {
     background-color: whitesmoke;
     font-size: 20px;
     transition: font-size 0.3s;
-  }
+}
+
 
 @media (max-width: 880px) {
     .table thead th {
@@ -250,11 +234,13 @@ body {
     }
 }
 
+
 @media (max-width: 720px) {
     .table thead th {
         font-size: 12px;
     }
 }
+
 
 @media (max-width: 800px) {
     .table tbody tr td {
@@ -262,11 +248,13 @@ body {
     }
 }
 
+
 @media (max-width: 720px) {
     .table tbody tr td {
         font-size: 12px !important;
     }
 }
+
 
 .table tbody tr td {
     border-style: none;
@@ -274,44 +262,46 @@ body {
     transition: font-size 0.3s;
 }
 
-.pressed{
+
+/* .pressed{
     background:var(--body);
     box-shadow: inset -3px 0px 8px #c1c1c1;
     outline: none;
-}
+} */
 
 
 /* Target the text element inside Plotly's hover layer */
 .hoverlayer .hovertext text {
-    text-anchor: end !important;  /* Right-align the text */
-    direction: rtl !important;     /* Set text direction to RTL */
+    text-anchor: end !important;
+    direction: rtl !important;
     font-size: 14px !important;
     font-family: 'Shabwa', sans-serif !important;
 }
+
 
 th a {
     text-decoration: none;
     color: inherit;
 }
 
+
 th a::after {
     font-family: "bootstrap-icons";
-    content: "\F238"; /* Default: bi-arrow-down-up */
+    content: "\F238";
     font-size: 14px;
     margin-right: 3px;
 }
 
+
 th.asc a::after {
-    content: "\F235"; /* bi-chevron-up */
+    content: "\F235";
 }
+
 
 th.desc a::after {
-    content: "\F229"; /* bi-chevron-down */
+    content: "\F229";
 }
 
-/* #publicationTabsContent {
-    visibility: hidden;
-} */
 
 #modelTabsContent {
     visibility: hidden;
@@ -322,28 +312,28 @@ th.desc a::after {
     opacity: 0;
     transform: translateY(-10px);
     transition: opacity 0.9s ease, transform 0.9s ease;
-    display: none; /* Ensures it's hidden initially */
+    display: none;
 }
 
 #publication-details.show {
     opacity: 1;
     transform: translateY(0);
-    display: block; /* Overrides 'none' to allow animations */
+    display: block;
 }
+
 
 form label {
     font-weight: 600;
 }
 
+
 .is-placeholder {
-    background-color: rgba(255, 0, 0, 0.1);  /* Light red background */
+    background-color: rgba(255, 0, 0, 0.1);
     font-weight: bold;
 }
 
-table {
-    max-width: 100% !important;
-}
 
 .card_text_big {
     font-size: 24px;
 }
+

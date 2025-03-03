@@ -189,8 +189,10 @@ LOGGING = {
     'handlers': {
         'file': {
             'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'logfile.log'),
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs.log'),
+            'maxBytes': 5 * 1024 * 1024,  # 5MB max size per log file
+            'backupCount': 2,  # Keep only 3 log files
             'formatter': 'verbose',
         },
     },
@@ -205,21 +207,24 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
+        'users': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
     },
 }
 
-
+AUTH_USER_MODEL = 'users.CustomUser'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
-
 LOGOUT_REDIRECT_URL = 'index'  # Redirect to login page after logout
 
+# Control whether the site can be embedded in an <iframe> externally.
 X_FRAME_OPTIONS = "SAMEORIGIN"
 SILENCED_SYSTEM_CHECKS = ["security.W019"]
 
-# SESSION_COOKIE_SECURE = False
-# CSRF_COOKIE_SECURE = False
-
+# Redis settings
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
@@ -230,14 +235,17 @@ CACHES = {
     }
 }
 
+# Celery settings
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER', 'redis://redis:6379/0')  # Adjust if Redis is running on a different host or port
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
+# Link error messages to Bootstrap danger class
 from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
 
-AUTH_USER_MODEL = 'users.CustomUser'
-
+# Control whether cookies for sessions and CSRF tokens are only sent over HTTPS connections [PRODUCTION]
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True

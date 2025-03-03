@@ -5,15 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
     {% load static %}
-    {% load custom_filters %}
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="{% static 'bootstrap5/bootstrap.rtl.css' %}">
     <link rel="stylesheet" href="{% static 'bootstrap5/bootstrap-icons.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <meta name="csrf-token" content="{{ csrf_token }}">
+
     {% block extra_head%}{% endblock%}
-</head>
-<body>
+    
     <!-- Toggle Sidebar Script -->
     <script>
         // On page load, check if the sidebar state is saved in localStorage and apply it
@@ -34,6 +33,9 @@
             localStorage.setItem('sidebarState', sidebar.classList.contains('closed') ? 'closed' : 'open');
         }
     </script>
+</head>
+<body>
+
     <!-- Title Bar -->
     <div class="titlebar d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
@@ -85,21 +87,21 @@
         <div class="list-group" id="sidebar">
             <!-- Option 1: Decrees List -->
             {% if perms.documents.view_decree %}
-            <a href="{% url 'decree_list' %}" class="list-group-item list-group-item-action {% if request.path == '/decrees/' %}disabled pressed{% elif '/decrees/' in request.path %}pressed{% endif %}">
+            <a href="{% url 'decree_list' %}" class="list-group-item list-group-item-action {% if request.path == '/decrees/' %}active disabled{% elif '/decrees/' in request.path %}active{% endif %}">
                 <i class="bi bi-file-earmark-binary me-2" style="font-size: 24px;"></i>
                 قرارات العلامات التجارية
             </a>
             {% endif %}
             
             <!-- Option 2: Publications List -->
-            <a href="{% url 'publication_list' %}" class="list-group-item list-group-item-action {% if request.path == '/publications/' %}disabled pressed{% elif '/publications/' in request.path %}pressed{% endif %}">
+            <a href="{% url 'publication_list' %}" class="list-group-item list-group-item-action {% if request.path == '/publications/' %}active disabled{% elif '/publications/' in request.path %}active{% endif %}">
                 <i class="bi bi-file-earmark-check me-2" style="font-size: 24px;"></i>
                 اشهارات العلامات التجارية
             </a>
 
             <!-- Option 3: Objections List -->
             {% if perms.documents.view_objection %}
-            <a href="{% url 'objection_list' %}" class="list-group-item list-group-item-action {% if request.path == '/objections/' %}disabled pressed{% elif '/objections/' in request.path %}pressed{% endif %}">
+            <a href="{% url 'objection_list' %}" class="list-group-item list-group-item-action {% if request.path == '/objections/' %}active disabled{% elif '/objections/' in request.path %}active{% endif %}">
                 <i class="bi bi-file-earmark-diff me-2" style="font-size: 24px;"></i>
                 الاعتراضات
             </a>
@@ -107,7 +109,7 @@
 
             <!-- Option 4: Forms List -->
             {% if perms.documents.view_formplus %}
-            <a href="{% url 'formplus_list' %}" class="list-group-item list-group-item-action {% if request.path == '/formplus/' %}disabled pressed{% elif '/formplus/' in request.path %}pressed{% endif %}">
+            <a href="{% url 'formplus_list' %}" class="list-group-item list-group-item-action {% if request.path == '/formplus/' %}disabled active{% elif '/formplus/' in request.path %}active{% endif %}">
                 <i class="bi bi-file-earmark-richtext me-2" style="font-size: 24px;"></i>
                 التشريعات و النماذج
             </a>
@@ -125,13 +127,13 @@
                     <div id="collapseReports" class="accordion-collapse collapse {% if '/reports/' in request.path %}show{% endif %}" aria-labelledby="headingReports" data-bs-parent="#reportsAccordion">
                         <div class="accordion-body p-0">
                             <!-- Report links -->
-                            <a href="{% url 'decree_report' %}" class="list-group-item list-group-item-action {% if '/reports/decrees/' in request.path %}active bg-primary disabled{% endif %}">
+                            <a href="{% url 'decree_report' %}" class="list-group-item list-group-item-action {% if '/reports/decree/' in request.path %}active disabled{% endif %}">
                                 <i class="bi bi-calendar-date me-2" style="font-size: 21px; opacity: 0.5;"></i>القرارات
                             </a>
-                            <a href="{% url 'publication_report' %}" class="list-group-item list-group-item-action {% if '/reports/publications/' in request.path %}active bg-primary disabled{% endif %}">
+                            <a href="{% url 'publication_report' %}" class="list-group-item list-group-item-action {% if '/reports/publication/' in request.path %}active disabled{% endif %}">
                                 <i class="bi bi-calendar-check me-2" style="font-size: 21px; opacity: 0.5;"></i>الإشهارات
                             </a>
-                            <a href="{% url 'objection_report' %}" class="list-group-item list-group-item-action {% if '/reports/objections/' in request.path %}active bg-primary disabled{% endif %}">
+                            <a href="{% url 'objection_report' %}" class="list-group-item list-group-item-action {% if '/reports/objection/' in request.path %}active disabled{% endif %}">
                                 <i class="bi bi-calendar-x me-2" style="font-size: 21px; opacity: 0.5;"></i>الاعتراضات
                             </a>
                         </div>
@@ -198,7 +200,7 @@
                 setTimeout(function () {
                     message.style.opacity = "0";
                     setTimeout(() => message.remove(), 3000); // Remove the element after fade-out
-                }, 3000); // Change this to adjust timeout (3000ms = 3s)
+                }, 3000); // Change to adjust timeout (3000ms = 3s)
             });
         });
     </script>
