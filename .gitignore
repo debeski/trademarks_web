@@ -1,7 +1,23 @@
-/*/__pycache__/
-/*/migrations/
-staticfiles
+# Ignore pycache
+__pycache__/
+
+# Ignore migrations
+*/migrations/
+
+# Ignore static files
+staticfiles/
+
+# Ignore environment files
 .env
+
+# Ignore command run logs
 .commands_run
+
+# Ignore dev container config
 .devcontainer.json
-/media
+
+# Ignore media folder
+/media/
+
+# Ignore log files
+logs.log*
