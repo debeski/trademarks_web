@@ -1,0 +1,40 @@
+stages:          # List of stages for jobs, and their order of execution
+  - fetch
+  - build
+  - test
+  - deploy
+
+# Fetch stage to pull the latest code from GitHub
+fetch-job:       # This job runs in the fetch stage, which runs first.
+  stage: fetch
+  script:
+    - echo "Fetching latest code from GitHub..."
+    - git fetch origin main
+    - git reset --hard origin/main
+    - echo "Fetch complete."
+
+# Build stage to build the Docker containers using docker-compose
+build-job:       # This job runs in the build stage, which runs after the fetch stage.
+  stage: build
+  script:
+    - echo "Building Docker containers..."
+    - docker-compose -f docker-compose.yml up --build -d
+    - echo "Docker containers built and running."
+
+# Test stage to check if the server and container are running properly
+test-job:        # This job runs in the test stage after the build stage completes.
+  stage: test
+  script:
+    - echo "Checking if the server and Docker containers are running..."
+    - docker ps  # List running containers to confirm they are up
+    - curl -f http://localhost:8000 || exit 1  # Replace with your app's URL and port
+    - echo "Server is running and containers are up."
+
+# Deploy stage to deploy the app to the VM via SSH
+deploy-job:      # This job runs in the deploy stage after the test stage completes.
+  stage: deploy
+  environment: production
+  script:
+    - echo "Deploying application to VM..."
+    - ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY $SSH_USER@$SSH_HOST "cd /home/ahmed/trademarks_web && git pull origin main && docker-compose up -d && systemctl restart your-app.service"
+    - echo "Application successfully deployed to VM."
