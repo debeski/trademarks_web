@@ -1,0 +1,37 @@
+# Use the official Python image
+FROM python:3.13
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    DEBIAN_FRONTEND=noninteractive
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Install required system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a new user for security
+RUN useradd -m vscode && \
+    echo 'vscode:123456' | chpasswd && \
+    adduser vscode sudo && \
+    chown -R vscode:vscode /app
+
+# Switch to non-root user
+USER vscode
+
+# Copy requirements file separately to use Docker cache efficiently
+COPY --chown=vscode:vscode requirements.txt .
+
+# Install dependencies
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Expose Django's default port
+EXPOSE 8000
+
+# Set default command (will be overridden by the main Dockerfile)
+CMD ["python"]

@@ -16,6 +16,9 @@ if [ ! -f "$COMMANDS_RUN_FILE" ]; then
     wait_for_service redis 6379
     
     echo "Running management commands..."
+    python manage.py makemigrations users
+    python manage.py makemigrations documents
+    python manage.py makemigrations
     python manage.py migrate
     python manage.py create_su
     python manage.py populate

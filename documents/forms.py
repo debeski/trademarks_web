@@ -235,7 +235,12 @@ class PublicationForm(forms.ModelForm):
         label="رقم القرار",
         widget=forms.TextInput(attrs={'autocomplete': 'off', 'id': 'id_decree_autocomplete'})
     )
-
+    category = forms.IntegerField(
+        required=False,
+        min_value=1, max_value=45,
+        label="الفئة",
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
     class Meta:
         model = Publication
         fields = [
