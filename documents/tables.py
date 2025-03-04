@@ -1,12 +1,14 @@
+# Imports of the required python modules and libraries
+######################################################
 import os
-from django.utils.html import mark_safe
+from django.utils.safestring import mark_safe
 import django_tables2 as tables
 from .models import Decree, Publication, Objection, FormPlus, Country, Government, ComType, DocType, DecreeCategory
 from django.urls import reverse
-# from django.utils.safestring import mark_safe
-# from babel.dates import format_date
 
 
+# Section models tables
+#######################
 class GovernmentTable(tables.Table):
     edit = tables.Column(accessor='id', verbose_name='', empty_values=(), orderable=False)
 
@@ -138,6 +140,8 @@ class DecreeCategoryTable(tables.Table):
         return mark_safe(f'<a href="{url}" class="btn btn-secondary">تعديل</a>')
 
 
+# Primary models tables
+#######################
 class DecreeTable(tables.Table):
     actions = tables.TemplateColumn(
         template_name='partials/decree_actions.html',
@@ -155,7 +159,6 @@ class DecreeTable(tables.Table):
     def render_date(self, value):
         # Format the date as desired
         return value.strftime('%Y-%m-%d') if value else ''
-
 
 class PublicationTable(tables.Table):
     # Define a custom column to display the image
@@ -190,7 +193,6 @@ class PublicationTable(tables.Table):
         fields = ('number', 'decree', 'number_applied', 'applicant', 'country', 'address', 'date_applied', 'category', 'img_file', 'e_number', 'created_at', 'actions')
         attrs = {'class': 'table table-hover table-responsive align-middle'}
 
-
 class ObjectionPubPickTable(tables.Table):
     # Define a custom column to display the image
     img_file = tables.Column(orderable=False, verbose_name="الصورة")
@@ -222,7 +224,6 @@ class ObjectionPubPickTable(tables.Table):
     #     url = reverse("add_pub_objection", kwargs={"document_id": record.id})
     #     return mark_safe(f'<a href="{url}" class="row-link">{value}</a>')
 
-
 class ObjectionTable(tables.Table):
     actions = tables.TemplateColumn(
         template_name='partials/objection_actions.html',
@@ -241,7 +242,6 @@ class ObjectionTable(tables.Table):
         # Format the date as desired
         return value.strftime('%Y-%m-%d') if value else ''
 
-
 class FormPlusTable(tables.Table):
     actions = tables.TemplateColumn(
         template_name='partials/formplus_actions.html', 
@@ -259,4 +259,3 @@ class FormPlusTable(tables.Table):
     def render_date(self, value):
         # Format the date as desired
         return value.strftime('%Y-%m-%d') if value else ''
-

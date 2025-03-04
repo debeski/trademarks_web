@@ -1,3 +1,5 @@
+# Imports of the required python modules and libraries
+######################################################
 import django_filters
 from django.contrib.auth import get_user_model
 from crispy_forms.helper import FormHelper
@@ -14,7 +16,7 @@ class UserFilter(django_filters.FilterSet):
 
     class Meta:
         model = User
-        fields = ["username", "email", "phone", "occupation"]  # Include phone and occupation
+        fields = ["username", "email", "phone", "occupation"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -35,5 +37,5 @@ class UserFilter(django_filters.FilterSet):
         """
         Filter the queryset by matching the keyword in username, email, phone, and occupation.
         """
-        q = Q(username__icontains=value) | Q(email__icontains=value) | Q(phone__icontains=value) | Q(occupation__icontains=value)
+        q = Q(username__icontains=value) | Q(email__icontains=value) | Q(phone__icontains=value) | Q(occupation__icontains=value) | Q(first_name__icontains=value) | Q(last_name__icontains=value)
         return queryset.filter(q)

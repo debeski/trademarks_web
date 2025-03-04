@@ -184,21 +184,21 @@
     <div class="mt-4 justify-content-end g-2">
         {% if objection.status <= 2 %}
         <a class="btn btn-danger" href="{% url 'gen_obj_pdf' objection.id %}" title="تحميل نموذج الإعتراض">
-            <i class="bi bi-file-earmark-pdf-fill text-light me-1" style="font-size: 22px;"></i> تحميل نموذج الإعتراض
+            <i class="bi bi-file-earmark-pdf-fill text-light me-1 h4"></i> تحميل نموذج الإعتراض
         </a>
         {% endif %}
         {% if objection.receipt_file %}
         <a class="btn btn-success" href="{% url 'download_objection_receipt' objection.id %}" title="تحميل ايصال الدفع">
-            <i class="bi bi-file-earmark-arrow-down-fill text-light me-1" style="font-size: 22px;"></i> تحميل الايصال
+            <i class="bi bi-file-earmark-arrow-down-fill text-light me-1 h4"></i> تحميل الايصال
         </a>
         {% endif %}
         {% if objection.pdf_file %}
         <a class="btn btn-primary" href="{% url 'download_objection' objection.id %}" title="تحميل الملف المرفق">
-            <i class="bi bi-file-earmark-arrow-down-fill text-light me-1" style="font-size: 22px;"></i> تحميل المرفق
+            <i class="bi bi-file-earmark-arrow-down-fill text-light me-1 h4"></i> تحميل المرفق
         </a>
         {% endif %}
         <a class="btn btn-secondary" href="javascript:history.back()" title="رجـــوع">
-            <i class="bi bi-arrow-return-left text-light me-1" style="font-size: 22px;"></i> رجـــوع
+            <i class="bi bi-arrow-return-left text-light me-1 h4"></i> رجـــوع
         </a>
     </div>
 

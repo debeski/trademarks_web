@@ -52,6 +52,16 @@
 
 {% block content %}
 
+    {% if messages %}
+    <div class="alert-container position-absolute top-0 start-0 w-100">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} text-center" style="opacity: 95%;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <!-- Bootstrap Tabs Navigation -->
     <ul class="nav nav-tabs" id="modelTabs" role="tablist">
       {% for model in models %}

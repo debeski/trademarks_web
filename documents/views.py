@@ -1,5 +1,5 @@
 # Fundemental imports
-#####################################################################
+#####################
 import logging
 from django.contrib import messages
 import os
@@ -15,6 +15,7 @@ import base64
 from django.views.decorators.csrf import csrf_exempt
 
 # Helping imports
+#################
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse, JsonResponse, HttpResponse, HttpResponseNotFound, HttpResponseBadRequest, HttpResponseRedirect
@@ -25,28 +26,31 @@ from django.contrib.auth.decorators import login_required, permission_required, 
 from django.utils.module_loading import import_string
 
 # JSON imports
+##############
 import json
 import mimetypes
 import zipfile
 from io import BytesIO
 
 # Project imports
+#################
 from .models import Decree, DecreeStatus, Publication, PublicationStatus, Objection, ObjectionStatus, FormPlus, Country, Government, ComType, DocType, DecreeCategory
 from .genpdf import pub_pdf, obj_pdf, pub_final_pdf
 
 # Design imports
+################
 from django_tables2 import RequestConfig
 from django.db.models import Q
 import pandas as pd
 import plotly.express as px
 
 #####################################################################
-# Logging initiation
+# low-level Logging initialization
 logger = logging.getLogger('documents')
 from users.models import  UserActivityLog
 from users.signals import get_client_ip
 
-# Logging Function
+# low-level Logging Function
 def log_action(action, model, object_id=None):
     timestamp = timezone.now()
     message = f"{timestamp} - Performed {action} on {model.__name__} (ID: {object_id})"
@@ -251,7 +255,7 @@ def create_chart(models, start_year=2012, end_year=2025):
     return chart_html
 
 
-# Html & Chart Rendering Functions on main page only
+# Html & Chart Rendering Functions on index page
 def index(request):
     # Generate the chart HTML
     chart_html = create_chart([Publication])
@@ -290,7 +294,7 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-# Main view, and CRUD function for secondary models
+# Main view, and CRUD function for section models
 def core_models_view(request):
     # Read the GET parameter, defaulting to 'Country'
     model_param = request.GET.get('model', 'Country')
@@ -368,9 +372,9 @@ def core_models_view(request):
     return render(request, 'manage_sections.html', context)
 
 
-# Views for Decree
+# Views for Decree Model
 #####################################################################
-# Main table view for decrees
+# Main table Function for Decree Model
 @login_required
 def decree_list(request):
     if not request.user.has_perm('documents.view_decree'):
@@ -414,7 +418,7 @@ def decree_list(request):
     })
 
 
-# Main Adding and Editing view for decrees
+# Adding and Editing Functions for Decree Model
 @login_required
 def add_edit_decree(request, document_id=None):
     if not request.user.has_perm('documents.add_decree'):
@@ -456,7 +460,7 @@ def add_edit_decree(request, document_id=None):
     })
 
 
-# Main PDF download view for decrees
+# PDF download Function for Decree Model
 @login_required
 def download_decree(request, document_id):
     """
@@ -526,7 +530,7 @@ def download_decree(request, document_id):
     return HttpResponseNotFound('No document or attachment available for download.')
 
 
-# Main soft delete view for decrees
+# Soft delete Function for Decree Model
 @login_required
 @user_passes_test(is_superuser)
 def soft_delete_decree(request, document_id):
@@ -553,7 +557,7 @@ def soft_delete_decree(request, document_id):
     return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=400)
 
 
-# Main detail view for decrees
+# Detail Function for Decree Model
 @login_required
 def decree_detail(request, document_id):
     """
@@ -578,9 +582,9 @@ def decree_detail(request, document_id):
     return render(request, 'decrees/decree_detail.html', {'decree': decree})
 
 
-# Views for Publication
+# Views for Publication Model
 #####################################################################
-# Main table view for publications
+# Main table Function for Publication Model
 def publication_list(request):
     
     qs = Publication.objects.filter(deleted_at__isnull=True)
@@ -618,7 +622,7 @@ def publication_list(request):
     })
 
 
-# Main Adding view for publications
+# Adding Function for Publication Model
 @login_required
 def add_publication(request):
     form_class_path = Publication.get_form_class()
@@ -682,7 +686,7 @@ def add_publication(request):
     return render(request, 'publications/pub_form.html', {'form': form})
 
 
-# Main Editing view for publications
+# Editing Function for Publication Model
 @login_required
 def edit_publication(request, document_id):
     instance = get_object_or_404(Publication, id=document_id)
@@ -709,7 +713,7 @@ def edit_publication(request, document_id):
     return render(request, 'publications/pub_form_edit.html', {'form': form})
 
 
-# Main PDF download view for publications
+# PDF download Function for Publication Model
 def download_publication(request, document_id):
     """
     Downloads a publication's image file or attachment as a ZIP file.
@@ -774,7 +778,7 @@ def download_publication(request, document_id):
     return HttpResponseNotFound('No document or attachment available for download.')
 
 
-# Main soft delete view for publications
+# Soft delete Function for Publication Model
 @login_required
 @user_passes_test(is_superuser)
 def soft_delete_publication(request, document_id):
@@ -801,7 +805,7 @@ def soft_delete_publication(request, document_id):
     return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=400)
 
 
-# Main detail view for publications
+# Detail Function for Publication Model
 def publication_detail(request, document_id):
     """
     Displays details of a publication with image preview.
@@ -884,7 +888,7 @@ def fetch_pub_data(pub_id):
     return pub_record
 
 
-# Function for generating initial PDF for publications
+# Function for generating INITIAL PDF for Publication Model
 def gen_pub_pdf(request, pub_id):
     record_info = fetch_pub_data(pub_id)
     pub_qr = generate_pub_qr(pub_id)
@@ -895,6 +899,8 @@ def gen_pub_pdf(request, pub_id):
 
     return response
 
+
+# Function for generating FINAL PDF for Publication Model
 def gen_final_pub_pdf(request, pub_id):
     # if model == 'publication':
     record_info = fetch_pub_data(pub_id)
@@ -907,9 +913,9 @@ def gen_final_pub_pdf(request, pub_id):
     return response
 
 
-# Views for Objection
+# Views for Objection Model
 #####################################################################
-# Main table view for Objection
+# Main table Function for Objection Model
 @login_required
 def objection_list(request):
     
@@ -954,7 +960,7 @@ def objection_list(request):
     })
 
 
-# Main Adding view for Objection
+# Adding Function for Objection Model
 def add_objection(request):
     form_class = get_class_from_string(Objection.get_form_class())  # Resolving the form class
 
@@ -992,7 +998,7 @@ def add_objection(request):
     return render(request, 'objections/objection_form.html', {'form': form})
 
 
-# Main Editing view for Objection
+# Editing Function for Objection Model
 def edit_objection(request, document_id):
     """
     Function to edit an existing objection.
@@ -1156,7 +1162,7 @@ def fetch_objection_data(obj_id):
     return objection_data
 
 
-# Function for generating initial PDF for objections
+# Function for generating PDF for Objection Model
 def gen_obj_pdf(request, obj_id):
     """
     Generates and returns a PDF for the specified objection.
@@ -1174,7 +1180,7 @@ def gen_obj_pdf(request, obj_id):
     return response
 
 
-# PDF download view for Objection Attachment
+# PDF download Function for Objection Attachment
 @login_required
 def download_objection(request, document_id):
     """
@@ -1203,7 +1209,7 @@ def download_objection(request, document_id):
     return response
 
 
-# PDF download view for Objection Receipt
+# PDF download Function for Objection Receipt
 @login_required
 def download_objection_receipt(request, document_id):
     """
@@ -1231,7 +1237,8 @@ def download_objection_receipt(request, document_id):
 
     return response
 
-# Main soft delete view for Objection
+
+# Soft delete Function for Objection Model
 @login_required
 @user_passes_test(is_superuser)
 def soft_delete_objection(request, document_id):
@@ -1258,7 +1265,7 @@ def soft_delete_objection(request, document_id):
     return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=400)
 
 
-# Main detail view for Objection
+# Detail Function for Objection Model
 @login_required
 def objection_detail(request, document_id):
     """
@@ -1279,6 +1286,7 @@ def objection_detail(request, document_id):
     return render(request, 'objections/objection_detail.html', {'objection': objection})
 
 
+# Public Function for checking an objection status
 @csrf_exempt  # Allow AJAX requests without CSRF token (only if necessary)
 def check_objection_status(request):
     if request.method == "POST":
@@ -1454,9 +1462,9 @@ def decline_objection_status(request, document_id):
     return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=400)
 
 
-# Views for FormPlus
+# Views for FormPlus Model
 #####################################################################
-# Main table view for FormPlus
+# Main table Function for FormPlus Model
 def formplus_list(request):
     # Get the base queryset (only non-deleted items)
     qs = FormPlus.objects.filter(deleted_at__isnull=True)
@@ -1480,7 +1488,7 @@ def formplus_list(request):
     })
 
 
-# Main Adding and Editing view for FormPlus
+# Adding and Editing view for FormPlus Model
 @login_required
 def add_edit_formplus(request, document_id=None):
     if not request.user.has_perm('documents.add_formplus'):
@@ -1512,7 +1520,7 @@ def add_edit_formplus(request, document_id=None):
     return render(request, 'formplus/formplus_form.html', {'form': form})
 
 
-# Main PDF download view for FormPlus
+# PDF download Function for FormPlus Model
 def download_formplus_pdf(request, document_id):
     """
     Downloads a FormPlus document's PDF file.
@@ -1540,7 +1548,7 @@ def download_formplus_pdf(request, document_id):
     return response
 
 
-# Main PDF download view for FormPlus
+# PDF download Function for FormPlus Model
 def download_formplus_word(request, document_id):
     """
     Downloads a FormPlus document's Word file.
@@ -1570,7 +1578,7 @@ def download_formplus_word(request, document_id):
     return response
 
 
-# Main soft delete view for FormPlus
+# Soft delete Function for FormPlus Model
 @login_required
 @user_passes_test(is_superuser)
 def soft_delete_formplus(request, document_id):
@@ -1597,7 +1605,7 @@ def soft_delete_formplus(request, document_id):
     return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=400)
 
 
-# Main detail view for FormPlus
+# Detail Function for FormPlus Model
 def formplus_detail(request, document_id):
     """
     Displays details of a FormPlus document with a PDF preview.
@@ -1622,7 +1630,7 @@ def formplus_detail(request, document_id):
     return render(request, 'formplus/formplus_detail.html', {'formplus': formplus})
 
 
-# Views for Reports
+# Views for Report Generation
 #####################################################################
 # Function that formts missing numbers in a table
 def format_missing_numbers(missing_numbers):

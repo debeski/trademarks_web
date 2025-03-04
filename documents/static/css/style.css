@@ -82,15 +82,12 @@ body {
 
 /* Titlebar Button */
 .menu-toggle {
-    background-color: var(--title);
+    background-color: inherit;
     color: white;
-    padding: 10px 15px;
     border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-right: 15px;
     transition: background-color 0.3s, transform 0.1s;
-    width: auto;
+    min-width: 5vh;
+    min-height: 5vh;
     text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
 }
 

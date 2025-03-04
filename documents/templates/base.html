@@ -37,10 +37,10 @@
 <body>
 
     <!-- Title Bar -->
-    <div class="titlebar d-flex justify-content-between align-items-center">
+    <div class="titlebar d-flex justify-content-between align-items-center" style="z-index: 999;">
         <div class="d-flex align-items-center">
             {% if request.user.is_authenticated %}
-                <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+                <button class="menu-toggle ms-2 rounded" onclick="toggleMenu()">☰</button>
             {% endif %}
             <a href="{% url 'index' %}" style="text-decoration: none; color: inherit;">
                 <h1>الاشهار الالكتروني للعلامات التجارية{% block header %}{% endblock %}</h1>
@@ -50,7 +50,7 @@
         <div>
         {% if user.is_authenticated %}
             <!-- Dropdown Button and Menu for Authenticated User -->
-            <div class="dropdown" style="z-index: 1050;">
+            <div class="dropdown">
                 <button class="btn btn-light me-2 dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-person-circle">&nbsp;</i> {{ user.username }}
                 </button>
@@ -62,7 +62,7 @@
                                 تسجيل الخروج  &nbsp; <i class="bi bi-box-arrow-left"></i>
                             </button>
                         </form>
-                        <a class="dropdown-item" href="#">
+                        <a class="dropdown-item" href="{% url 'user_profile' %}">
                             الملف الشخصي &nbsp; <i class="bi bi-person-lines-fill"></i>
                         </a>
                         {% if user.is_superuser %}

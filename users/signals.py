@@ -1,8 +1,10 @@
+# Imports of the required python modules and libraries
+######################################################
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.utils.timezone import now
 from django.conf import settings
-from .models import UserActivityLog  # Import the log model
+from .models import UserActivityLog
 import threading
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 

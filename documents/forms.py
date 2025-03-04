@@ -1,3 +1,5 @@
+# Imports of the required python modules and libraries
+######################################################
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Submit, Field, Div, HTML
@@ -5,6 +7,9 @@ from crispy_forms.bootstrap import FormActions
 from .models import Decree, Publication, FormPlus, Objection, Country, Government, ComType, DocType, DecreeCategory
 import datetime
 
+
+# Section models forms
+######################
 class CountryForm(forms.ModelForm):
     class Meta:
         model = Country
@@ -132,6 +137,8 @@ class DecreeCategoryForm(forms.ModelForm):
         )
 
 
+# Primary models forms
+######################
 class DecreeForm(forms.ModelForm):
     
     category = forms.IntegerField(
@@ -282,7 +289,6 @@ class PublicationForm(forms.ModelForm):
                 HTML('<a class="btn btn-secondary" href="{% url \'publication_list\' %}">إلغاء</a>')
             )
         )
-
 
 class ObjectionForm(forms.ModelForm):
     year = forms.CharField(required=False, label="سنة الإشهار", initial=str(datetime.datetime.now().year))

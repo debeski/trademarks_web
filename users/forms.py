@@ -1,3 +1,5 @@
+# Imports of the required python modules and libraries
+######################################################
 from django import forms
 from django.contrib.auth.models import Permission
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm, SetPasswordForm
@@ -8,9 +10,12 @@ from django.contrib.auth.hashers import make_password
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, Div, HTML, Fieldset, Button, Submit
 from crispy_forms.bootstrap import FormActions
+from PIL import Image
+from django.core.exceptions import ValidationError
 
 User = get_user_model()
 
+# Custom User Creation form layout
 class CustomUserCreationForm(UserCreationForm):
     permissions = forms.ModelMultipleChoiceField(
         queryset=Permission.objects.all(),
@@ -21,7 +26,7 @@ class CustomUserCreationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ["username", "email", "password1", "password2", "first_name", "last_name", "phone", "occupation", "is_staff", "permissions"]
+        fields = ["profile_picture","username", "email", "password1", "password2", "first_name", "last_name", "phone", "occupation", "is_staff", "permissions"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -82,7 +87,7 @@ class CustomUserCreationForm(UserCreationForm):
             "email",
             "password1",
             "password2",
-            HTML("<hr>"),  # Separator line
+            HTML("<hr>"),
             Div(
                 Div(Field("first_name", css_class="col-md-6"), css_class="col-md-6"),
                 Div(Field("last_name", css_class="col-md-6"), css_class="col-md-6"),
@@ -93,7 +98,7 @@ class CustomUserCreationForm(UserCreationForm):
                 Div(Field("occupation", css_class="col-md-6"), css_class="col-md-6"),
                 css_class="row"
             ),
-            HTML("<hr>"),  # Separator line
+            HTML("<hr>"),
             Div(
                 Div(Field("permissions_right", css_class="col-md-6"), css_class="col-md-6"),
                 Div(Field("permissions_left", css_class="col-md-6"), css_class="col-md-6"),
@@ -110,6 +115,8 @@ class CustomUserCreationForm(UserCreationForm):
         user.user_permissions.set(self.cleaned_data["permissions_left"] | self.cleaned_data["permissions_right"])
         return user
 
+
+# Custom User Editing form layout
 class CustomUserChangeForm(UserChangeForm):
     permissions = forms.ModelMultipleChoiceField(
         queryset=Permission.objects.all(),
@@ -120,7 +127,7 @@ class CustomUserChangeForm(UserChangeForm):
 
     class Meta:
         model = User
-        fields = ["username", "email", "first_name", "last_name", "phone", "occupation", "is_staff",  "permissions"]
+        fields = ["profile_picture", "username", "email", "first_name", "last_name", "phone", "occupation", "is_staff",  "permissions"]
 
     def __init__(self, *args, **kwargs):
         user = kwargs.get('instance')
@@ -161,7 +168,7 @@ class CustomUserChangeForm(UserChangeForm):
 
         # Get user's current permissions
         if user:
-            user_permissions = set(user.user_permissions.all())  # Convert to a set for easy checking
+            user_permissions = set(user.user_permissions.all())
 
             # Set initial values based on user's existing permissions
             initial_right = [p.id for p in self.permissions_right if p in user_permissions]
@@ -176,23 +183,23 @@ class CustomUserChangeForm(UserChangeForm):
             required=False,
             widget=forms.CheckboxSelectMultiple,
             label="الصلاحيـــات",
-            initial=initial_right  # Set initial selection
+            initial=initial_right
         )
         self.fields["permissions_left"] = forms.ModelMultipleChoiceField(
             queryset=Permission.objects.filter(id__in=[p.id for p in self.permissions_left]),
             required=False,
             widget=forms.CheckboxSelectMultiple,
             label="",
-            initial=initial_left  # Set initial selection
+            initial=initial_left
         )
 
         # Use Crispy Forms Layout helper
         self.helper = FormHelper()
-        self.helper.form_tag = False  # Disable the form tag for custom modal handling
+        self.helper.form_tag = False
         self.helper.layout = Layout(
             "username",
             "email",
-            HTML("<hr>"),  # Separator line
+            HTML("<hr>"),
             Div(
                 Div(Field("first_name", css_class="col-md-6"), css_class="col-md-6"),
                 Div(Field("last_name", css_class="col-md-6"), css_class="col-md-6"),
@@ -203,7 +210,7 @@ class CustomUserChangeForm(UserChangeForm):
                 Div(Field("occupation", css_class="col-md-6"), css_class="col-md-6"),
                 css_class="row"
             ),
-            HTML("<hr>"),  # Separator line
+            HTML("<hr>"),
             Div(
                 Div(Field("permissions_right", css_class="col-md-6"), css_class="col-md-6"),
                 Div(Field("permissions_left", css_class="col-md-6"), css_class="col-md-6"),
@@ -222,12 +229,14 @@ class CustomUserChangeForm(UserChangeForm):
         user.user_permissions.set(self.cleaned_data["permissions_left"] | self.cleaned_data["permissions_right"])
         return user
 
-class ResetPasswordForm(SetPasswordForm):  # ✅ Change from PasswordChangeForm to SetPasswordForm
+
+# Custom User Reset Password form layout
+class ResetPasswordForm(SetPasswordForm):
     username = forms.CharField(label="اسم المستخدم", widget=forms.TextInput(attrs={"readonly": "readonly"}))
 
     def __init__(self, user, *args, **kwargs):
         super().__init__(user, *args, **kwargs)
-        self.fields['username'].initial = user.username  # Ensure username is displayed
+        self.fields['username'].initial = user.username
         self.helper = FormHelper()
         self.fields["new_password1"].label = "كلمة المرور الجديدة"
         self.fields["new_password2"].label = "تأكيد كلمة المرور"
@@ -246,3 +255,34 @@ class ResetPasswordForm(SetPasswordForm):  # ✅ Change from PasswordChangeForm 
         if commit:
             user.save()
         return user
+
+
+class UserProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'phone', 'occupation', 'profile_picture']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].disabled = True  # Prevent the user from changing their username
+        self.fields['email'].label = "البريد الالكتروني"  # Prevent the user from changing their email
+        self.fields['first_name'].label = "الاسم الاول"
+        self.fields['last_name'].label = "اللقب"
+        self.fields['phone'].label = "رقم الهاتف"
+        self.fields['occupation'].label = "جهة العمل"
+        self.fields['profile_picture'].label = "الصورة الشخصية"
+
+    def clean_profile_picture(self):
+        profile_picture = self.cleaned_data.get('profile_picture')
+
+        # Check if the uploaded file is a valid image
+        if profile_picture:
+            try:
+                img = Image.open(profile_picture)
+                img.verify()  # Verify the image is not corrupt
+                # Check if the image size is within the limits
+                if img.width > 600 or img.height > 600:
+                    raise ValidationError("The image must not exceed 600x600 pixels.")
+            except Exception as e:
+                raise ValidationError("Invalid image file.")
+        return profile_picture

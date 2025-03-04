@@ -1,3 +1,5 @@
+# Imports of the required python modules and libraries
+######################################################
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth import get_user_model
@@ -13,4 +15,4 @@ class CustomUserAdmin(UserAdmin):
     ordering = ['username']
 
 admin.site.register(User, CustomUserAdmin)
-admin.site.unregister(Group)  # Optionally, unregister Group if not needed
+admin.site.unregister(Group)

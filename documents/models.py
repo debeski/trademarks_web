@@ -1,11 +1,10 @@
-# Imports:
-##########
+# Imports of the required python modules and libraries
+######################################################
 from django.db import models
 import uuid
 import os
 import json
 from django.http import JsonResponse
-from django.views import View
 from datetime import datetime, time
 import random
 import string
@@ -179,7 +178,7 @@ class DecreeCategory(models.Model):
         return 'documents.forms.DecreeCategoryForm'
 
 
-# Document Models:
+# Primary Models:
 ##################
 class Decree(models.Model):
     """Model representing a minister decree."""
@@ -233,7 +232,6 @@ class Decree(models.Model):
     @classmethod
     def get_form_class(cls):
         return 'documents.forms.DecreeForm'
-
 
 class Publication(models.Model):
     """Model representing a minister decree."""
@@ -293,7 +291,6 @@ class Publication(models.Model):
     @classmethod
     def get_form_class(cls):
         return 'documents.forms.PublicationForm'
-
 
 class Objection(models.Model):
     """Model representing a minister decree."""
@@ -366,7 +363,6 @@ class Objection(models.Model):
         if context == "objection_pub_pick":
             return "documents.forms.ObjectionPubPickForm"
         return "documents.forms.ObjectionForm"
-
 
 class FormPlus(models.Model):
     """Ambiguous Model representing a report of some sort."""

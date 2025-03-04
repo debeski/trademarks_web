@@ -1,7 +1,7 @@
+# Imports of the required python modules and libraries
+######################################################
 from django import forms
 import django_filters
-from django_filters.widgets import BooleanWidget
-from django.forms.widgets import TextInput
 from django.db.models import Q
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Submit, Field, HTML, Div
@@ -15,6 +15,8 @@ def set_first_choice(field, placeholder):
         field.empty_label = placeholder
 
 
+# Section models filters
+########################
 class CountryFilter(django_filters.FilterSet):
 
     keyword = django_filters.CharFilter(
@@ -142,6 +144,8 @@ class DecreeCategoryFilter(django_filters.FilterSet):
         )
 
 
+# Primary models filters
+########################
 class DecreeFilter(django_filters.FilterSet):
 
     # Define custom filters for search
@@ -251,7 +255,6 @@ class DecreeFilter(django_filters.FilterSet):
             except ValueError:
                 pass
         return queryset.filter(q)
-
 
 class PublicationFilter(django_filters.FilterSet):
 
@@ -367,7 +370,6 @@ class PublicationFilter(django_filters.FilterSet):
                 pass
         return queryset.filter(q)
 
-
 class ObjectionFilter(django_filters.FilterSet):
     
     # Define custom filters for search
@@ -445,7 +447,6 @@ class ObjectionFilter(django_filters.FilterSet):
             except ValueError:
                 pass
         return queryset.filter(q)
-
 
 class FormPlusFilter(django_filters.FilterSet):
 

@@ -1,6 +1,9 @@
+# Imports of the required python modules and libraries
+######################################################
 from django.apps import AppConfig
 from django.utils.translation import gettext_lazy as _
 
+# Translate permission names to Arabic
 class DocumentsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'documents'
