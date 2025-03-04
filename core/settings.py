@@ -43,7 +43,7 @@ LOGOUT_REDIRECT_URL = 'index'
 #########################################################################################################
 # SECURITY WARNING: keep the secret key used in production secret!
 # The SECRET_KEY is used for cryptographic signing and should be kept private in production.
-SECRET_KEY = 'django-insecure-cdo1^@rz#s)d69d^0snm1(*!bfe#!eix%4z^%fsj!!hwskl107'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-cdo1^@rz#s)d69d^0snm1(*!bfe#!eix%4z^%fsj!!hwskl107')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG should be set to False in production to prevent sensitive data exposure in errors.

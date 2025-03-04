@@ -8,7 +8,7 @@ from django.conf import settings  # Use this to reference the custom user model
 class CustomUser(AbstractUser):
     phone = models.CharField(max_length=15, blank=True, null=True, verbose_name="رقم الهاتف")
     occupation = models.CharField(max_length=100, blank=True, null=True, verbose_name="جهة العمل")
-    profile_picture = models.ImageField(upload_to='media/profile_pictures/', null=True, blank=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
 
     @property
     def full_name(self):

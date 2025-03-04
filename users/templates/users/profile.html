@@ -67,8 +67,8 @@
                 <div class="modal-body">
                     <form method="post">
                         {% csrf_token %}
-                        {{ password_form.as_p }}
-                        <button type="submit" name="change_password" class="btn btn-primary">تغيير</button>
+                        {{ password_form|crispy }}
+                        <button type="submit" name="change_password" class="btn btn-primary">تـغـيــيــر</button>
                     </form>
                 </div>
             </div>

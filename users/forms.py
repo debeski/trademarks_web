@@ -12,6 +12,7 @@ from crispy_forms.layout import Layout, Field, Div, HTML, Fieldset, Button, Subm
 from crispy_forms.bootstrap import FormActions
 from PIL import Image
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
 
@@ -286,3 +287,18 @@ class UserProfileEditForm(forms.ModelForm):
             except Exception as e:
                 raise ValidationError("Invalid image file.")
         return profile_picture
+
+
+class ArabicPasswordChangeForm(PasswordChangeForm):
+    old_password = forms.CharField(
+        label=_('كلمة المرور القديمة'),
+        widget=forms.PasswordInput(attrs={'autocomplete': 'current-password', 'dir': 'rtl'}),
+    )
+    new_password1 = forms.CharField(
+        label=_('كلمة المرور الجديدة'),
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'dir': 'rtl'}),
+    )
+    new_password2 = forms.CharField(
+        label=_('تأكيد كلمة المرور الجديدة'),
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'dir': 'rtl'}),
+    )

@@ -7,7 +7,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.utils.decorators import method_decorator
 from django_tables2 import RequestConfig
 from .tables import UserTable, UserActivityLogTable
-from .forms import CustomUserCreationForm, CustomUserChangeForm, PasswordChangeForm, ResetPasswordForm, UserProfileEditForm
+from .forms import CustomUserCreationForm, CustomUserChangeForm, ArabicPasswordChangeForm, ResetPasswordForm, UserProfileEditForm
 from .filters import UserFilter
 from .models import UserActivityLog
 from django_filters.views import FilterView
@@ -59,7 +59,6 @@ def user_list(request):
         "filter": user_filter,
         "users": user_filter.qs  # Ensure 'users' is available in the template
     })
-
 
 
 # Function for creating a new User
@@ -141,10 +140,21 @@ def reset_password(request, user_id):
 @login_required
 def user_profile(request):
     user = request.user
-    password_form = PasswordChangeForm(user)
+    password_form = ArabicPasswordChangeForm(user)
+    if request.method == 'POST':
+        password_form = ArabicPasswordChangeForm(user, request.POST)
+        if password_form.is_valid():
+            password_form.save()
+            update_session_auth_hash(request, password_form.user)  # Prevent user from being logged out
+            messages.success(request, 'تم تغيير كلمة المرور بنجاح!')
+            return redirect('user_profile')
+        else:
+            # Log form errors
+            messages.error(request, "هناك خطأ في البيانات المدخلة")
+            print(password_form.errors)  # You can log or print errors here for debugging
 
     return render(request, 'users/profile.html', {
-        'user': request.user,
+        'user': user,
         'password_form': password_form
     })
 
@@ -166,21 +176,3 @@ def edit_profile(request):
 
     return render(request, 'users/profile_edit.html', {'form': form})
 
-
-# Function for changing password
-@login_required
-def change_password(request):
-    user = request.user
-    if request.method == 'POST':
-        password_form = PasswordChangeForm(user, request.POST)
-        if password_form.is_valid():
-            password_form.save()
-            update_session_auth_hash(request, password_form.user)  # Prevent user from being logged out
-            messages.success(request, 'تم تغيير كلمة المرور بنجاح!')
-            return redirect('user_profile')
-    else:
-        password_form = PasswordChangeForm(user)
-
-    return render(request, 'users/profile.html', {
-        'password_form': password_form
-    })

@@ -45,8 +45,8 @@ class PublicationAdmin(admin.ModelAdmin):
 
 class ObjectionAdmin(admin.ModelAdmin):
     form = ObjectionForm
-    list_display = ['pub_number', 'name', 'job', 'nationality', 'is_paid']
-    search_fields = ['pub_number', 'name', 'com_name']
+    list_display = ['number', 'name', 'job', 'nationality', 'is_paid']
+    search_fields = ['number', 'name', 'com_name']
     list_filter = ['is_paid']
 
 

@@ -323,7 +323,7 @@ class Objection(models.Model):
 
     class Meta:
         verbose_name = "اعتراض" 
-        verbose_name_plural = "الاعتراضات" 
+        verbose_name_plural = "اعتراضات" 
         ordering = ['-id']
         permissions = [
             ("confirm_objection_fee", " قبول او رفض ايصال رسوم اعتراض "),
