@@ -10,6 +10,12 @@ __pycache__/
 # Ignore media folder
 /media/
 
+# Ignore macOS created files
+.DS_store
+
+# Ignore trademarks-base (python) Dockerfile
+pyDockerfile
+
 # Ignore environment files
 # .env
 
