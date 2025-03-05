@@ -20,6 +20,13 @@ RUN useradd -m vscode && \
     adduser vscode sudo && \
     chown -R vscode:vscode /app
 
+# Create logs and media directories, and set the correct permissions
+RUN mkdir -p /app/logs /app/media && \
+    chown -R vscode:vscode /app/logs /app/media
+
+# Give vscode full permissions on the application directory
+RUN chmod -R 777 /app
+
 # Switch to non-root user
 USER vscode
 
@@ -30,8 +37,12 @@ COPY --chown=vscode:vscode requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
+# Switch to root user
+USER root
+
 # Expose Django's default port
 EXPOSE 8000
+
 
 # Set default command (will be overridden by the main Dockerfile)
 CMD ["python"]
