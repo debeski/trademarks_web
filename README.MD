@@ -71,7 +71,7 @@ v0.3.8 - Patch Update
 v0.4.2 - Minor Update
 	•	Introduced Categories model, linked to Publications and Decrees.
 	•	User system added with basic functionality for adding, editing, and deleting users.
-	•	Refactored the Objection model to allow users to view their objection status via a unique code or QR code, streamlining the objection review process.
+	•	Refactored the Objection model to allow users to view their objection status via a unique code, streamlining the objection review process.
 	•	Refined the Objection form’s UI for better clarity and user experience.
 
 v0.4.4 - Minor Enhancements
@@ -85,7 +85,7 @@ v0.4.6 - Patch Update
 
 v0.5.1 - Major Update
 	•	Interactive Sidebar revamped for better navigation and mobile support.
-	•	Improved admin interface for managing and reviewing objections, with advanced filtering capabilities.
+	•	Improved admin interface for managing and reviewing all models, with advanced filtering capabilities.
 	•	Introduced a plotly chart for the index page to keep track of inserted documents.
 	•	Added PDF rendering to detail views for all models.
 	•	Refactored index page for a friendlier experience for the public users.
@@ -143,3 +143,19 @@ v0.8.7 - Major Update
 	•	Refined the Docker-compose file to reflect real-time changes using a volume within base image.
 	•	Added soft-deletion permissions to superuser and made them get logged in the user log.
 
+v0.9.1 - Patch Update
+	•	Fixed media and staticfiles permission issues inside the container.
+	•	Enhanced the User creation form and added further security measures.
+	•	Fixed the category not being submitted correctly in the new publication form.
+
+v0.9.7 - Major Features and Refinements
+	•	Changed the Decree model to be accessable for view by the public.
+	•	Fixed permission issues with decree model and logging.
+	•	Introduced a new view for decrees for public view and download of related decrees.
+	•	Enhanced the overall colors and shadows of cards and their content.
+	•	Added a link to download objection pdf to the public objection tracking modal.
+	•	Enhanced the number fields logic on Publications and Objections.
+
+v0.9.9 - Patch Update
+	•	Fixed filters on the objection publication pick interface.
+	•	Fixed some clipping and out of order visuals in forms and table views.

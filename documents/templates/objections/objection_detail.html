@@ -37,14 +37,14 @@
 
 
     <!-- Dynamic Card Container for Publication Details -->
-    <div id="publication-objection" class="container-fluid mb-3">
-        <div class="card border-light shadow mb-3">
+    <div id="publication-objection" class="container-fluid mb-4">
+        <div class="card border-light shadow h3 mb-4">
             <div class="card-header text-light text-center pe-5 {% if objection.status == 3 %}bg-info{% elif objection.status == 4 %}bg-success{% elif objection.status == 5 %}bg-danger{% else %}bg-warning{% endif %}">
-                    <h4 class="card-title pt-1">حالة الاعتراض: <strong>{{ objection.get_status_display }}</strong></h4>
+                    <p class="card-title pt-1">حالة الاعتراض: <strong>{{ objection.get_status_display }}</strong></p>
             </div>
             <div class="card-body d-flex">
             {% if perms.documents.confirm_objection_fee %}
-                {% if objection.status <= 2 %}
+                {% if objection.status == 2 %}
                     <!-- Modal Trigger for Status Change -->
                 <button class="flex-fill btn btn-primary" title="تأكيد صلاحية ايصال الدفع المرفق" href="#" data-bs-toggle="modal" data-bs-target="#statusModal"
                         data-doc-id="{{ objection.id }}" data-doc-number="{{ objection.number }}">
@@ -76,8 +76,8 @@
         </div>
 
         <div class="card border-light shadow">
-            <div class="card-header text-center pe-5">
-                    <h5 class="card-title mt-1">تفـــاصيل الاشهـــار المعترض عليه</h5>
+            <div class="card-header text-bg-primary text-center pe-5">
+                    <h5 class="card-title h3 mt-1">تفـــاصيل الاشهـــار المعترض عليه</h5>
             </div>
             <div class="card-body row">
                 <div class="col-md-8">
@@ -132,7 +132,6 @@
             {% endif %}
             </div>
         </div>
-        <hr>
     </div>
 
 
@@ -140,11 +139,11 @@
     <div class="row">
         <!-- Left Column: Objection Details -->
         <div class="col-md-7">
-            <div class="card border-light shadow">
-                <div class="card-header text-center pe-5">
-                    <h5 class="card-title mb-0">تفاصيل الاعتراض</h5>
+            <div class="card border-light shadow mb-4">
+                <div class="card-header text-bg-primary text-center pe-5">
+                    <h5 class="card-title h3 mb-0">تفاصيل الاعتراض</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body h4">
                     <h5><strong>رقم الاعتراض: </strong> {{ objection.number }}</h5>
                     <h5><strong>اسم مقدم الاعتراض: </strong> {{ objection.name }}</h5>
                     <h5><strong>المهنة: </strong> {{ objection.job }}</h5>
@@ -166,15 +165,15 @@
         <!-- Right Column: PDF -->
         <div class="col">
             <div class="card border-light shadow">
-                <div class="card-header text-center pe-5">
-                    <h5 class="card-title mb-0">معاينة الملف المرفق بالاعتراض</h5>
+                <div class="card-header text-bg-primary text-center pe-5">
+                    <h5 class="card-title h3 mb-0">معاينة الايصال المرفق بالاعتراض</h5>
                 </div>
                 <div class="card-body">
                     {% if objection.receipt_file %}
                         <div id="pdf-viewer-container" class="border rounded p-2">
                             <canvas id="pdf-canvas" class="w-100"></canvas>
                     {% else %}
-                        <p class="text-muted">لا يوجد ملف PDF لهذا الاعتراض</p>
+                        <p class="text-muted">لا يوجد ايصال لهذا الاعتراض.</p>
                     {% endif %}
                 </div>
             </div>
@@ -183,22 +182,22 @@
 
     <div class="mt-4 justify-content-end g-2">
         {% if objection.status <= 2 %}
-        <a class="btn btn-danger" href="{% url 'gen_obj_pdf' objection.id %}" title="تحميل نموذج الإعتراض">
-            <i class="bi bi-file-earmark-pdf-fill text-light me-1 h4"></i> تحميل نموذج الإعتراض
+        <a class="btn btn-outline-danger me-2" href="{% url 'gen_obj_pdf' objection.id %}" title="تحميل نموذج الإعتراض">
+            <i class="bi bi-file-earmark-pdf-fill me-2 h4"></i> تحميل نموذج الإعتراض
         </a>
         {% endif %}
         {% if objection.receipt_file %}
-        <a class="btn btn-success" href="{% url 'download_objection_receipt' objection.id %}" title="تحميل ايصال الدفع">
-            <i class="bi bi-file-earmark-arrow-down-fill text-light me-1 h4"></i> تحميل الايصال
+        <a class="btn btn-outline-success me-2" href="{% url 'download_objection_receipt' objection.id %}" title="تحميل ايصال الدفع">
+            <i class="bi bi-file-earmark-arrow-down-fill me-2 h4"></i> تحميل الايصال
         </a>
         {% endif %}
         {% if objection.pdf_file %}
-        <a class="btn btn-primary" href="{% url 'download_objection' objection.id %}" title="تحميل الملف المرفق">
-            <i class="bi bi-file-earmark-arrow-down-fill text-light me-1 h4"></i> تحميل المرفق
+        <a class="btn btn-outline-info me-2" href="{% url 'download_objection' objection.id %}" title="تحميل الملف المرفق">
+            <i class="bi bi-file-earmark-arrow-down-fill me-2 h4"></i> تحميل المرفق
         </a>
         {% endif %}
-        <a class="btn btn-secondary" href="javascript:history.back()" title="رجـــوع">
-            <i class="bi bi-arrow-return-left text-light me-1 h4"></i> رجـــوع
+        <a class="btn btn-secondary me-2" href="javascript:history.back()" title="رجـــوع">
+            <i class="bi bi-arrow-return-left me-2 h4"></i> رجـــوع
         </a>
     </div>
 

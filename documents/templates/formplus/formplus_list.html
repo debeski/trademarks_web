@@ -31,6 +31,12 @@
         </div>
     </div>
 
+    {% if not request.user.is_authenticated %}
+        <div class="d-flex justify-content-end p-4">
+            <a class="btn btn-secondary btn-lg" href="{% url 'index' %}">رجـــــوع</a>
+        </div>
+    {% endif %}
+
     {% if request.user.is_authenticated %}
         <form id="deleteForm" method="post">
         {% csrf_token %}

@@ -13,7 +13,7 @@
     {% if record.status == 5 %}
         <span title="هذه المعارضة تم رفضها"><i class="bi bi-x-circle-fill text-danger"></i> </span> <!-- Display an asterisk with alt text -->
     {% endif %}
-    {% if objection.status <= 2 %}
+    {% if record.status <= 2 %}
     <a href="{% url 'gen_obj_pdf' record.id %}" title="تحميل نموذج الاعتراض لهذه العلامة"><i class="bi bi-file-earmark-pdf-fill text-danger" style="font-size: 36px;"></i>
     </a>
     {% endif %}

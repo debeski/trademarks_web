@@ -9,7 +9,8 @@ from datetime import datetime, time
 import random
 import string
 from django.core.validators import FileExtensionValidator
-
+from django.db.models import Max
+from django.core.exceptions import ValidationError
 
 # Status Choices Lists:
 #######################
@@ -236,27 +237,27 @@ class Decree(models.Model):
 class Publication(models.Model):
     """Model representing a minister decree."""
     year = models.IntegerField(null=True, blank=True)
-    number = models.IntegerField(blank=False, null=False, verbose_name="رقم الاشهار")
+    number = models.IntegerField(blank=False, null=False, verbose_name="ر.ت")
     decree = models.ForeignKey(Decree, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="رقم القرار")
     decree_number = models.IntegerField(blank=False, null=False, verbose_name="رقم القرار")
 
     applicant = models.CharField(max_length=255, blank=False, verbose_name="طالب التسجيل")
     owner = models.CharField(max_length=255, blank=False, verbose_name="مالك العلامة")
     country = models.ForeignKey(Country, on_delete=models.PROTECT,  verbose_name="الدولة")
-    address = models.CharField(max_length=255, blank=False, verbose_name="العنوان")
+    address = models.CharField(max_length=255, blank=True, null=True, verbose_name="العنوان")
     date_applied = models.DateField(blank=False, verbose_name="تاريخ التقديم")
     number_applied = models.IntegerField(blank=False, verbose_name="رقم التسجيل")
     ar_brand = models.CharField(max_length=255, blank=False, verbose_name="العلامة (عربي)")
     en_brand = models.CharField(max_length=255, blank=False, verbose_name="العلامة (انجليزي)")
     category = models.ForeignKey(DecreeCategory, on_delete=models.PROTECT, verbose_name="الفئة")
     
-    img_file = models.ImageField(upload_to=generate_random_filename, blank=True, verbose_name="الصورة")
-    attach = models.FileField(upload_to=generate_random_filename, blank=True, verbose_name="المرفقات", validators=[FileExtensionValidator(allowed_extensions=['pdf'], message="يرجى رفع ملف PDF فقط.")])
+    img_file = models.ImageField(upload_to=generate_random_filename, blank=True, null=True, verbose_name="الصورة")
+    attach = models.FileField(upload_to=generate_random_filename, blank=True, null=True, verbose_name="المرفقات", validators=[FileExtensionValidator(allowed_extensions=['pdf'], message="يرجى رفع ملف PDF فقط.")])
     e_number = models.IntegerField(blank=False, null=False, verbose_name="رقم النشرية")
     status = models.IntegerField(choices=PublicationStatus.choices, default=PublicationStatus.INITIAL, verbose_name="حالة التسجيل")
     
     is_hidden = models.BooleanField(default=False, verbose_name="مخفي")
-    notes = models.TextField(max_length=999, blank=True, verbose_name="ملاحظات")
+    notes = models.TextField(max_length=999, blank=True, null=True, verbose_name="ملاحظات")
     
     objection_date = models.DateField(blank=True, null=True, verbose_name="تاريخ الاعتراض")
     is_objected = models.BooleanField(default=False, verbose_name="تم الاعتراض عليه")
@@ -274,6 +275,21 @@ class Publication(models.Model):
             ("pub_change_status", " تغيير حالة إشهار من مبدئي الى نهائي "),
         ]
 
+    def save(self, *args, **kwargs):
+        # Check if we are updating an existing record
+        if self.pk:
+            # Exclude the current instance from the check
+            existing_publications = Publication.objects.filter(
+                number=self.number,
+                created_at__year=self.created_at.year if self.created_at else datetime.now().year
+            ).exclude(pk=self.pk)  # Exclude the current object
+            
+            if existing_publications.exists():
+                raise ValidationError(f"الرقم {self.number} موجود بالفعل في السنة {self.created_at.year}. يرجى استخدام رقم مختلف.")
+        
+        # Call the parent save method
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return str(self.number)
 
@@ -284,9 +300,12 @@ class Publication(models.Model):
             return "documents.tables.ObjectionPubPickTable"
         return "documents.tables.PublicationTable"
 
-    @classmethod
-    def get_filter_class(cls):
-        return 'documents.filters.PublicationFilter'
+    @staticmethod
+    def get_filter_class(context="default"):
+        """Returns the appropriate table class based on context."""
+        if context == "objection_pub_pick":
+            return "documents.filters.ObjectionPubPickFilter"
+        return "documents.filters.PublicationFilter"
 
     @classmethod
     def get_form_class(cls):
@@ -294,7 +313,7 @@ class Publication(models.Model):
 
 class Objection(models.Model):
     """Model representing a minister decree."""
-    number = models.IntegerField(unique=True, blank=False, null=False, verbose_name="ر.ت")
+    number = models.IntegerField(blank=False, null=False, verbose_name="ر.ت")
     pub = models.ForeignKey(Publication, on_delete=models.PROTECT, verbose_name="الاشهار")
     name = models.CharField(max_length=64, blank=False, null=False, verbose_name="اسم ولقب مقدم الشكوى")
     job = models.CharField(max_length=24, blank=False, null=False, verbose_name="المهنة")
@@ -332,11 +351,18 @@ class Objection(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.number:
-            last_objection = Objection.objects.order_by('-number').first()
+            current_year = self.created_at.year  # Extract the year from the created_at field
+            
+            # Get the maximum number for the current year
+            last_objection = Objection.objects.filter(created_at__year=current_year).aggregate(Max('number'))['number__max']
+            
+            # If there are objections for the current year, increment the highest number, otherwise start at 1
             if last_objection:
-                self.number = last_objection.number + 1
+                self.number = last_objection + 1
             else:
                 self.number = 1
+                
+        super().save(*args, **kwargs)
 
         # Generate a unique code only if the object is being created (not updated)
         if not self.unique_code:

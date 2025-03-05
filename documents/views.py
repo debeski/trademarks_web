@@ -375,15 +375,17 @@ def core_models_view(request):
 # Views for Decree Model
 #####################################################################
 # Main table Function for Decree Model
-@login_required
+
 def decree_list(request):
-    if not request.user.has_perm('documents.view_decree'):
-        messages.error(request, "ليس لديك الصلاحية الكافية لزيارة هذا القسم!.")
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    # if not request.user.has_perm('documents.view_decree'):
+    #     messages.error(request, "ليس لديك الصلاحية الكافية لزيارة هذا القسم!.")
+    #     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     
     # Get the base queryset (only non-deleted items)
-    qs = Decree.objects.filter(deleted_at__isnull=True)
-
+    if request.user.has_perm('documents.view_decree'):
+        qs = Decree.objects.filter(deleted_at__isnull=True)
+    else:
+        qs = Decree.objects.filter(deleted_at__isnull=True, is_placeholder=False)
     # Get the status from GET parameters (None means "ALL")
     status = request.GET.get("status")
     if status is not None:
@@ -419,56 +421,121 @@ def decree_list(request):
 
 
 # Adding and Editing Functions for Decree Model
-@login_required
-def add_edit_decree(request, document_id=None):
-    if not request.user.has_perm('documents.add_decree'):
-        messages.error(request, "ليس لديك الصلاحية الكافية للادخال والتعديل!.")
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+# @login_required
+# def add_edit_decree(request, document_id=None):
+#     if not request.user.has_perm('documents.add_decree'):
+#         messages.error(request, "ليس لديك الصلاحية الكافية للادخال والتعديل!.")
+#         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     
-    if document_id:
-        instance = get_object_or_404(Decree, id=document_id)
-    else:
-        instance = None
+#     if document_id:
+#         instance = get_object_or_404(Decree, id=document_id)
+#     else:
+#         instance = None
 
-    # Dynamically import the form class
+#     # Dynamically import the form class
+#     form_class_path = Decree.get_form_class()
+#     form_class = get_class_from_string(form_class_path)
+#     form = form_class(request.POST or None, request.FILES or None, instance=instance)
+    
+#     if request.method == 'POST' and form.is_valid():
+#         # Add the check here for is_placeholder field
+#         if instance and instance.is_placeholder:
+#             instance.is_placeholder = False
+#             instance.save()
+#         instance = form.save()
+
+#         # Log the action
+#         UserActivityLog.objects.create(
+#             user=request.user,
+#             action="CREATE" if not document_id else "UPDATE",
+#             model_name='قرار',
+#             object_id=instance.pk,
+#             number=instance.number,
+#             timestamp=timezone.now(),
+#             ip_address=get_client_ip(request),  # Assuming you have this function
+#             user_agent=request.META.get("HTTP_USER_AGENT", ""),
+#         )
+#         return redirect(reverse('decree_list'))
+
+#     return render(request, 'decrees/decree_form.html', {
+#         'form': form,
+#     })
+
+@login_required
+def add_decree(request):
+    """Function to add a new Decree."""
+    if not request.user.has_perm('documents.add_decree'):
+        messages.error(request, "ليس لديك الصلاحية الكافية للإدخال!")
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
     form_class_path = Decree.get_form_class()
     form_class = get_class_from_string(form_class_path)
-    form = form_class(request.POST or None, request.FILES or None, instance=instance)
-    
+    form = form_class(request.POST or None, request.FILES or None)
+
     if request.method == 'POST' and form.is_valid():
-        # Add the check here for is_placeholder field
-        if instance and instance.is_placeholder:
-            instance.is_placeholder = False
-            instance.save()
         instance = form.save()
 
         # Log the action
         UserActivityLog.objects.create(
             user=request.user,
-            action="CREATE" if not document_id else "UPDATE",
+            action="CREATE",
             model_name='قرار',
             object_id=instance.pk,
             number=instance.number,
             timestamp=timezone.now(),
-            ip_address=get_client_ip(request),  # Assuming you have this function
+            ip_address=get_client_ip(request),
             user_agent=request.META.get("HTTP_USER_AGENT", ""),
         )
         return redirect(reverse('decree_list'))
 
-    return render(request, 'decrees/decree_form.html', {
-        'form': form,
-    })
+    return render(request, 'decrees/decree_form.html', {'form': form})
+
+
+@login_required
+def edit_decree(request, document_id):
+    """Function to edit an existing Decree."""
+    if not request.user.has_perm('documents.change_decree'):
+        messages.error(request, "ليس لديك الصلاحية الكافية للتعديل!")
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+    instance = get_object_or_404(Decree, id=document_id)
+
+    form_class_path = Decree.get_form_class()
+    form_class = get_class_from_string(form_class_path)
+    form = form_class(request.POST or None, request.FILES or None, instance=instance)
+
+    if request.method == 'POST' and form.is_valid():
+        # Check if the decree was auto-created and remove placeholder flag
+        if instance.is_placeholder:
+            instance.is_placeholder = False
+            instance.save()
+
+        instance = form.save()
+
+        # Log the action
+        UserActivityLog.objects.create(
+            user=request.user,
+            action="UPDATE",
+            model_name='قرار',
+            object_id=instance.pk,
+            number=instance.number,
+            timestamp=timezone.now(),
+            ip_address=get_client_ip(request),
+            user_agent=request.META.get("HTTP_USER_AGENT", ""),
+        )
+        return redirect(reverse('decree_list'))
+
+    return render(request, 'decrees/decree_form.html', {'form': form})
 
 
 # PDF download Function for Decree Model
-@login_required
 def download_decree(request, document_id):
     """
     Downloads a decree's PDF file, attachment, or both as a ZIP file.
     """
-    if not request.user.has_perm('documents.download_decree'):
-        messages.error(request, "ليس لديك الصلاحية الكافية لتحميل هذا الملف!.")
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    # if not request.user.has_perm('documents.download_decree'):
+    #     messages.error(request, "ليس لديك الصلاحية الكافية لتحميل هذا الملف!.")
+    #     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     
     decree = get_object_or_404(Decree, pk=document_id)
 
@@ -558,19 +625,21 @@ def soft_delete_decree(request, document_id):
 
 
 # Detail Function for Decree Model
-@login_required
 def decree_detail(request, document_id):
     """
     Displays details of a decree with a PDF preview.
     """
-    if not request.user.has_perm('documents.view_decree'):
-        messages.error(request, "ليس لديك الصلاحية الكافية لزيارة هذا القسم!.")
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-    
+    # if not request.user.has_perm('documents.view_decree'):
+    #     messages.error(request, "ليس لديك الصلاحية الكافية لزيارة هذا القسم!.")
+    #     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    if request.user.is_authenticated:
+        user = request.user
+    else:
+        user = None
     decree = get_object_or_404(Decree, pk=document_id)
     # Log the action
     UserActivityLog.objects.create(
-        user=request.user,
+        user=user,
         action="VIEW",
         model_name='قرار',
         object_id=decree.pk,
@@ -1043,8 +1112,7 @@ def objection_pub_pick(request):
     qs = Publication.objects.filter(deleted_at__isnull=True, status=1)
 
     # Use the same filter logic but for status=1 only
-    filter_class_path = Publication.get_filter_class()
-    filter_class = get_class_from_string(filter_class_path)
+    filter_class = get_class_from_string(Publication.get_filter_class(context="objection_pub_pick"))
     publication_filter = filter_class(request.GET, queryset=qs)
 
     # Use a separate table for the new page
@@ -1304,7 +1372,8 @@ def check_objection_status(request):
                     "status": objection.get_status_display(),
                     "com_name": objection.com_name,
                     "brand": f"{objection.pub.ar_brand} - {objection.pub.en_brand} <br> الفئة: {objection.pub.category}",
-                    "date": objection.created_at.strftime("%d-%m-%Y")
+                    "date": objection.created_at.strftime("%d-%m-%Y"),
+                    "file": reverse('gen_obj_pdf', kwargs={'obj_id': objection.id})
                 })
             else:
                 return JsonResponse({"success": False, "error": "لم يتم العثور على اعتراض مطابق."}, status=404)

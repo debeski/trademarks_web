@@ -37,11 +37,11 @@
     <div class="row">
         <!-- Left Column: FormPlus Details -->
         <div class="col-md-7">
-            <div class="card border-light shadow-sm">
-                <div class="card-header text-center pe-5">
-                    <h5 class="card-title mb-0">تفاصيل الوثيقة</h5>
+            <div class="card border-light shadow">
+                <div class="card-header text-bg-primary text-center pe-5">
+                    <h5 class="card-title h3 mb-0">تفاصيل الوثيقة</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body h4">
                     <p><strong>رقم الوثيقة: </strong> {{ formplus.number|default:"-" }}</p>
                     <p><strong>تاريخ الوثيقة: </strong> {{ formplus.date|date:"Y-m-d" }}</p>
                     <p><strong>الحكومة: </strong> {{ formplus.government|default:"-" }}</p>
@@ -51,22 +51,22 @@
                     <br>
                 </div>
             </div>
-            <div class="mt-4">
+            <div class="mt-4 mb-4">
                 {% if perms.documents.change_formplus %}
-                <a class="btn btn-warning text-light" href="{% url 'edit_formplus' formplus.id %}" title="تعديل">
-                    <i class="bi bi-pencil-square text-light me-1 h4"></i> تعديل
+                <a class="btn btn-outline-primary me-2" href="{% url 'edit_formplus' formplus.id %}" title="تعديل">
+                    <i class="bi bi-pencil-square me-2 h4"></i> تعديل
                 </a>
                 {% endif %}
-                <a class="btn btn-secondary" href="javascript:history.back()" title="رجـــوع">
-                    <i class="bi bi-arrow-return-left text-light me-1 h4"></i> رجـــوع
+                <a class="btn btn-secondary me-2" href="javascript:history.back()" title="رجـــوع">
+                    <i class="bi bi-arrow-return-left me-2 h4"></i> رجـــوع
                 </a>
             </div>
         </div>
 
         <!-- Right Column: PDF Preview -->
         <div class="col">
-            <div class="card border-light shadow-sm">
-                <div class="card-header text-center pe-5">
+            <div class="card border-light shadow">
+                <div class="card-header text-bg-primary text-center pe-5">
                     <h5 class="card-title mb-0">معاينة ملف الوثيقة</h5>
                 </div>
                 <div class="card-body">

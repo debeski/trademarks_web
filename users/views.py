@@ -53,11 +53,10 @@ def user_list(request):
     
     # Paginate table (10 users per page)
     RequestConfig(request, paginate={'per_page': 10}).configure(table)
-    
     return render(request, "users/manage_users.html", {
         "table": table,
         "filter": user_filter,
-        "users": user_filter.qs  # Ensure 'users' is available in the template
+        "users": user_filter.qs
     })
 
 
@@ -65,10 +64,12 @@ def user_list(request):
 @user_passes_test(is_staff)
 def create_user(request):
     if request.method == "POST":
-        form = CustomUserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST or None)
         if form.is_valid():
             form.save()
             return redirect("manage_users")
+        else:
+            return render(request, "users/user_form.html", {"form": form})
     else:
         form = CustomUserCreationForm()
     return render(request, "users/user_form.html", {"form": form})
@@ -79,13 +80,19 @@ def create_user(request):
 def edit_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
     form_reset = ResetPasswordForm(user, data=request.POST or None)
+
     if request.method == "POST":
         form = CustomUserChangeForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
             return redirect("manage_users")
+        else:
+            # Validation errors will be automatically handled by the form object
+            return render(request, "users/user_form.html", {"form": form, "edit_mode": True, "form_reset": form_reset})
+
     else:
         form = CustomUserChangeForm(instance=user)
+
     return render(request, "users/user_form.html", {"form": form, "edit_mode": True, "form_reset": form_reset})
 
 

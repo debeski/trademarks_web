@@ -6,7 +6,7 @@
 }
 
 :root {
-    --title: #042546;
+    --title: #133e69;
     --body: #f6f7f98b;
     --htitle: #88c1fa;
     --hbody: #dee8ffdb;
@@ -65,8 +65,7 @@ body {
 }
 
 /* Titlebar Text */
-.titlebar h1 {
-    font-size: 23px;
+.titlebar p {
     flex: 1;
     padding: 0px 10px 0px 0px;
     color: white;

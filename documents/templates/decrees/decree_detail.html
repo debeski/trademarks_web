@@ -37,12 +37,12 @@
     <div class="row">
         <!-- Left Column: Decree Details -->
         <div class="col-md-7">
-            <div class="card border-light shadow-sm">
-                <div class="card-header text-center pe-5">
-                    <h5 class="card-title mb-0">تفاصيل القرار</h5>
+            <div class="card border-light shadow">
+                <div class="card-header text-bg-primary text-center pe-5">
+                    <h5 class="card-title h3 mb-0">تفاصيل القرار</h5>
                 </div>
 
-                <div class="card-body">
+                <div class="card-body h4">
                     <p><strong>رقم الوثيقة: </strong> {{ decree.number|default:"-" }}</p>
 
                     <p><strong>تاريخ الوثيقة: </strong> {{ decree.date|date:"Y-m-d" }}</p>
@@ -81,23 +81,23 @@
                 </div>
             </div>
 
-            <div class="mt-4">
+            <div class="mt-4 mb-4">
                 {% if perms.documents.change_decree %}
-                <a class="btn btn-warning text-light" href="{% url 'edit_decree' decree.id %}" title="تعديــل">
-                    <i class="bi bi-pencil-square text-light me-1 h4"></i> تعديــل
+                <a class="btn btn-outline-primary me-2" href="{% url 'edit_decree' decree.id %}" title="تعديــل">
+                    <i class="bi bi-pencil-square me-2 h4"></i> تعديــل
                 </a>
                 {% endif %}
-                <a class="btn btn-secondary" href="javascript:history.back()" title="رجـــوع">
-                    <i class="bi bi-arrow-return-left text-light me-1 h4"></i> رجـــوع
+                <a class="btn btn-secondary me-2" href="javascript:history.back()" title="رجـــوع">
+                    <i class="bi bi-arrow-return-left me-2 h4"></i> رجـــوع
                 </a>
             </div>
         </div>
 
         <!-- Right Column: PDF Preview -->
         <div class="col">
-            <div class="card border-light shadow-sm">
-                <div class="card-header text-center pe-5">
-                    <h5 class="card-title mb-0">معاينة ملف القرار</h5>
+            <div class="card border-light shadow">
+                <div class="card-header text-bg-primary text-center pe-5">
+                    <h5 class="card-title h3 mb-0">معاينة ملف القرار</h5>
                 </div>
                 <div class="card-body">
                     {% if decree.pdf_file %}

@@ -370,6 +370,117 @@ class PublicationFilter(django_filters.FilterSet):
                 pass
         return queryset.filter(q)
 
+class ObjectionPubPickFilter(django_filters.FilterSet):
+
+    # Define custom filters for search
+    keyword = django_filters.CharFilter(
+        method='filter_keyword',
+        label='',
+    )
+
+    brand = django_filters.CharFilter(
+        method='filter_brand',
+        label='',
+    )
+    
+    date_applied__year = django_filters.NumberFilter(
+        field_name="date__year",
+        lookup_expr="exact",
+        widget=forms.NumberInput(attrs={'min': 2000, 'max': 2025, 'placeholder': 'السنة'}),
+    )
+    applicant = django_filters.CharFilter(
+        field_name="applicant",
+        lookup_expr="icontains",
+        label='',
+    )
+    owner = django_filters.CharFilter(
+        field_name="owner",
+        lookup_expr="icontains",
+        label='',
+    )
+
+    class Meta:
+        model = Publication
+        fields = {
+            'number': ['exact'],
+            'decree_number': ['exact'],
+            'category__number': ['exact'],
+            'country': ['exact'],
+            'date_applied': ['gte', 'lte'],
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Replace default "------" for the select fields
+        set_first_choice(self.filters['country'].field, 'الدولة')
+        
+        # Initialize Crispy Forms helper
+        self.form.helper = FormHelper()
+        self.form.helper.form_method = 'GET'
+        self.form.helper.form_class = 'form-inline'
+        self.form.helper.form_show_labels = False
+        
+        # Customize the layout
+        self.form.helper.layout = Layout(
+            # Row 1: Keyword search (always visible) plus Add button and basic controls.
+            Row(
+                Column(Field('keyword', placeholder="البحث ( رقم، سنة، مقدم طلب، صاحب علامة.. )"), css_class='form-group col-md-6'),
+                Column(Submit('submit', 'بحث', css_class='btn btn-secondary w-100'), css_class='form-group col-md-auto text-center'),
+                Column(HTML('<button class="btn btn-outline-secondary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#advanced-search">بحث متقدم</button>'), css_class='form-group col-md-auto text-center'),
+                Column(HTML('{% if request.GET and request.GET.keys|length > 2 %} <a href="{% url "objection_pub_pick" %}" class="btn btn-warning">clear</a> {% endif %}'), css_class='form-group col-md-auto text-center'),
+                css_class='form-row'
+            ),
+
+            # Row 2: Advanced filters (hidden by default)
+            Div(
+                Row(
+                    Column(Field('number', placeholder="رقم النشر", dir="rtl"), css_class='form-group col-md-1'),
+                    Column(Field('decree_number', placeholder="رقم القرار", dir="rtl"), css_class='form-group col-md-1'),
+                    Column(Field('applicant', placeholder="طالب التسجيل", dir="rtl"), css_class='form-group col-md-2'),
+                    Column(Field('owner', placeholder="مالك العلامة", dir="rtl"), css_class='form-group col-md-2'),
+                    Column(Field('brand', placeholder="العلامة", dir="rtl"), css_class='form-group col-md-1'),
+                    Column(Field('category__number', placeholder="الفئة", dir="rtl"), css_class='form-group col-md-1'),
+                    Column(Field('country', placeholder="الدولة"), css_class='form-group col-md-1'),
+                    Column(Field('date_applied__year', placeholder="السنة", dir="rtl"), css_class='form-group col-md-1'),
+                    Column(Field('date_applied__gte', css_class='flatpickr', placeholder="من تاريخ"), css_class='form-group col-md-1'),
+                    Column(Field('date_applied__lte', css_class='flatpickr', placeholder="إلى تاريخ"), css_class='form-group col-md-1'),
+                    css_class='form-row mt-2 align-items-center'
+                ),
+                css_class="collapse mt-3",
+                id="advanced-search"
+            )
+        )
+
+    def filter_brand(self, queryset, name, value):
+        # Use Q objects to filter on multiple fields
+        return queryset.filter(
+            Q(ar_brand__icontains=value) | Q(en_brand__icontains=value)
+        )
+        
+    def filter_keyword(self, queryset, name, value):
+        """
+        Filter the queryset by matching the keyword in number, applicant, or company,
+        and if the value is numeric, also match the publication submission year.
+        """
+        q = (
+            Q(number__icontains=value) |
+            Q(decree_number__icontains=value) |
+            Q(applicant__icontains=value) |
+            Q(owner__icontains=value) |
+            Q(ar_brand__icontains=value) |
+            Q(en_brand__icontains=value) |
+            Q(country__name__icontains=value)
+        )
+
+        if value.isdigit():
+            try:
+                year = int(value)
+                q |= Q(date_applied__year=year)
+            except ValueError:
+                pass
+        return queryset.filter(q)
+
 class ObjectionFilter(django_filters.FilterSet):
     
     # Define custom filters for search

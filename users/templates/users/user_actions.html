@@ -1,7 +1,9 @@
 <a href="{% url 'edit_user' record.id %}" class="btn btn-info btn-sm" title="تعديل">
     <i class="bi bi-person-lines-fill text-light me-1 h4"></i> تعديل
 </a>
+{% if not record.is_staff %}
 <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal" 
     data-user-id="{{ record.id }}" data-user-name="{{ record.username }}">
     <i class="bi bi-person-dash-fill text-light me-1 h4"></i> حذف
 </button>
+{% endif %}

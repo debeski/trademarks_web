@@ -1,11 +1,9 @@
 {% load static %}
-{% if request.user.is_authenticated %}
 <div class="d-flex gap-2 align-items-center justify-content-end">
     {% if record.is_placeholder %}
         <span class="text-danger" title="هذا القرار تم ادخاله تلقائيا مع اشهار ويحتاج الى تعديل بيانات"><i class="bi bi-exclamation-circle text-warning"></i> </span> <!-- Display an asterisk with alt text -->
     {% endif %}
     <!-- PDF Icon (Always Visible) -->
-    {% if perms.documents.download_doc %}
     {% if record.pdf_file %}
         <a href="{% url 'download_decree' record.id %}" title="تحميل"><i class="bi bi-file-earmark-arrow-down-fill" style="font-size: 36px;"></i>
         </a>
@@ -13,7 +11,6 @@
         <span title="لا يوجد ملف pdf" class="disabled">
             <i class="bi bi-file-earmark-arrow-down-fill" style="opacity: 0.2; font-size: 36px;"></i>
         </span>
-    {% endif %}
     {% endif %}
 
     <!-- Use the icon itself as the dropdown trigger -->
@@ -45,4 +42,3 @@
         </ul>
     </div>
 </div>
-{% endif %}

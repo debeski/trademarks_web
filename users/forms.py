@@ -27,7 +27,7 @@ class CustomUserCreationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ["profile_picture","username", "email", "password1", "password2", "first_name", "last_name", "phone", "occupation", "is_staff", "permissions"]
+        fields = ["username", "email", "password1", "password2", "first_name", "last_name", "phone", "occupation", "is_staff", "permissions"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -105,7 +105,24 @@ class CustomUserCreationForm(UserCreationForm):
                 Div(Field("permissions_left", css_class="col-md-6"), css_class="col-md-6"),
                 css_class="row"
             ),
-            "is_staff"
+            "is_staff",
+            FormActions(
+                HTML(
+                    """
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-person-plus-fill text-light me-1 h4"></i>
+                        إضافة
+                    </button>
+                    """
+                ),
+                HTML(
+                    """
+                    <a href="{% url 'manage_users' %}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-return-left text-light me-1 h4"></i> إلغـــاء
+                    </a>
+                    """
+                )
+            )
         )
 
     def save(self, commit=True):
@@ -128,7 +145,7 @@ class CustomUserChangeForm(UserChangeForm):
 
     class Meta:
         model = User
-        fields = ["profile_picture", "username", "email", "first_name", "last_name", "phone", "occupation", "is_staff",  "permissions"]
+        fields = ["username", "email", "first_name", "last_name", "phone", "occupation", "is_staff",  "permissions"]
 
     def __init__(self, *args, **kwargs):
         user = kwargs.get('instance')
@@ -218,7 +235,30 @@ class CustomUserChangeForm(UserChangeForm):
                 css_class="row"
             ),
             "is_staff",
-            Button('reset_password', 'إعادة تعيين كلمة المرور', css_class="btn btn-primary", data_bs_toggle="modal", data_bs_target="#resetPasswordModal"),
+            FormActions(
+                HTML(
+                    """
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-person-plus-fill text-light me-1 h4"></i>
+                        تحديث
+                    </button>
+                    """
+                ),
+                HTML(
+                    """
+                    <a href="{% url 'manage_users' %}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-return-left text-light me-1 h4"></i> إلغـــاء
+                    </a>
+                    """
+                ),
+                HTML(
+                    """
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#resetPasswordModal">
+                        <i class="bi bi-key-fill text-light me-1 h4"></i> إعادة تعيين كلمة المرور
+                    </button>
+                    """
+                )
+            )
         )
 
 

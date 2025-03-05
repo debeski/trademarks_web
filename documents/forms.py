@@ -6,6 +6,7 @@ from crispy_forms.layout import Layout, Row, Column, Submit, Field, Div, HTML
 from crispy_forms.bootstrap import FormActions
 from .models import Decree, Publication, FormPlus, Objection, Country, Government, ComType, DocType, DecreeCategory
 import datetime
+from django.db.models import Max
 
 
 # Section models forms
@@ -229,7 +230,7 @@ class DecreeForm(forms.ModelForm):
 
 class PublicationForm(forms.ModelForm):
     # Extra field to filter decrees by year
-    year = forms.CharField(label="سنة القرار", initial=str(datetime.datetime.now().year))
+    year = forms.CharField(label="السنة", initial=str(datetime.datetime.now().year))
     # For the decree field, we use a ModelChoiceField; its widget will be enhanced by JavaScript.
     decree_number = forms.CharField(
         label="رقم القرار",
@@ -254,6 +255,21 @@ class PublicationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
+        # Extract the year from the current date or the provided value in the form.
+        current_year = datetime.datetime.now().year
+        year = self.data.get('year', current_year)
+
+        # Get the highest number for the current year, if any
+        last_publication = Publication.objects.filter(created_at__year=year).aggregate(Max('number'))['number__max']
+
+        # If there are existing publications for the current year, set the number to the next one.
+        if last_publication:
+            self.fields['number'].initial = last_publication + 1
+        # If no publications exist for the year, set it to 1.
+        else:
+            self.fields['number'].initial = 1
+
         self.helper = FormHelper()
         self.helper.form_method = 'POST'
         self.fields['attach'].widget.attrs.update({
@@ -261,8 +277,9 @@ class PublicationForm(forms.ModelForm):
         })
         self.helper.layout = Layout(
             Row(
-                Div(Field('year', css_class='form-control'), css_class='col-md-3'),
-                Div(Field('decree_number', css_class='form-control', placeholder="اكتب رقم القرار للبحث"), css_class='col-md-9'),
+                Div(Field('year', css_class='form-control'), css_class='col-md-4'),
+                Div(Field('decree_number', css_class='form-control', placeholder="اكتب للبحث برقم القرار"), css_class='col-md-4'),
+                Div(Field('number_applied', css_class='form-control', placeholder="اكتب للبحث برقم طلب التسجيل"), css_class='col-md-4'),
                 css_class='form-row'
             ),
             HTML("<hr>"),
@@ -273,7 +290,6 @@ class PublicationForm(forms.ModelForm):
                 Div(Field('country', css_class='form-control'), css_class='col'),
                 Div(Field('address', css_class='form-control'), css_class='col'),
                 Div(Field('date_applied', css_class='form-control flatpickr'), css_class='col'),
-                Div(Field('number_applied', css_class='form-control'), css_class='col'),
                 Div(Field('ar_brand', css_class='form-control'), css_class='col'),
                 Div(Field('en_brand', css_class='form-control'), css_class='col'),
                 Div(Field('category', css_class='form-control'), css_class='col'),
@@ -294,6 +310,19 @@ class PublicationForm(forms.ModelForm):
                 HTML('<a class="btn btn-secondary" href="{% url \'publication_list\' %}">إلغاء</a>')
             )
         )
+
+    def clean_category(self):
+        category = self.cleaned_data.get("category")
+        
+        # Check if category has a value
+        if category:
+            try:
+                return DecreeCategory.objects.get(number=category)
+            except DecreeCategory.DoesNotExist:
+                raise forms.ValidationError("Invalid category. Please enter a valid category number.")
+        
+        # If no category is provided, return it as is
+        return category
 
 class ObjectionForm(forms.ModelForm):
     year = forms.CharField(required=False, label="سنة الإشهار", initial=str(datetime.datetime.now().year))

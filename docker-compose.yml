@@ -41,11 +41,10 @@ services:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL}
       CELERY_RESULT_BACKEND: ${CELERY_BROKER_URL}
     volumes:
-      - .:/app
+      - .:/app  # Mounts your project files inside the container
     ports:
       - "9430:8000"
 
 volumes:
   postgres_data:
   redis_data:
-  app_data:

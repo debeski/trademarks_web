@@ -14,39 +14,53 @@
     <div class="col-md-3">
         <div class="card shadow-sm h-100">
             <div class="card-body d-flex flex-column">
-                <a href="{% url 'publication_list' %}" class="stretched-link"></a>
-                <h4 class="card-title"><strong>اشهارات العلامات التجارية</strong></h4>
-                <p class="text-muted">البحث في قائمة تحتوي كل العلامات التجارية التي تم اشهارها.</p>
-                <i class="bi bi-clipboard-data mt-auto text-primary"></i>
+                <a href="{% url 'decree_list' %}" class="stretched-link"></a>
+                <h4 class="card-title"><strong>قرارات العلامات التجارية</strong></h4>
+                <p class="text-muted">البحث في قائمة تحتوي كل قرارات العلامات التجارية التي تم ارشفتها.</p>
+                <i class="bi bi-file-earmark-binary mt-auto text-success h3"></i>
             </div>
         </div>
     </div>
+
     <div class="col-md-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body d-flex flex-column">
+                <a href="{% url 'publication_list' %}" class="stretched-link"></a>
+                <h4 class="card-title"><strong>اشهارات العلامات التجارية</strong></h4>
+                <p class="text-muted">البحث في قائمة تحتوي كل العلامات التجارية التي تم اشهارها.</p>
+                <i class="bi bi-file-earmark-check mt-auto text-primary h3"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-2">
         <div class="card shadow-sm h-100">
             <div class="card-body d-flex flex-column">
                 <a href="{% url 'formplus_list' %}" class="stretched-link"></a>
                 <h4 class="card-title"><strong>التشريعات والنماذج</strong></h4>
                 <p class="text-muted">البحث في قائمة التشريعات والنماذج الصادرة عن وزارة الاقتصاد بخصوص العلامات التجارية.</p>
-                <i class="bi bi-file-earmark-richtext mt-auto text-success"></i>
+                <i class="bi bi-file-earmark-richtext mt-auto text-info h3"></i>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+
+    <div class="col-md-2">
         <div class="card shadow-sm h-100">
             <div class="card-body d-flex flex-column">
                 <a href="{% url 'objection_pub_pick' %}" class="stretched-link"></a>
                 <h4 class="card-title"><strong>تقديم معارضة</strong></h4>
                 <p class="text-muted">البدء في اجراءات تقديم معارضة على علامة تجارية مشهرة.</p>
-                <i class="bi bi-gear-fill mt-auto text-danger"></i>
+                <i class="bi bi-slash-circle mt-auto text-danger h3"></i>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+
+    <div class="col-md-2">
         <div class="card shadow-sm h-100" role="button" data-bs-toggle="modal" data-bs-target="#statusModal">
             <div class="card-body d-flex flex-column">
                 <h4 class="card-title"><strong>تتبع حالة معارضة</strong></h4>
                 <p class="text-muted">الاستفسار عن حالة معارضة تم تقديمها مسبقا بإستخدام الرمز المميز الخاص بالمعارضة.</p>
-                <i class="bi bi-search mt-auto text-dark"></i>
+                <i class="bi bi-search mt-auto text-dark h3"></i>
             </div>
         </div>
     </div>
@@ -59,7 +73,6 @@
             <div class="d-flex align-items-center">
                 <i class="bi bi-graph-up display-3 text-success me-3"></i> <!-- Bootstrap Icon -->
                 <div>
-                    <h5>اجمالي القرارات <strong><span class="ps-2 card_text_big">{{ decree_total }}</span></strong></h5>
                     <h5>قرارات القبول <strong><span class="text-success card_text_big ps-2">{{ decree_accept }}</span></strong></h5>
                     <h5>قرارات الرفض <strong><span class="text-danger card_text_big ps-2">{{ decree_reject }}</span></strong></h5>
                 </div>
@@ -69,8 +82,7 @@
             <div class="d-flex align-items-center">
                 <i class="bi bi-diagram-3 display-3 text-primary me-3"></i>
                 <div>
-                    <h5>اشهارات نشر مبدئي <strong><span class="ps-2 text-primary card_text_big">{{ pub_initial }}</span></strong></h5>
-                    <h5>اشهارات عليها معارضة <strong><span class="text-warning card_text_big ps-2">{{ pub_conflict }}</span></strong></h5>
+                    <h5>اشهارات علامات <strong><span class="ps-2 text-primary card_text_big">{{ pub_initial }}</span></strong></h5>
                     <h5>علامات مسجلة <strong><span class="text-success card_text_big ps-2">{{ pub_final }}</span></strong></h5>
                 </div>
             </div>
@@ -79,8 +91,7 @@
             <div class="d-flex align-items-center">
                 <i class="bi bi-exclamation-triangle display-3 text-warning me-3"></i>
                 <div>
-                    <h5>اعتراضات تتطلب اجراء <strong><span class="ps-2 text-warning card_text_big">{{ obj_pending }}</span></strong></h5>
-                    <h5>اعتراضات تم دفع رسومها <strong><span class="text-success card_text_big ps-2">{{ obj_paid }}</span></strong></h5>
+                    <h5>اعتراضات مقدمة <strong><span class="ps-2 text-warning card_text_big">{{ obj_pending }}</span></strong></h5>
                     <h5>اعتراضات مقبولة <strong><span class="text-primary card_text_big ps-2">{{ obj_accept }}</span></strong></h5>
                 </div>
             </div>
@@ -101,7 +112,7 @@
 
         <br>
 
-        <p class="lead"><small>جميع الحقوق محفوظة لوزارة الاقتصاد والتجارة © 2025 - الاصدار 0.8.7<small></p>
+        <p class="lead"><small>جميع الحقوق محفوظة لوزارة الاقتصاد والتجارة © 2025 - الاصدار 0.9.7<small></p>
     </div>
 </div>
 
@@ -195,6 +206,7 @@
                             <strong>الشركة المعترضة:</strong> ${data.com_name} <br>
                             <strong>العلامة التجارية:</strong> ${data.brand} <br>
                             <strong>تاريخ تقديم الاعتراض:</strong> ${data.date} <br>
+                            <strong>ملف الاعتراض:</strong> <a href="${data.file}" target="_blank">تحميل PDF</a> <br>
                         </div>
                     `;
                 } else {

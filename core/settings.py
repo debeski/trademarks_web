@@ -191,7 +191,7 @@ LOCALE_PATHS = [
 STATIC_URL = '/static/'
 
 # The root directory where static files will be collected for deployment.
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Additional directories where static files are stored.
 STATICFILES_DIRS = [
@@ -206,7 +206,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 
 # MEDIA_ROOT is the actual filesystem path where the files are stored
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # low-level logging settings for the entire Django project.
 LOGGING = {

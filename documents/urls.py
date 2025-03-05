@@ -14,8 +14,8 @@ urlpatterns = [
     path('decrees/', views.decree_list, name='decree_list'),
     
     # CRUD routes for Decree model
-    path('decrees/add/', views.add_edit_decree, name='add_decree'),
-    path('decrees/edit/<int:document_id>/', views.add_edit_decree, name='edit_decree'),
+    path('decrees/add/', views.add_decree, name='add_decree'),
+    path('decrees/edit/<int:document_id>/', views.edit_decree, name='edit_decree'),
     path('decrees/detail/<int:document_id>/', views.decree_detail, name='view_decree'),
     path('decrees/download/<int:document_id>/', views.download_decree, name='download_decree'),
     path('decrees/delete/<int:document_id>/', views.soft_delete_decree, name='delete_decree'),
@@ -46,7 +46,7 @@ urlpatterns = [
     # Secondary Table URL Route for picking a Publication to Object on
     path('objection-pub-pick/', views.objection_pub_pick, name='objection_pub_pick'),
     path('add_objection/<int:document_id>/', views.add_pub_objection, name='add_pub_objection'),
-    path('objection-pub-pick/pdf/<int:obj_id>/', views.gen_obj_pdf, name='gen_obj_pdf'),
+    path('objections/pdf/<int:obj_id>/', views.gen_obj_pdf, name='gen_obj_pdf'),
     path("check-status/", views.check_objection_status, name="check_objection_status"),
     
     # CRUD routes for Objection model

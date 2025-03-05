@@ -10,11 +10,11 @@
     <div class="row">
         <!-- Left Column: publication Details -->
         <div class="col-md-7">
-            <div class="card border-light shadow-sm">
-                <div class="card-header text-center pe-5">
-                    <h5 class="card-title mb-0">تفاصيل الاشهار</h5>
+            <div class="card border-light shadow">
+                <div class="card-header text-bg-primary text-center pe-5">
+                    <h5 class="card-title h3 mb-0">تفاصيل الاشهار</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body h4">
                     <p><strong>سنة الاشهار: </strong> {{ publication.year|default:"-" }}</p>
 
                     <p><strong>رقم الاشهار: </strong> {{ publication.number|default:"-" }}</p>
@@ -63,35 +63,35 @@
                 </div>
             </div>
 
-            <div class="mt-4">
+            <div class="mt-4 mb-4">
                 {% if publication.status <= 2 %}
-                <a class="btn btn-primary" href="{% url 'gen_pub_pdf' publication.id %}" title="تحميل الاشهــار">
-                    <i class="bi bi-file-earmark-pdf text-light me-1 h4"></i> تحميل الاشهــار
+                <a class="btn btn-outline-success me-2" href="{% url 'gen_pub_pdf' publication.id %}" title="تحميل الاشهــار">
+                    <i class="bi bi-file-earmark-pdf me-2 h4"></i> تحميل الاشهــار
                 </a>
                 {% endif %}
                 {% if publication.status == 3 %}
-                <a class="btn btn-primary" href="{% url 'gen_final_pub_pdf' publication.id %}" title="تحميل شهادة التسجيــل">
-                    <i class="bi bi-file-earmark-check text-light me-1 h4"></i> تحميل شهادة التسجيــل
+                <a class="btn btn-outline-success me-2" href="{% url 'gen_final_pub_pdf' publication.id %}" title="تحميل شهادة التسجيــل">
+                    <i class="bi bi-file-earmark-check me-2 h4"></i> تحميل شهادة التسجيــل
                 </a>
                 {% endif %}
                 {% if publication.status == 1 %}
                     {% if perms.documents.change_publication %}
-                    <a class="btn btn-warning text-light" href="{% url 'edit_publication' publication.id %}" title="تعديــل">
-                        <i class="bi bi-pencil-square text-light me-1 h4"></i> تعديــل
+                    <a class="btn btn-outline-primary me-2" href="{% url 'edit_publication' publication.id %}" title="تعديــل">
+                        <i class="bi bi-pencil-square me-2 h4"></i> تعديــل
                     </a>
                     {% endif %}
                 {% endif %}
-                <a class="btn btn-secondary" href="javascript:history.back()" title="رجـــوع">
-                    <i class="bi bi-arrow-return-left text-light me-1 h4"></i> رجـــوع
+                <a class="btn btn-secondary me-2" href="javascript:history.back()" title="رجـــوع">
+                    <i class="bi bi-arrow-return-left text-light me-2 h4"></i> رجـــوع
                 </a>
             </div>
         </div>
 
         <!-- Right Column: PDF Preview -->
         <div class="col">
-            <div class="card border-light shadow-sm">
-                <div class="card-header text-center pe-5">
-                    <h5 class="card-title mb-0">معاينة صورة العلامة</h5>
+            <div class="card border-light shadow">
+                <div class="card-header text-bg-primary text-center pe-5">
+                    <h5 class="card-title h3 mb-0">معاينة صورة العلامة</h5>
                 </div>
                 <div class="card-body">
                     {% if publication.img_file %}
