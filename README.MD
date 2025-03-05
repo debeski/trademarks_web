@@ -108,8 +108,8 @@ v0.6.4 - Patch update
 	•	revamped the detail view for all models with a fresh redesigned look.
 	•	fixed an intertwining permission issue preventing public objection form submission.
 
-v0.6.9 - Stable Release
-	•	Full-featured, stable release with comprehensive documentation.
+v0.6.9 - Major Update
+	•	Initial alpha release for testing, added comprehensive documentation.
 	•	All models and views are fully functional.
 	•	Permissions system is robust, with role-based access controls.
 	•	Major features like QR code generation, advanced search, and interactive forms are fully implemented and tested.
@@ -159,3 +159,7 @@ v0.9.7 - Major Features and Refinements
 v0.9.9 - Patch Update
 	•	Fixed filters on the objection publication pick interface.
 	•	Fixed some clipping and out of order visuals in forms and table views.
+
+v1.0.0 - Stable Release
+	•	Full-featured stable release.
+

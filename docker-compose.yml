@@ -28,6 +28,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - USER_ID=1000  # Match your host user's UID
+        - GROUP_ID=1000 # Match your host user's GID
+    user: "1000:1000"
     container_name: trademarks_app
     restart: unless-stopped
     depends_on:
@@ -41,10 +45,16 @@ services:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL}
       CELERY_RESULT_BACKEND: ${CELERY_BROKER_URL}
     volumes:
-      - .:/app  # Mounts your project files inside the container
+      - ./:/app  # Mounts your project files inside the container
+      - media_volume:/app/media
+      - static_volume:/app/staticfiles
+      - logs_volume:/app/logs
     ports:
       - "9430:8000"
 
 volumes:
   postgres_data:
   redis_data:
+  media_volume:
+  static_volume:
+  logs_volume:

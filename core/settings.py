@@ -222,7 +222,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs.log'),
+            'filename': os.path.join(BASE_DIR, 'logs/logs.log'),
             'maxBytes': 5 * 1024 * 1024,  # 5MB max size per log file
             'backupCount': 2,  # Keep only 3 log files
             'formatter': 'verbose',
