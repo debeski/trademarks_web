@@ -2,8 +2,8 @@
 FROM debeski/trademarks-base:latest
 
 # Create a new user for security and add to sudoers (granting superuser privileges)
-ARG USER_ID=1000
-ARG GROUP_ID=1000
+ARG USER_ID=1001
+ARG GROUP_ID=1001
 RUN addgroup --gid $GROUP_ID vscode && \
     adduser --disabled-password --gecos '' --uid $USER_ID --gid $GROUP_ID vscode && \
     echo "vscode ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers

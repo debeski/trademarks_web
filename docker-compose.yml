@@ -29,9 +29,9 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - USER_ID=1000  # Match your host user's UID
-        - GROUP_ID=1000 # Match your host user's GID
-    user: "1000:1000"
+        - USER_ID=1001  # Match your host user's UID
+        - GROUP_ID=1001 # Match your host user's GID
+    user: "1001:1001"
     container_name: trademarks_app
     restart: unless-stopped
     depends_on:
