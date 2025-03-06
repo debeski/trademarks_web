@@ -1,17 +1,19 @@
-# Ignore pycache
-__pycache__/
-/__pycache__
-# Ignore migrations
-*/migrations/
+# Ignore all pycache folders
+**/__pycache__/
+
+
+# Ignore all migrations folders
+**/migrations/
 
 # Ignore command run logs
 .commands_run
 
-# Ignore media folder
+# Ignore media + logs folders
 /media/
+/logs/
 
-# Ignore macOS created files
-.DS_store
+# Ignore all macOS created files
+**/.DS_Store
 
 # Ignore trademarks-base (python) Dockerfile
 pyDockerfile
