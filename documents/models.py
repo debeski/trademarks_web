@@ -157,7 +157,7 @@ class DocType(models.Model):
 class DecreeCategory(models.Model):
     """Model representing a government entity."""
     number = models.IntegerField(unique=True, verbose_name="رقم الفئة")
-    name = models.CharField(max_length=999, unique=True, verbose_name="اسم الفئة")
+    name = models.CharField(max_length=999, unique=True, verbose_name="محتوى الفئة")
 
     class Meta:
         verbose_name = "الفئة"
@@ -350,6 +350,7 @@ class Objection(models.Model):
         ]
 
     def save(self, *args, **kwargs):
+        self.created_at = datetime.now()
         if not self.number:
             current_year = self.created_at.year  # Extract the year from the created_at field
             

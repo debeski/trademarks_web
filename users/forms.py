@@ -145,16 +145,25 @@ class CustomUserChangeForm(UserChangeForm):
 
     class Meta:
         model = User
-        fields = ["username", "email", "first_name", "last_name", "phone", "occupation", "is_staff",  "permissions"]
+        fields = ["username", "email", "first_name", "last_name", "phone", "occupation", "is_staff",  "permissions", "is_active"]
 
     def __init__(self, *args, **kwargs):
         user = kwargs.get('instance')
         super().__init__(*args, **kwargs)
+        
+        # Labels
         self.fields["username"].label = "اسم المستخدم"
         self.fields["email"].label = "البريد الإلكتروني"
         self.fields["first_name"].label = "الاسم الاول"
         self.fields["last_name"].label = "اللقب"
         self.fields["is_staff"].label = "صلاحيات انشاء و تعديل المستخدمين"
+        self.fields["is_active"].label = "تفعيل الحساب"
+        
+        # Help Texts
+        self.fields["username"].help_text = "اسم المستخدم يجب أن يكون فريدًا، 50 حرفًا أو أقل. فقط حروف، أرقام و @ . + - _"
+        self.fields["email"].help_text = "أدخل عنوان البريد الإلكتروني الصحيح"
+        self.fields["is_staff"].help_text = "يحدد ما إذا كان بإمكان المستخدم الوصول إلى قسم ادارة المستخدمين."
+        self.fields["is_active"].help_text = "يحدد ما إذا كان يجب اعتبار هذا الحساب نشطًا. قم بإلغاء تحديد هذا الخيار بدلاً من الحذف."
         
         # Split permissions queryset into two parts for 2 columns
         permissions_list = list(Permission.objects.exclude(
@@ -235,6 +244,7 @@ class CustomUserChangeForm(UserChangeForm):
                 css_class="row"
             ),
             "is_staff",
+            "is_active",
             FormActions(
                 HTML(
                     """

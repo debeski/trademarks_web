@@ -6,10 +6,30 @@
 }
 
 :root {
-    --title: #133e69;
+    --title: #1e4f99;
     --body: #f6f7f98b;
-    --htitle: #88c1fa;
+    --htitle: #1c5690;
     --hbody: #dee8ffdb;
+}
+
+.btn-primary {
+    background-color: #276dd6 !important;
+    border-color: #276dd6 !important;
+}
+
+.btn-primary:hover {
+    background-color: #1e4f99 !important; /* Slightly lighter shade */
+    border-color: #1e4f99 !important;
+}
+
+.text-bg-primary {
+    background-color: #276dd6 !important;
+    border-color: #276dd6 !important;
+}
+
+.list-group-item.active{
+    background-color: #276dd6 !important;
+    border-color: #276dd6 !important;
 }
 
 @font-face {
@@ -61,7 +81,7 @@ body {
 /* Titlebar Style */
 .titlebar {
     background-color: var(--title);
-    height: 7vh;
+    height: 7.5vh;
 }
 
 /* Titlebar Text */

@@ -31,7 +31,7 @@ class UserActivityLog(models.Model):
     action = models.CharField(max_length=10, choices=ACTION_TYPES, verbose_name="العملية")
     model_name = models.CharField(max_length=100, blank=True, null=True, verbose_name="القسم")
     object_id = models.IntegerField(blank=True, null=True, verbose_name="ID")
-    number = models.CharField(max_length=50, null=True, blank=True, verbose_name="رقم المستند")
+    number = models.CharField(max_length=50, null=True, blank=True, verbose_name="المستند")
     ip_address = models.GenericIPAddressField(blank=True, null=True, verbose_name="عنوان IP")
     user_agent = models.TextField(blank=True, null=True, verbose_name="agent")
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name="الوقت")

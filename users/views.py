@@ -1,23 +1,17 @@
 # Imports of the required python modules and libraries
 ######################################################
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth import update_session_auth_hash
-from django.utils.decorators import method_decorator
-from django_tables2 import RequestConfig
+from django_tables2 import RequestConfig, SingleTableView
 from .tables import UserTable, UserActivityLogTable
 from .forms import CustomUserCreationForm, CustomUserChangeForm, ArabicPasswordChangeForm, ResetPasswordForm, UserProfileEditForm
 from .filters import UserFilter
 from .models import UserActivityLog
 from django_filters.views import FilterView
-from django_tables2.views import SingleTableMixin
 from django.contrib import messages
-from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django_tables2 import SingleTableView
-from django.contrib.auth.views import PasswordChangeView
 from django.utils import timezone
 from users.signals import get_client_ip
 
@@ -35,29 +29,56 @@ def is_superuser(user):
 
 
 # Class Function to display users in a table
-@login_required
-def user_list(request):
+# @login_required
+# def user_list(request):
 
-    if not request.user.is_staff:
-        messages.error(request, "ليس لديك الصلاحية الكافية لزيارة هذا القسم!.")
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+#     if not request.user.is_staff:
+#         messages.error(request, "ليس لديك الصلاحية الكافية لزيارة هذا القسم!.")
+#         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     
-    # Get all users
-    qs = User.objects.all()
+#     # Get all users
+#     qs = User.objects.all()
     
-    # Apply filter
-    user_filter = UserFilter(request.GET, queryset=qs)
+#     # Apply filter
+#     user_filter = UserFilter(request.GET, queryset=qs)
     
-    # Create table
-    table = UserTable(user_filter.qs)
+#     # Create table
+#     table = UserTable(user_filter.qs)
     
-    # Paginate table (10 users per page)
-    RequestConfig(request, paginate={'per_page': 10}).configure(table)
-    return render(request, "users/manage_users.html", {
-        "table": table,
-        "filter": user_filter,
-        "users": user_filter.qs
-    })
+#     # Paginate table (10 users per page)
+#     RequestConfig(request, paginate={'per_page': 10}).configure(table)
+#     return render(request, "users/manage_users.html", {
+#         "table": table,
+#         "filter": user_filter,
+#         "users": user_filter.qs
+#     })
+
+class UserListView(LoginRequiredMixin, UserPassesTestMixin, FilterView, SingleTableView):
+    model = User
+    table_class = UserTable
+    filterset_class = UserFilter  # Set the filter class to apply filtering
+    template_name = "users/manage_users.html"
+    
+    # Restrict access to only staff users
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get_queryset(self):
+        # Apply the filter and order by any logic you need
+        qs = super().get_queryset().order_by('date_joined')
+        # Apply ordering here if needed, for example:
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_filter = self.get_filterset(self.filterset_class)
+
+        # Apply the pagination
+        RequestConfig(self.request, paginate={'per_page': 10}).configure(self.table_class(user_filter.qs))
+        
+        context["filter"] = user_filter
+        context["users"] = user_filter.qs
+        return context
 
 
 # Function for creating a new User
@@ -124,7 +145,10 @@ class UserActivityLogView(LoginRequiredMixin, UserPassesTestMixin, SingleTableVi
 
     def test_func(self):
         return self.request.user.is_staff  # Only staff can access logs
-
+    
+    def get_queryset(self):
+        # Order by timestamp descending by default
+        return super().get_queryset().order_by('-timestamp')
 
 # Function that resets a user password
 @user_passes_test(is_staff)

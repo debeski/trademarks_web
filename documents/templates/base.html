@@ -43,7 +43,8 @@
                 <button class="menu-toggle ms-2 rounded" onclick="toggleMenu()">☰</button>
             {% endif %}
             <a href="{% url 'index' %}" style="text-decoration: none; color: inherit;">
-                <p class="h2">الاشهار الالكتروني للعلامات التجارية{% block header %}{% endblock %}</p>
+                <img src="{% static 'img/pdf_logo.png' %}" alt="Logo" style="height: 60px; width: auto; margin-right: 10px; vertical-align: middle;">
+                <p class="h2" style="display: inline; vertical-align: middle;">الاشهار الالكتروني للعلامات التجارية{% block header %}{% endblock %}</p>
             </a>
         </div>
             <!-- The Login Button -->
@@ -86,12 +87,10 @@
         <!-- Sidebar -->
         <div class="list-group" id="sidebar">
             <!-- Option 1: Decrees List -->
-            {% if perms.documents.view_decree %}
             <a href="{% url 'decree_list' %}" class="list-group-item list-group-item-action {% if request.path == '/decrees/' %}active disabled{% elif '/decrees/' in request.path %}active{% endif %}">
                 <i class="bi bi-file-earmark-binary me-2" style="font-size: 24px;"></i>
                 قرارات العلامات التجارية
             </a>
-            {% endif %}
             
             <!-- Option 2: Publications List -->
             <a href="{% url 'publication_list' %}" class="list-group-item list-group-item-action {% if request.path == '/publications/' %}active disabled{% elif '/publications/' in request.path %}active{% endif %}">
@@ -108,12 +107,10 @@
             {% endif %}
 
             <!-- Option 4: Forms List -->
-            {% if perms.documents.view_formplus %}
             <a href="{% url 'formplus_list' %}" class="list-group-item list-group-item-action {% if request.path == '/formplus/' %}disabled active{% elif '/formplus/' in request.path %}active{% endif %}">
                 <i class="bi bi-file-earmark-richtext me-2" style="font-size: 24px;"></i>
                 التشريعات و النماذج
             </a>
-            {% endif %}
             
             <!-- Accordion for Reports -->
             <div class="accordion" id="reportsAccordion">
@@ -150,7 +147,7 @@
                             الإعدادات
                         </button>
                     </h2>
-                    <div id="collapseSettings" class="accordion-collapse collapse {% if '/manage/' in request.path %}show{% endif %}" aria-labelledby="headingSettings" data-bs-parent="#settingsAccordion">
+                    <div id="collapseSettings" class="accordion-collapse collapse {% if '/manage/' in request.path and not 'profile' in request.path %}show{% endif %}" aria-labelledby="headingSettings" data-bs-parent="#settingsAccordion">
                         <div class="accordion-body p-0">
                             <!-- You can add more links here as needed -->
                             <a class="list-group-item list-group-item-action {% if '/manage/sections/' in request.path %}active bg-primary disabled{% endif %}" href="{% url 'manage_sections' %}"><i class="bi bi-layout-sidebar-inset me-2" style="font-size: 21px; opacity: 0.5;"></i>ادارة الاقسام</a>
@@ -168,6 +165,15 @@
         {% endif %}
         <!-- Main Content -->
         <div class="main-content container-fluid mt-3 p-4 d-flex">
+            {% if messages %}
+            <div class="alert-container position-absolute top-0 start-0 w-100">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} text-center h3" style="opacity: 95%; z-index: 1090;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+            {% endif %}
             {% block content %}{% endblock %}
         </div>
     </div>

@@ -201,12 +201,12 @@ class DecreeFilter(django_filters.FilterSet):
         self.form.helper.layout = Layout(
             # Row 1: Keyword search (always visible) plus Add button and basic controls.
             Row(
-                Column(HTML('{% if perms.documents.add_decree %} <a href="{% url "add_decree" %}" class="btn btn-primary active w-100"><i class="bi bi-plus-lg"></i> إضافة جديد</a> {% endif %}'), css_class='col-md-auto text-center'),
+                Column(HTML('{% if perms.documents.add_decree %} <a href="{% url "add_decree" %}" class="btn btn-primary me-2 w-100"><i class="bi bi-plus-lg me-2 h4"></i> إضافـة جـديد</a> {% endif %}'), css_class='col-md-auto text-center'),
                 Column(Field('keyword', placeholder="البحث (رقم، مقدم الطلب، صاحب العلامة)"), css_class='form-group col-md-6'),
-                Column(Submit('submit', 'بحث', css_class='btn btn-secondary w-100'), css_class='form-group col-md-auto text-center'),
-                Column(HTML('<button class="btn btn-outline-secondary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#advanced-search">بحث متقدم</button>'), css_class='form-group col-md-auto text-center'),
+                Column(HTML('<button type="submit" class="btn btn-secondary"><i class="bi bi-search text-light me-1 h4"></i>بحـــث</button>'), css_class='col-md-auto text-center'),
+                Column(HTML('<button class="btn btn-outline-secondary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#advanced-search"><i class="bi bi-binoculars-fill me-2 h4"></i>بحث متقدم</button>'), css_class='form-group col-md-auto text-center'),
                 Column(HTML('{% if request.GET and request.GET.keys|length > 1 %} <a href="{% url "decree_list" %}" class="btn btn-warning">clear</a> {% endif %}'), css_class='form-group col-md-auto text-center'),
-                css_class='form-row'
+                css_class='row'
             ),
 
             # Row 2: Advanced filters (hidden by default)

@@ -35,7 +35,7 @@
                     <p><strong>الدولة: </strong> {{ publication.get_country_display|default:"-" }}</p>
                     <p></p>
 
-                    <p><strong>تاريخ التقديم: </strong> {{ publication.date_applied|date:"Y-m-d" }}</p>
+                    <p><strong>تاريخ التقديم: </strong> {{ publication.date_applied|date:"d-m-Y" }}</p>
                     <p></p>
 
                     <p><strong>العلامة التجارية (عربي): </strong> {{ publication.ar_brand|default:"-" }}</p>
@@ -50,7 +50,7 @@
                     <p><strong>رقم النشرية: </strong> {{ publication.e_number|default:"-" }}</p>
                     <p></p>
 
-                    <p><strong>تاريخ النشر: </strong> {{ publication.created_at|date:"Y-m-d" }}</p>
+                    <p><strong>تاريخ النشر: </strong> {{ publication.created_at|date:"d-m-Y" }}</p>
                     <p></p>
 
                     {% if publication.attach %}

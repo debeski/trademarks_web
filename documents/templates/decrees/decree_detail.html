@@ -45,7 +45,7 @@
                 <div class="card-body h4">
                     <p><strong>رقم الوثيقة: </strong> {{ decree.number|default:"-" }}</p>
 
-                    <p><strong>تاريخ الوثيقة: </strong> {{ decree.date|date:"Y-m-d" }}</p>
+                    <p><strong>تاريخ الوثيقة: </strong> {{ decree.date|date:"d-m-Y" }}</p>
 
                     <p><strong>الحالة: </strong> {{ decree.get_status_display|default:"-" }}</p>
 
@@ -56,7 +56,7 @@
                     <p><strong>الدولة: </strong> {{ decree.country.ar_name|default:"-" }}</p>
                     <p></p>
 
-                    <p><strong>تاريخ التقديم: </strong> {{ decree.date_applied|date:"Y-m-d" }}</p>
+                    <p><strong>تاريخ التقديم: </strong> {{ decree.date_applied|date:"d-m-Y" }}</p>
                     <p></p>
 
                     <p><strong>رقم التقديم: </strong> {{ decree.number_applied|default:"-" }}</p>

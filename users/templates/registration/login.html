@@ -7,10 +7,12 @@
 
 <div class="page">
     <div class="container">
-      <div class="right">
-        <div class="login">هام !</div>
-        <div class="eula">بالنقر على زر دخــول فأنت تخــول الــمسؤوليـن على هذا الموقع بــتسجيل كــل الـعمليات الـتي سـتقوم بهـا فـي سجــل العمليـات. حـيث يمكن عرضهـا و مراجعتهـا لاحقـا من قبــل الاشخــاص المختصيـن بذلـك. </div>
+      <div class="right text-center pt-4">
+        <div class="">
+          <img src="{% static 'img/pdf_logo_og.png' %}" alt="Ministry Logo" class="img-fluid"style="height: auto; width: 150px;">
       </div>
+      <div class="login mb-3 text-secondary">تسجيل الدخــول</div>
+    </div>
       <div class="left">
         <svg viewBox="0 0 320 300">
           <defs>
@@ -23,11 +25,11 @@
                             y2="193.49992"
                             gradientUnits="userSpaceOnUse">
               <stop
-                    style="stop-color:#007bff;"
+                    style="stop-color:#1e4f99;"
                     offset="0"
                     id="stop876" />
               <stop
-                    style="stop-color:#001f3f;"
+                    style="stop-color:#276dd6;"
                     offset="1"
                     id="stop878" />
             </linearGradient>
@@ -37,11 +39,11 @@
         <form action="{% url 'login' %}" method="POST">
             {% csrf_token %}
             <div class="form">
-                <input type="username" id="username" name="username" placeholder="اسم المستخدم" required>
+                <input type="username" style="font-size: 28px;" id="username" name="username" placeholder="اسم المستخدم" required>
         
-                <input type="password" id="password" name="password" placeholder="كلمة المرور" required>
+                <input type="password" style="font-size: 28px;" id="password" name="password" placeholder="كلمة المرور" required>
         
-                <input type="submit" value="دخول" id="submit">
+                <input type="submit" style="font-size: 25px;" class="mt-5 pe-3" value="دخول" id="submit">
             </div>
         </form>
       </div>

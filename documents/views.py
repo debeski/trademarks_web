@@ -341,16 +341,33 @@ def core_models_view(request):
             form = FormClass(request.POST or None)  # Fall back to a blank form if no instance is found
     else:
         form = FormClass(request.POST or None)
-    
-    # For the filter, pass in the GET data and a queryset for the model.
-    filter_obj = FilterClass(request.GET or None, queryset=selected_model.objects.all())
+
+    # Set default ordering if no 'sort' parameter is provided
+    sort_param = request.GET.get('sort', None)
+    # If the 'sort' parameter doesn't exist, order by 'id' by default
+    if not sort_param:
+        # Default to ordering by 'id' if 'sort' parameter is not provided
+        filter_obj = FilterClass(request.GET or None, queryset=selected_model.objects.all().order_by('id'))
+    else:
+        # For the filter, pass in the GET data and a queryset for the model.
+        filter_obj = FilterClass(request.GET or None, queryset=selected_model.objects.all())
     
     # Instantiate the table from the filtered queryset.
-    table = TableClass(filter_obj.qs)
+    table = TableClass(filter_obj.qs, model_name=model_param, user=request.user)
 
     if request.method == 'POST':
         if form.is_valid():
             form.save()
+            UserActivityLog.objects.create(
+                user=request.user,
+                action="UPDATE",
+                model_name='ادارة الاقسام',
+                object_id=instance.pk,
+                number=selected_model._meta.verbose_name,
+                timestamp=timezone.now(),
+                ip_address=get_client_ip(request),
+                user_agent=request.META.get("HTTP_USER_AGENT", ""),
+            )
             print("Form is valid and saved.")
             return redirect('manage_sections')  # Change this to your desired redirect
         else:
@@ -935,14 +952,14 @@ def fetch_pub_data(pub_id):
     pub_record = {
         'pub_id': pub_record.id,
         'pub_year': pub_record.year,
-        'pub_date': pub_record.created_at.strftime("%d-%m-%Y"),
+        'pub_date': pub_record.created_at.strftime("%Y-%m-%d"),
         'pub_no': pub_record.number,
         'dec_no': pub_record.decree.number if pub_record.decree else "N/A",
         'applicant': pub_record.applicant if pub_record.applicant else "N/A",
         'owner': pub_record.owner if pub_record.owner else "N/A",
         'country': pub_record.country.ar_name if pub_record.country else "N/A",
         'address': pub_record.address if pub_record.address else "N/A",
-        'date_applied': pub_record.date_applied.strftime("%d-%m-%Y") if pub_record.date_applied else "N/A",
+        'date_applied': pub_record.date_applied.strftime("%Y-%m-%d") if pub_record.date_applied else "N/A",
         'number_applied': pub_record.number_applied if pub_record.number_applied else "N/A",
         'ar_brand': pub_record.ar_brand if pub_record.ar_brand else "N/A",
         'en_brand': pub_record.en_brand if pub_record.en_brand else "N/A",
@@ -1048,7 +1065,7 @@ def add_objection(request):
             UserActivityLog.objects.create(
                 user=request.user,
                 action="CREATE",
-                model_name='اعتراض من عضو',
+                model_name='اعتراض من مستخدم',
                 object_id=objection.pk,
                 number=objection.number,
                 timestamp=timezone.now(),

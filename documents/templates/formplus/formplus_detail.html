@@ -43,7 +43,7 @@
                 </div>
                 <div class="card-body h4">
                     <p><strong>رقم الوثيقة: </strong> {{ formplus.number|default:"-" }}</p>
-                    <p><strong>تاريخ الوثيقة: </strong> {{ formplus.date|date:"Y-m-d" }}</p>
+                    <p><strong>تاريخ الوثيقة: </strong> {{ formplus.date|date:"d-m-Y" }}</p>
                     <p><strong>الحكومة: </strong> {{ formplus.government|default:"-" }}</p>
                     <p><strong>العنوان: </strong> {{ formplus.title|default:"-" }}</p>
                     <p><strong>الكلمات المفتاحية:</strong></p>
@@ -67,7 +67,7 @@
         <div class="col">
             <div class="card border-light shadow">
                 <div class="card-header text-bg-primary text-center pe-5">
-                    <h5 class="card-title mb-0">معاينة ملف الوثيقة</h5>
+                    <h5 class="card-title h3 mb-0">معاينة ملف الوثيقة</h5>
                 </div>
                 <div class="card-body">
                     {% if formplus.pdf_file %}

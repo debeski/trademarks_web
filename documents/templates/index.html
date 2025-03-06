@@ -112,29 +112,31 @@
 
         <br>
 
-        <p class="lead"><small>جميع الحقوق محفوظة لوزارة الاقتصاد والتجارة © 2025 - الاصدار 1.0.0<small></p>
+        <p class="lead"><small>جميع الحقوق محفوظة لوزارة الاقتصاد والتجارة © 2025 - الاصدار 1.0.4<small></p>
     </div>
 </div>
 
 
 {% if messages %}
-    <div class="modal fade" id="submissionModal"  data-bs-backdrop="static"  tabindex="-1" role="dialog" aria-labelledby="submissionModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered modal-fullscreen-lg-down" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title fs-3" id="submissionModalLabel">تمت تعبئة نموذج الاعتراض بنجاح و عليك الان دفع الرسم المقرر</h5>
-                </div>
-                <div class="modal-body fs-4">
-                    {% for message in messages %}
-                        <p>{{ message|safe }}</p>
-                    {% endfor %}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">انا، أوافق</button>
+    {% for message in messages %}
+        {% if "رقم تتبع الاعتراض" in message %}
+            <div class="modal fade" id="submissionModal"  data-bs-backdrop="static"  tabindex="-1" role="dialog" aria-labelledby="submissionModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl modal-dialog-centered modal-fullscreen-lg-down" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title fs-3" id="submissionModalLabel">تمت تعبئة نموذج الاعتراض بنجاح و عليك الان دفع الرسم المقرر</h5>
+                        </div>
+                        <div class="modal-body fs-4">
+                            <p>{{ message|safe }}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">انا، أوافق</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
+        {% endif %}
+    {% endfor %}
 {% endif %}
 
 <!-- Status Check Modal -->

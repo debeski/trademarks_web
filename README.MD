@@ -316,3 +316,15 @@ v1.0.0 - Stable Release
 	•	Full-featured stable release.
 
 
+v1.0.4 - Patch Update
+
+	•	Fixed a bug where error mesasges spawn inside the objection success modal when on the index page.
+
+	•	Fixed a visual error in the sidebar, optimized visibility and permissions.
+
+	•	Fixed the edit button not appearing correctly for authorized users on the edit_sections view.
+
+	•	Enhanced date formats, visuals, tables, buttons, colors, and overall look and feel of the UI.
+
+
+v1.0.x - 

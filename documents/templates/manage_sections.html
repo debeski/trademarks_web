@@ -52,16 +52,6 @@
 
 {% block content %}
 
-    {% if messages %}
-    <div class="alert-container position-absolute top-0 start-0 w-100">
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} text-center" style="opacity: 95%;">
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
     <!-- Bootstrap Tabs Navigation -->
     <ul class="nav nav-tabs" id="modelTabs" role="tablist">
       {% for model in models %}
@@ -80,7 +70,7 @@
 
         <!-- Card 1: Form -->
         <div class="card border-light shadow mb-5">
-            <div class="card-header text-center pe-5 bg-transparent">
+            <div class="card-header text-center pe-5 text-bg-primary">
                 <h3 class="card-title">{% if id %} تعديل {% else %} اضافة {% endif %}{{ ar_name }}</h3>
             </div>
             <div class="card-body">
@@ -92,7 +82,7 @@
 
       <!-- Card 2: Filter & Table -->
       <div class="card border-light shadow">
-            <div class="card-header text-center pe-5 bg-transparent">
+            <div class="card-header text-center pe-5 text-bg-primary">
                 <h3 class="card-title">قائمة {{ ar_names }}</h3>
             </div>
             <div class="card-body">

@@ -107,7 +107,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6">
-                            <h5><strong>تاريخ الطلب:</strong> {{ objection.pub.created_at|date:"Y-m-d" }}</h5>
+                            <h5><strong>تاريخ الطلب:</strong> {{ objection.pub.created_at|date:"d-m-Y" }}</h5>
                         </div>
                         <div class="col-md-6">
                             <h5><strong>التصنيف:</strong> {{ objection.pub.category }}</h5>
@@ -121,7 +121,7 @@
                             <h5><strong>العلامة التجارية (EN):</strong> {{ objection.pub.en_brand }}</h5>
                         </div>
                     </div>
-                    <h5><strong>تاريخ الاشهار:</strong> {{ objection.pub.created_at }}</h5>
+                    <h5><strong>تاريخ الاشهار:</strong> {{ objection.pub.created_at|date:"d-m-Y"  }}</h5>
                 </div>
             {% if objection.pub.img_file %}
                 <div class="col-md-4 d-flex align-items-center justify-content-center">

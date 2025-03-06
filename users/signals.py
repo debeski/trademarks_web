@@ -14,7 +14,7 @@ def log_login(sender, request, user, **kwargs):
     UserActivityLog.objects.create(
         user=user,
         action="LOGIN",
-        model_name="Authentication",
+        model_name="مصادقة",
         object_id=None,
         ip_address=get_client_ip(request),
         user_agent=request.META.get("HTTP_USER_AGENT", ""),
@@ -27,7 +27,7 @@ def log_logout(sender, request, user, **kwargs):
     UserActivityLog.objects.create(
         user=user,
         action="LOGOUT",
-        model_name="Authentication",
+        model_name="مصادقة",
         object_id=None,
         ip_address=get_client_ip(request),
         user_agent=request.META.get("HTTP_USER_AGENT", ""),

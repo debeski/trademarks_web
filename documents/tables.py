@@ -17,7 +17,7 @@ class GovernmentTable(tables.Table):
         self.model_name = model_name
         self.user = user
         # Check if the user has the permission and add the column accordingly
-        if self.user and self.user.has_perm('documents.edit_sections'):
+        if self.user and self.user.has_perm('documents.change_government'):
             self.base_columns['edit'].visible = True
         else:
             self.base_columns['edit'].visible = False
@@ -43,7 +43,7 @@ class CountryTable(tables.Table):
         self.model_name = model_name
         self.user = user
         # Check if the user has the permission and add the column accordingly
-        if self.user and self.user.has_perm('documents.edit_sections'):
+        if self.user and self.user.has_perm('documents.change_country'):
             self.base_columns['edit'].visible = True
         else:
             self.base_columns['edit'].visible = False
@@ -69,7 +69,7 @@ class ComTypeTable(tables.Table):
         self.model_name = model_name
         self.user = user
         # Check if the user has the permission and add the column accordingly
-        if self.user and self.user.has_perm('documents.edit_sections'):
+        if self.user and self.user.has_perm('documents.change_comtype'):
             self.base_columns['edit'].visible = True
         else:
             self.base_columns['edit'].visible = False
@@ -95,7 +95,7 @@ class DocTypeTable(tables.Table):
         self.model_name = model_name
         self.user = user
         # Check if the user has the permission and add the column accordingly
-        if self.user and self.user.has_perm('documents.edit_sections'):
+        if self.user and self.user.has_perm('documents.change_doctype'):
             self.base_columns['edit'].visible = True
         else:
             self.base_columns['edit'].visible = False
@@ -121,7 +121,7 @@ class DecreeCategoryTable(tables.Table):
         self.model_name = model_name
         self.user = user
         # Check if the user has the permission and add the column accordingly
-        if self.user and self.user.has_perm('documents.edit_sections'):
+        if self.user and self.user.has_perm('documents.change_decreecategory'):
             self.base_columns['edit'].visible = True
         else:
             self.base_columns['edit'].visible = False
