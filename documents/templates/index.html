@@ -5,13 +5,13 @@
 <!-- First Row: Title and Description -->
 <div class="row text-center mb-4">
     <div class="row">
-        <h1 class="display-5">الاشهار الالكتروني للعلامات التجارية</h1>
+        <p class="display-4">الاشهار الالكتروني للعلامات التجارية</p>
     </div>
 </div>
 
 <!-- Second Row: Three Feature Cards -->
 <div class="row p-4 justify-content-between g-3">
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="card shadow-sm h-100">
             <div class="card-body d-flex flex-column">
                 <a href="{% url 'decree_list' %}" class="stretched-link"></a>
@@ -22,7 +22,7 @@
         </div>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="card shadow-sm h-100">
             <div class="card-body d-flex flex-column">
                 <a href="{% url 'publication_list' %}" class="stretched-link"></a>
@@ -157,7 +157,7 @@
                         <label for="phoneNumber" class="form-label">رقم الهاتف</label>
                         <input type="text" class="form-control" id="phoneNumber" name="phone_number" required>
                     </div>
-                    <button type="submit" class="btn btn-success">تحقق</button>
+                    <button type="submit" class="btn btn-primary">تحقق</button>
                 </form>
                 <div id="statusResult" class="fs-6 mt-3"></div>
             </div>
