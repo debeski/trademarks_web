@@ -1,30 +1,42 @@
-Django Project Version Control README
-
 Project Overview
+################
 
 This Django project contains two main apps:
-	1.	User System - A complete comprehensive user management system allowing admins to add, edit, and manage user permissions, and a profile page for users to update their details, including profile picture handling.
-	2.	Main App - A robust app managing Decrees, Publications, Objections, and Documents in relation to registered trademarks. It includes various sections like countries, company types, document types, governments, and categories, interconnected with foreign key relationships.
+	1.	User App - A complete comprehensive user management system allowing staff members to add, edit, and manage user permissions, a profile page for users to view and update their details, including adding a profile picture.
+	2.	Documents App - A robust complete app for managing Trademarks related Decrees, Publications, Objections, and other documents that are also related to trademarks. The app includes secondary sections which are Countries, Company Types, Document Types, Governments, and Decree Catagories, all of which interconnected with foreign key relationships to the main models. In addition to open viewership to the public and the ability file objections on registered tradmarks.
+
 
 Technologies Used
+#################
 
-  •	Docker (Containerization)
-	•	Django (Backend Framework)
-	•	Django Tables2 (Table Views)
-	•	Django Crispy Forms (Forms Rendering)
-	•	PostgresSQL (Database)
-	•	Bootstrap 5 + jQuery (Frontend)
-	•	Javascript + AJAX (Frontend)
-	•	Flatpickr (Date Picker)
-	•	ReportLab (PDF Generation)
-	•	Pdfjs (PDF rendering)
-	•	QR Codes (Python)
-	•	Plotly (Charts)
-	•	Redis (Cache)
-	•	Celery (Tesks)
+  •	Docker Compose (Containerization)
+  •	Python 3.13 (Main Language)
+		Backend Framework:
+		  •	Django 5.1.4 (Main Framework)
+		  •	django-tables2 2.7.1 (Table Views)
+		  •	django-crispy-forms 2.3.0 (Forms Rendering)
+		  •	django-filter 24.3 (Query Filters)
+		  •	django-autocomplete-light 3.11.0  ( Autocomplete support)
+		  •	reportlab 4.2.5 (PDF Generation)
+		  •	arabic-reshaper 3.0.0 + python-bidi 0.6.3 (PDF Generation RTL Support)
+		  •	celery[redis] 5.4.0[5.2.1] (Tasks)
+		  •	django-redis 5.4.0 (django redis adapter)
+		  •	django-celery-beat 2.7.0 (django celery adapter)
+		  •	psycopg2-binary==2.9.10  (PostgreSQL database adapter)
+		  •	Plotly (Interactive charts)
+		  •	QR Code (QR Code Generation)
+		Database:
+		  •	PostgresSQL (Database)
+		Cache:
+		  •	Redis server (Cache)
+		Frontend:
+		  •	Html + CSS + Javascript + Bootstrap 5 + jQuery + AJAX
+		  •	Flatpickr (Date Picker)
+		  •	Pdfjs (PDF rendering)
 
 
 Version History
+###############
 
 v0.1.0 - Initial Development
 	•	Initial commit of the project.
@@ -101,12 +113,12 @@ v0.6.0 - Major Update
 	•	Added Celery server for use in scheduled tasks.
 	•	Optimized docker-compose file for a multi container application.
 	•	Fully integrated user permissions system, allowing admins to set granular permissions for each user and restrict access to certain pages or actions.
-	•	Introduced a fully revamped publication selection view for the public users to file an objection on. with interactive detail card for the publication as well.
+	•	Introduced a fully revamped publication selection view for the public users to file an objection on. with interactive detail card for the publication.
 
 v0.6.4 - Patch update
 	•	Fixed minor issues in the interface, clipping and fading objects.
 	•	revamped the detail view for all models with a fresh redesigned look.
-	•	fixed an intertwining permission issue preventing public objection form submission.
+	•	fixed an intertwining permission issue preventing public objections form submission.
 
 v0.6.9 - Major Update
 	•	Initial alpha release for testing, added comprehensive documentation.
@@ -119,7 +131,7 @@ v0.7.3 - Minor Update
 	•	Profile page added for users to update their details
 	•	Refined the user profile page to allow more detailed updates (e.g., address, contact details).
 	•	Enhanced performance on Publications and Decrees data retrieval, especially for large datasets.
-	•	Implemented real-time updates on the objection status page.
+	•	Introduced internal background tasks to change Publication status from initial to final after 30 days using Celery and redis Servers.
 
 v0.7.6 - Patch Update
 	•	Security patch for the User System to fix vulnerabilities in file uploads.
@@ -158,7 +170,7 @@ v0.9.7 - Major Features and Refinements
 
 v0.9.9 - Patch Update
 	•	Fixed filters on the objection publication pick interface.
-	•	Fixed some clipping and out of order visuals in forms and table views.
+	•	Optimized Dockerfiles and permissions, linked user vscode gid + uid inside the container to user in ssh vm.
 
 v1.0.0 - Stable Release
 	•	Full-featured stable release.
