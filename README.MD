@@ -327,4 +327,12 @@ v1.0.4 - Patch Update
 	•	Enhanced date formats, visuals, tables, buttons, colors, and overall look and feel of the UI.
 
 
-v1.0.x - 
+v1.0.7 - Patch Update
+
+	•	Enhanced index page cards, chart, the titlebar and its content visually.
+
+	•	Optimized base, and index layouts and cards, and the sidebar, for smaller displays including smartphones.
+
+	•	implemented a dynamic settings function to fetch current version directly from README.MD
+
+

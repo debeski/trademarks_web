@@ -11,6 +11,7 @@ django-redis-server, and bootstrap5.
 from pathlib import Path
 import os
 import sys
+import re
 
 # Reconfigures the standard output (stdout) encoding to UTF-8 to support non-ASCII characters.
 sys.stdout.reconfigure(encoding='utf-8')
@@ -252,3 +253,14 @@ from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
+
+def get_last_version_from_readme():
+    with open("README.md", "r", encoding="utf-8") as f:
+        content = f.read()
+        # Use regex to find all version numbers prefixed by 'v'
+        versions = re.findall(r'v(\d+\.\d+\.\d+)', content)
+        if versions:
+            return versions[-1]  # Return the last version found
+        return 'Unknown'  # Fallback if no version found
+
+VERSION = get_last_version_from_readme()

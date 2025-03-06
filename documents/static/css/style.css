@@ -81,23 +81,35 @@ body {
 /* Titlebar Style */
 .titlebar {
     background-color: var(--title);
-    height: 7.5vh;
+    height: 7vh;
+    min-height: 30px;
+    display: flex;
+    position: sticky;
+    top: 0; /* Stick to the top of the viewport */
+    z-index: 1000; /* Ensure it stays on top of other content */
 }
 
 /* Titlebar Text */
 .titlebar p {
-    flex: 1;
-    padding: 0px 10px 0px 0px;
     color: white;
-    transition: font-size 0.3s;
+    transition: all 0.3s;
+    text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
+    font-size: clamp(24px, 4vh, 3em);
+    line-height: 1;
+}
+
+.titlebar img {
+    height: clamp(20px, 5.5vh, 75px);
+    width: auto;
+    transition: all 0.3s;
     text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
 }
 
-@media (max-height: 600px) {
-    .titlebar h1 {
-        font-size: 20px;
+@media (max-width: 750px) {
+    .titlebar p {
+        font-size: 20px !important;
     }
-}    
+}
 
 /* Titlebar Button */
 .menu-toggle {
@@ -119,24 +131,12 @@ body {
     transform: scale(0.95);
 }
 
-/* Container Fluid Layout */
-.layout {
-    flex-grow: 1;
-}
-
-/* Main Content */
-.main-content{
-    display: flex;
-    flex-direction:column;
-    flex-grow: 3;
-}
-
 /* Sidebar Design */
 #sidebar {
     background-color: white;
     color: black;
     width: 300px;
-    transition: width 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out;
     overflow: hidden;
     flex-grow: 0;
     box-shadow: -2px 0 5px -4px rgba(81, 81, 81, 0.5);
@@ -147,6 +147,24 @@ body {
 #sidebar.closed {
     width: 0 !important;
     overflow: hidden;
+}
+
+@media (max-width: 1200px) {
+    #sidebar {
+        position: fixed;
+        top: 7.5vh;
+        right: 0;
+        width: 300px; /* Default width when open */
+        height: 100vh; /* Full height */
+        background-color: white; /* Dark overlay */
+        z-index: 1000;
+        transition: all 0.3s ease-in-out;
+    }
+
+    /* When closed on small screens, hide it */
+    #sidebar.closed {
+        width: 0;
+    }
 }
 
 .list-group-item {
@@ -167,24 +185,13 @@ body {
     align-items: center;
 }
 
-
 .accordion-button:not(.collapsed) {
     background-color: var(--body) !important;
 }
 
-
-@media (max-width: 750px) {
-    #sidebar {
-        width: 0;
-        overflow: hidden;
-    }
-}
-
-
 .button-group{
     padding: 10px;
 }
-
 
 .checkbox-inline {
     display:inline-flex;
@@ -192,31 +199,32 @@ body {
     margin-right: 10px;
 }
 
-
 .alert {
     opacity: 1;
     transition: opacity 0.5s ease-in-out;
 }
 
-
 #id_year {
     direction: rtl;
 }
-
 
 .option-separator {
     border-bottom: 1px solid #ddd;
     padding-bottom: 5px;
 }
 
-
 .option-separator:last-of-type {
     border-bottom: none;
 }
 
-
 .card {
     --bs-card-border-radius: 0px !important;
+}
+.icard {
+    transition: all 0.3s ease-in-out;
+}
+.icard:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1) !important;
 }
 
 .dropdown-menu.show{

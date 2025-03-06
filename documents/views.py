@@ -13,6 +13,7 @@ from django.utils.safestring import mark_safe
 import qrcode
 import base64
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 
 # Helping imports
 #################
@@ -289,6 +290,7 @@ def index(request):
         'obj_pending': obj_pending,
         'obj_paid': obj_paid,
         'obj_accept': obj_accept,
+        'version': settings.VERSION,
     }
 
     return render(request, 'index.html', context)

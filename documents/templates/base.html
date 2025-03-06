@@ -12,7 +12,7 @@
     <meta name="csrf-token" content="{{ csrf_token }}">
 
     {% block extra_head%}{% endblock%}
-    
+    {% if user.is_authenticated %}
     <!-- Toggle Sidebar Script -->
     <script>
         // On page load, check if the sidebar state is saved in localStorage and apply it
@@ -33,26 +33,27 @@
             localStorage.setItem('sidebarState', sidebar.classList.contains('closed') ? 'closed' : 'open');
         }
     </script>
+    {% endif %}
 </head>
 <body>
 
     <!-- Title Bar -->
-    <div class="titlebar d-flex justify-content-between align-items-center" style="z-index: 999;">
+    <div class="titlebar shadow-sm d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
             {% if request.user.is_authenticated %}
                 <button class="menu-toggle ms-2 rounded" onclick="toggleMenu()">☰</button>
             {% endif %}
-            <a href="{% url 'index' %}" style="text-decoration: none; color: inherit;">
-                <img src="{% static 'img/pdf_logo.png' %}" alt="Logo" style="height: 50px; width: auto; margin-right: 10px; vertical-align: middle;">
-                <p class="h2" style="display: inline; vertical-align: middle;">الاشهار الالكتروني للعلامات التجارية{% block header %}{% endblock %}</p>
+            <a class="align-items-center d-flex" href="{% url 'index' %}" style="text-decoration: none; color: inherit;">
+                <img class="ps-2" src="{% static 'img/pdf_logo.png' %}" alt="Logo">
+                <p class="ps-3 pt-2">الاشهار الالكتروني للعلامات التجارية{% block header %}{% endblock %}</p>
             </a>
         </div>
             <!-- The Login Button -->
-        <div>
+        <div class="pe-2">
         {% if user.is_authenticated %}
             <!-- Dropdown Button and Menu for Authenticated User -->
             <div class="dropdown">
-                <button class="btn btn-light me-2 dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn btn-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-person-circle">&nbsp;</i> {{ user.username }}
                 </button>
                 <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="userDropdown" style="min-width: 130px;">
@@ -83,9 +84,9 @@
         </div>
     </div>
     {% if user.is_authenticated %}
-    <div class="layout d-flex">
+    <div class="d-flex flex-grow-1">
         <!-- Sidebar -->
-        <div class="list-group" id="sidebar">
+        <div class="list-group flex-shrink-0" id="sidebar">
             <!-- Option 1: Decrees List -->
             <a href="{% url 'decree_list' %}" class="list-group-item list-group-item-action {% if request.path == '/decrees/' %}active disabled{% elif '/decrees/' in request.path %}active{% endif %}">
                 <i class="bi bi-file-earmark-binary me-2" style="font-size: 24px;"></i>
@@ -164,7 +165,7 @@
         </div>
         {% endif %}
         <!-- Main Content -->
-        <div class="main-content container-fluid mt-3 p-4 d-flex">
+        <div class="main-content mt-3 p-4  d-flex flex-column flex-grow-1">
             {% if messages %}
             <div class="alert-container position-absolute top-0 start-0 w-100">
                 {% for message in messages %}
