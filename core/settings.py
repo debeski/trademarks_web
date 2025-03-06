@@ -255,7 +255,7 @@ MESSAGE_TAGS = {
 }
 
 def get_last_version_from_readme():
-    with open("README.md", "r", encoding="utf-8") as f:
+    with open("README.MD", "r", encoding="utf-8") as f:
         content = f.read()
         # Use regex to find all version numbers prefixed by 'v'
         versions = re.findall(r'v(\d+\.\d+\.\d+)', content)
