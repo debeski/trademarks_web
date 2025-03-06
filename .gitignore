@@ -1,6 +1,6 @@
 # Ignore pycache
 __pycache__/
-
+/__pycache__
 # Ignore migrations
 */migrations/
 
