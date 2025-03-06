@@ -1,12 +1,16 @@
 Project Overview
+
 ################
 
 This Django project contains two main apps:
+
 	1.	User App - A complete comprehensive user management system allowing staff members to add, edit, and manage user permissions, a profile page for users to view and update their details, including adding a profile picture.
+
 	2.	Documents App - A robust complete app for managing Trademarks related Decrees, Publications, Objections, and other documents that are also related to trademarks. The app includes secondary sections which are Countries, Company Types, Document Types, Governments, and Decree Catagories, all of which interconnected with foreign key relationships to the main models. In addition to open viewership to the public and the ability file objections on registered tradmarks.
 
 
 Technologies Used
+
 #################
 
   •	Docker Compose (Containerization)
