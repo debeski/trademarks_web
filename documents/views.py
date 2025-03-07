@@ -14,7 +14,6 @@ import qrcode
 import base64
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-from deep_translator import GoogleTranslator
 
 # Helping imports
 #################
