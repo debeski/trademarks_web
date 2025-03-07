@@ -3,7 +3,7 @@ FROM python:3.13
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
-    DEBIAN_FRONTEND=noninteractive
+    DEBIAN_FRONTEND=noninteractive \
     PIP_NO_CACHE_DIR=off
 
 # Install required system dependencies
