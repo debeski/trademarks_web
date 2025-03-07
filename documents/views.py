@@ -14,7 +14,7 @@ import qrcode
 import base64
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-# from googletrans import Translator
+from deep_translator import GoogleTranslator
 
 # Helping imports
 #################
@@ -308,21 +308,24 @@ def index(request):
 
 
 # About Us View
-# def readme_view(request):
-#     readme_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'README.MD')
+def readme_view(request):
+    readme_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'README.MD')
     
-#     try:
-#         with open(readme_path, "r", encoding="utf-8") as f:
-#             content = f.read()
-        
-#         # Translate to Arabic
-#         translator = Translator()
-#         translated_content = translator.translate(content, dest="ar").text
+    try:
+        with open(readme_path, "r", encoding="utf-8") as f:
+            content = f.read()
 
-#     except FileNotFoundError:
-#         translated_content = "ملف README.MD غير موجود."
+        # Translate to Arabic using deep-translator
+        try:
+            translator = GoogleTranslator(source="auto", target="ar")
+            translated_content = translator.translate(content)
+        except Exception:
+            translated_content = "حدث خطأ أثناء الترجمة."
 
-#     return render(request, "about.html", {"content": translated_content})
+    except FileNotFoundError:
+        translated_content = "ملف README.MD غير موجود."
+
+    return render(request, "aboutus.html", {"content": translated_content})
 
 
 

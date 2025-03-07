@@ -7,6 +7,9 @@ urlpatterns = [
     # Main URL Route for Index
     path('', views.index, name='index'),
 
+    # About Us Page View
+    path('aboutus', views.readme_view, name='aboutus'),
+
     # Complete URL Route for Manage-Sections
     path('manage/sections/', views.core_models_view, name='manage_sections'),
 
