@@ -48,7 +48,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG should be set to False in production to prevent sensitive data exposure in errors.
-DEBUG = True
+DEBUG = False
 
 # SECURITY WARNING: don't run with secure HTTPS connections False in production!
 # Ensures that cookies for sessions and CSRF are only sent over secure (HTTPS) connections in production.
