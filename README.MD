@@ -338,7 +338,7 @@ v1.0.6 - Minor Fixes and Enhancements
 	•	Optimized base, and index layouts and cards, and the sidebar, for smaller displays including smartphones.
 
 
-v1.1.0 - Minor Update
+v1.1.2 - Major Features and Refinements
 
 	•	Equipped base trademarks Docker image with neccessary requirements for server change, rebuilt, and repushed to hub.
 
@@ -346,4 +346,10 @@ v1.1.0 - Minor Update
 
 	•	implemented a dynamic settings function to fetch current version directly from README.MD
 
+	•	Equipped the new WSGI web server with WhiteNoise for serving staticfiles to the frontend.
+
 	•	Realigned the index page chart with all 3 main models[Publication, Decree, Objection] and with the adjacent index cards.
+
+	•	Introduced a new ABout us page to the sidebar containing a translated version of the README.MD file
+
+

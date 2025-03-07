@@ -113,7 +113,7 @@
                 التشريعات و النماذج
             </a>
             
-            <!-- Accordion for Reports -->
+            <!-- Option 5: Accordion for Reports -->
             <div class="accordion" id="reportsAccordion">
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingReports">
@@ -150,7 +150,6 @@
                     </h2>
                     <div id="collapseSettings" class="accordion-collapse collapse {% if '/manage/' in request.path and not 'profile' in request.path %}show{% endif %}" aria-labelledby="headingSettings" data-bs-parent="#settingsAccordion">
                         <div class="accordion-body p-0">
-                            <!-- You can add more links here as needed -->
                             <a class="list-group-item list-group-item-action {% if '/manage/sections/' in request.path %}active bg-primary disabled{% endif %}" href="{% url 'manage_sections' %}"><i class="bi bi-layout-sidebar-inset me-2" style="font-size: 21px; opacity: 0.5;"></i>ادارة الاقسام</a>
                             {% if user.is_staff %}
                             <a class="list-group-item list-group-item-action {% if '/manage/users' in request.path %}active bg-primary disabled{% endif %}" href="{% url 'manage_users' %}">
@@ -162,6 +161,11 @@
                     </div>
                 </div>
             </div>
+            <!-- Option 7: About page -->
+            <a href="#" class="list-group-item list-group-item-action">
+                <i class="bi bi-file-earmark-richtext me-2" style="font-size: 24px;"></i>
+                . حول
+            </a>
         </div>
         {% endif %}
         <!-- Main Content -->

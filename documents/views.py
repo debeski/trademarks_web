@@ -14,6 +14,7 @@ import qrcode
 import base64
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
+# from googletrans import Translator
 
 # Helping imports
 #################
@@ -305,6 +306,25 @@ def index(request):
     }
 
     return render(request, 'index.html', context)
+
+
+# About Us View
+# def readme_view(request):
+#     readme_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'README.MD')
+    
+#     try:
+#         with open(readme_path, "r", encoding="utf-8") as f:
+#             content = f.read()
+        
+#         # Translate to Arabic
+#         translator = Translator()
+#         translated_content = translator.translate(content, dest="ar").text
+
+#     except FileNotFoundError:
+#         translated_content = "ملف README.MD غير موجود."
+
+#     return render(request, "about.html", {"content": translated_content})
+
 
 
 # Main view, and CRUD function for section models

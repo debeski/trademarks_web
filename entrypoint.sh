@@ -33,7 +33,7 @@ fi
 python manage.py migrate --noinput
 
 # Start Django server in the background
-gunicorn core.wsgi:application --bind 0.0.0.0:8000 --workers 3 &
+gunicorn -c gunicorn.py &
 
 # Start Celery worker in the background
 python -m celery -A core worker --loglevel=info &

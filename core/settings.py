@@ -44,16 +44,16 @@ LOGOUT_REDIRECT_URL = 'index'
 #########################################################################################################
 # SECURITY WARNING: keep the secret key used in production secret!
 # The SECRET_KEY is used for cryptographic signing and should be kept private in production.
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-cdo1^@rz#s)d69d^0snm1(*!bfe#!eix%4z^%fsj!!hwskl107')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG should be set to False in production to prevent sensitive data exposure in errors.
-DEBUG = True
+DEBUG = False
 
 # SECURITY WARNING: don't run with secure HTTPS connections False in production!
 # Ensures that cookies for sessions and CSRF are only sent over secure (HTTPS) connections in production.
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 # SECURITY WARNING: don't allow all hosts in production!
 # List of allowed host/domain names that the app can serve.
@@ -172,6 +172,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Defines the default primary key field type to be used for models when no explicit primary key is set.
+# The 'BigAutoField' allows for larger integers (up to 9223372036854775807) as primary keys, which is useful for applications with a large number of records.
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Language and timezone settings.
 # Defines the language code for the application and the timezone used for date and time.
@@ -203,11 +206,6 @@ STATICFILES_DIRS = [
 # For Compression and Manifest Storage
 STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-
-# Defines the default primary key field type to be used for models when no explicit primary key is set.
-# The 'BigAutoField' allows for larger integers (up to 9223372036854775807) as primary keys, which is useful for applications with a large number of records.
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # MEDIA_URL is the URL where files will be accessed from the browser
 MEDIA_URL = '/media/'

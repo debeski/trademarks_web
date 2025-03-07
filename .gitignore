@@ -15,8 +15,14 @@
 # Ignore all macOS created files
 **/.DS_Store
 
-# Ignore trademarks-base (python) Dockerfile
-pyDockerfile
+# Ignore staticfiles
+staticfiles
+
+# # Ignore trademarks-base (python) Dockerfile
+# pyDockerfile
+
+# # Ignore trademarks-base (python) requirements.txt file
+# requirements.txt
 
 # Ignore environment files
 # .env
