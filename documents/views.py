@@ -307,28 +307,6 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-# About Us View
-def readme_view(request):
-    readme_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'README.MD')
-    
-    try:
-        with open(readme_path, "r", encoding="utf-8") as f:
-            content = f.read()
-
-        # Translate to Arabic using deep-translator
-        try:
-            translator = GoogleTranslator(source="auto", target="ar")
-            translated_content = translator.translate(content)
-        except Exception:
-            translated_content = "حدث خطأ أثناء الترجمة."
-
-    except FileNotFoundError:
-        translated_content = "ملف README.MD غير موجود."
-
-    return render(request, "aboutus.html", {"content": translated_content})
-
-
-
 # Main view, and CRUD function for section models
 def core_models_view(request):
     # Read the GET parameter, defaulting to 'Country'
