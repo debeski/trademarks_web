@@ -4,6 +4,9 @@ workers = 4
 # Number of threads per worker
 threads = 2
 
+# Turn to False in Production
+reload = True  # Enable automatic reloading during development
+
 # Bind to a specific address and port
 bind = "0.0.0.0:8000"
 

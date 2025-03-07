@@ -204,6 +204,7 @@ def create_chart(models, start_year=2012, end_year=2025):
 
     # Return the cached chart if available
     if cached_chart:
+        print('returned cached chart')
         return cached_chart  
     
     years = range(start_year, end_year + 1)
@@ -262,7 +263,7 @@ def create_chart(models, start_year=2012, end_year=2025):
 
     # Convert figure to HTML representation
     chart_html = fig.to_html(full_html=False)
-
+    print('returned normal chart')
     # Store the chart in the cache for 1 hour (3600 seconds)
     cache.set(cache_key, chart_html, timeout=3600)
     return chart_html
