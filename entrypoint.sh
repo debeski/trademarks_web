@@ -16,6 +16,7 @@ if [ ! -f "$COMMANDS_RUN_FILE" ]; then
     wait_for_service redis 6379
     
     echo "Running management commands..."
+    python manage.py collectstatic --noinput
     python manage.py makemigrations users
     python manage.py makemigrations documents
     python manage.py makemigrations
@@ -26,11 +27,13 @@ if [ ! -f "$COMMANDS_RUN_FILE" ]; then
     touch "$COMMANDS_RUN_FILE"
 fi
 
+
+
 # Apply database migrations
 python manage.py migrate --noinput
 
 # Start Django server in the background
-python manage.py runserver 0.0.0.0:8000 &
+gunicorn core.wsgi:application --bind 0.0.0.0:8000 --workers 3 &
 
 # Start Celery worker in the background
 python -m celery -A core worker --loglevel=info &

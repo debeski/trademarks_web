@@ -99,6 +99,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 # Configuration for Django templates. This includes settings for template engines.
@@ -199,6 +200,11 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "documents/static"),
 ]
 
+# For Compression and Manifest Storage
+STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
 # Defines the default primary key field type to be used for models when no explicit primary key is set.
 # The 'BigAutoField' allows for larger integers (up to 9223372036854775807) as primary keys, which is useful for applications with a large number of records.
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -255,12 +261,16 @@ MESSAGE_TAGS = {
 }
 
 def get_last_version_from_readme():
-    with open("README.MD", "r", encoding="utf-8") as f:
-        content = f.read()
-        # Use regex to find all version numbers prefixed by 'v'
-        versions = re.findall(r'v(\d+\.\d+\.\d+)', content)
-        if versions:
-            return versions[-1]  # Return the last version found
-        return 'Unknown'  # Fallback if no version found
+    if not os.path.exists("README.MD"):
+        return "Unknown"  # Return a default version if the file is missing
+
+    try:
+        with open("README.MD", "r", encoding="utf-8") as f:
+            content = f.read()
+            # Use regex to find all version numbers prefixed by 'v'
+            versions = re.findall(r'v(\d+\.\d+\.\d+)', content)
+            return versions[-1] if versions else "Unknown"
+    except Exception as e:
+        return f"Error: {str(e)}"  # Handle unexpected errors gracefully
 
 VERSION = get_last_version_from_readme()

@@ -211,10 +211,21 @@ def create_chart(models, start_year=2012, end_year=2025):
     # Collect data from each model
     for model in models:
         model_name = model._meta.verbose_name  # Use Django's verbose_name for readability
-        for year in years:
-            # Get the count of documents for the given year
-            count = model.objects.filter(year=year, deleted_at__isnull=True).count() or 0
-            data.append({'Year': year, 'Count': count, 'Model': model_name})
+        year_field = None
+
+        # Determine the correct field to filter by year
+        if hasattr(model, 'year'):  # Model with explicit 'year' field
+            year_field = 'year'
+        elif hasattr(model, 'created_at'):  # Model using 'created_at'
+            year_field = 'created_at__year'
+        elif hasattr(model, 'date'):  # Model using 'date'
+            year_field = 'date__year'
+
+        if year_field:
+            for year in years:
+                # Get the count of documents for the given year
+                count = model.objects.filter(**{year_field: year}, deleted_at__isnull=True).count() or 0
+                data.append({'Year': year, 'Count': count, 'Model': model_name})
 
     # Convert to DataFrame
     df = pd.DataFrame(data)
@@ -222,8 +233,8 @@ def create_chart(models, start_year=2012, end_year=2025):
     # Create the bar chart
     fig = px.bar(
         df, x='Year', y='Count', color='Model', barmode='group',
-        title='عدد الاشهارات حسب السنة',
-        labels={'Model': 'النوع', 'Year': 'السنة', 'Count': 'عدد الاشهارات'},
+        title='عدد الوثائق حسب السنة',
+        labels={'Model': 'النوع', 'Year': 'السنة', 'Count': 'عدد الوثائق'},
         text='Count',
         hover_data={'Model': False},
     )
@@ -233,7 +244,7 @@ def create_chart(models, start_year=2012, end_year=2025):
         height=340,
         title_x=0.5,
         xaxis_title='',
-        yaxis_title='عدد الاشهارات',
+        yaxis_title='عدد الوثائق',
         showlegend=False,
         autosize=True,
         margin=dict(l=40, r=20, t=40, b=0),
@@ -259,7 +270,7 @@ def create_chart(models, start_year=2012, end_year=2025):
 # Html & Chart Rendering Functions on index page
 def index(request):
     # Generate the chart HTML
-    chart_html = create_chart([Publication])
+    chart_html = create_chart([Publication, Decree, Objection])
 
     decree = Decree.objects.filter(deleted_at__isnull=True)
     decree_accept = decree.filter(status=1).count()

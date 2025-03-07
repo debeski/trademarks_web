@@ -18,8 +18,12 @@ Technologies Used
   •	Python 3.13 (Main Language)
 
 		Backend Framework:
-
+		
 		  •	Django 5.1.4 (Main Framework)
+
+		  •	gunicorn 23.0.0 (Main WSGI Server)
+
+		  •	whitenoise 6.9.0 (Static Files Server)
 
 		  •	django-tables2 2.7.1 (Table Views)
 
@@ -316,7 +320,7 @@ v1.0.0 - Stable Release
 	•	Full-featured stable release.
 
 
-v1.0.4 - Patch Update
+v1.0.3 - Patch Update
 
 	•	Fixed a bug where error mesasges spawn inside the objection success modal when on the index page.
 
@@ -324,15 +328,22 @@ v1.0.4 - Patch Update
 
 	•	Fixed the edit button not appearing correctly for authorized users on the edit_sections view.
 
+
+v1.0.6 - Minor Fixes and Enhancements
+
 	•	Enhanced date formats, visuals, tables, buttons, colors, and overall look and feel of the UI.
-
-
-v1.0.7 - Patch Update
 
 	•	Enhanced index page cards, chart, the titlebar and its content visually.
 
 	•	Optimized base, and index layouts and cards, and the sidebar, for smaller displays including smartphones.
 
+
+v1.1.0 - Minor Update
+
+	•	Equipped base trademarks Docker image with neccessary requirements for server change, rebuilt, and repushed to hub.
+
+	•	Introduced a new Wsgi Web Server which is better than native django server in terms of performance and caching.
+
 	•	implemented a dynamic settings function to fetch current version directly from README.MD
 
-
+	•	Realigned the index page chart with all 3 main models[Publication, Decree, Objection] and with the adjacent index cards.
