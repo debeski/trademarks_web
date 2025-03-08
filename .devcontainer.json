@@ -3,7 +3,7 @@
     "dockerComposeFile": "docker-compose.yml",
     "service": "web",
     "workspaceFolder": "/app",
-    "forwardPorts": [9430],
+    "forwardPorts": [9420],
     "remoteUser": "vscode",
     "mounts": [
       "source=${localWorkspaceFolder},target=/workspace/trademarks,type=bind"

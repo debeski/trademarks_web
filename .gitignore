@@ -8,15 +8,13 @@
 # Ignore command run logs
 .commands_run
 
-# Ignore media + logs folders
+# Ignore media + logs + static folders
 /media/
 /logs/
+staticfiles
 
 # Ignore all macOS created files
 **/.DS_Store
-
-# Ignore staticfiles
-staticfiles
 
 # Ignore trademarks-base (python) Dockerfile
 pyDockerfile
@@ -24,7 +22,7 @@ pyDockerfile
 # Ignore trademarks-base (python) requirements.txt file
 requirements.txt
 
-Ignore environment files
+# Ignore environment files
 .env
 
 # # Ignore dev container config

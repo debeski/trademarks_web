@@ -1,35 +1,46 @@
 # Use the pre-built Python base image
-FROM debeski/trademarks-base:latest
+FROM python:3.13-slim
 
-# Create a new user for security and add to sudoers (granting superuser privileges)
-ARG USER_ID=1001
-ARG GROUP_ID=1001
-RUN addgroup --gid $GROUP_ID vscode && \
-    adduser --disabled-password --gecos '' --uid $USER_ID --gid $GROUP_ID vscode && \
-    echo "vscode ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+# Install required system dependencies
+RUN apt update && apt install -y \
+    build-essential \
+    libpq-dev \
+    gcc \
+    python3-dev\
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
 
-# Ensure /app directory is owned by vscode user and group
-RUN mkdir -p /app && chown -R vscode:vscode /app
+# Create restricted user FIRST to ensure proper ownership
+RUN addgroup --system --gid 1001 micro && \
+    adduser --system --uid 1001 --gid 1001 --no-create-home micro
 
-# Create user with specific UID/GID matching host user
-USER vscode
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    DEBIAN_FRONTEND=noninteractive \
+    PIP_NO_CACHE_DIR=off
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Create directories and set permissions
+# Copy requirements FIRST for layer caching
+COPY requirements.txt .
+RUN pip install --user --no-warn-script-location -r requirements.txt
+
+# Copy application files with proper ownership
+COPY --chown=micro:micro . .
+
+# Final permissions fix
+RUN chmod 755 /app && \
+    chown -R micro:micro /app
+
+# Switch to non-root user
+USER micro
+
+# Create directories for volumes
 RUN mkdir -p /app/media /app/staticfiles /app/logs
 
-# Copy the application files and set ownership
-COPY --chown=vscode:vscode . .
+# Single entrypoint copy with exec permissions
+COPY --chown=micro:micro entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
-USER root
-
-# Copy entrypoint script and make it executable
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-USER vscode
-
-# Set the entrypoint
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["/app/entrypoint.sh"]
