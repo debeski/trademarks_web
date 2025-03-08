@@ -19,8 +19,8 @@ if [ ! -f "$COMMANDS_RUN_FILE" ]; then
     python manage.py makemigrations users --noinput
     python manage.py makemigrations documents --noinput
     python manage.py migrate --noinput
-    python manage.py create_su --noinput
-    python manage.py populate --noinput
+    python manage.py create_su
+    python manage.py populate
 
     touch "$COMMANDS_RUN_FILE"
 fi

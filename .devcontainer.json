@@ -11,12 +11,12 @@
     "customizations": {
       "vscode": {
         "extensions": [
-          "KevinRose.vsc-python-indent",
-          "ms-python.python",
-          "batisteo.vscode-django",
-          "ecmel.vscode-html-css",
-          "GitHub.remotehub",
-          "oderwat.indent-rainbow"
+            "KevinRose.vsc-python-indent",
+            "ms-python.python",
+            "batisteo.vscode-django",
+            "GitHub.remotehub",
+            "oderwat.indent-rainbow",
+            "thebarkman.vscode-djaneiro"
         ]
       }
     }
