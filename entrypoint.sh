@@ -35,11 +35,11 @@ python manage.py migrate --noinput
 
 # Start Django server in the background
 echo "Launching WSGI server..."
-# # PRODUCTION
-# gunicorn -c gunicorn.py &
+# PRODUCTION
+gunicorn -c gunicorn.py &
 
-# DEVELOPMENT
-python manage.py runserver
+# # DEVELOPMENT
+# python manage.py runserver &
 
 # Start Celery worker in the background
 echo "Launching Celery server..."
