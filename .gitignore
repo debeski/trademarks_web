@@ -18,14 +18,14 @@
 # Ignore staticfiles
 staticfiles
 
-# # Ignore trademarks-base (python) Dockerfile
-# pyDockerfile
+# Ignore trademarks-base (python) Dockerfile
+pyDockerfile
 
-# # Ignore trademarks-base (python) requirements.txt file
-# requirements.txt
+# Ignore trademarks-base (python) requirements.txt file
+requirements.txt
 
-# Ignore environment files
-# .env
+Ignore environment files
+.env
 
 # # Ignore dev container config
 # .devcontainer.json

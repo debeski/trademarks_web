@@ -48,7 +48,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG should be set to False in production to prevent sensitive data exposure in errors.
-DEBUG = False
+DEBUG = os.environ.get('DEBUG_STATUS') == 'True'
 
 # SECURITY WARNING: don't run with secure HTTPS connections False in production!
 # Ensures that cookies for sessions and CSRF are only sent over secure (HTTPS) connections in production.
@@ -58,7 +58,7 @@ CSRF_COOKIE_SECURE = True
 # SECURITY WARNING: don't allow all hosts in production!
 # List of allowed host/domain names that the app can serve.
 # In production, this should only include trusted domain names.
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
 
 # Control whether the site can be embedded in an <iframe> externally.
 # Prevents the site from being embedded in an iframe on other websites for security reasons.

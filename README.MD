@@ -292,12 +292,14 @@ v0.9.1 - Patch Update
 
 	•	Fixed the category not being submitted correctly in the new publication form.
 
+	•	Added three new volumes in Docker Compose file for static, media, and logs.
+
 
 v0.9.7 - Major Features and Refinements
 
 	•	Changed the Decree model to be accessable for view by the public.
 
-	•	Fixed permission issues with decree model and logging.
+	•	Fixed permission issues with logs volume and logging.
 
 	•	Introduced a new view for decrees for public view and download of related decrees.
 

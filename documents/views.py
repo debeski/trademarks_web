@@ -400,6 +400,20 @@ def core_models_view(request):
     
     return render(request, 'manage_sections.html', context)
 
+def read_txt_file(request):
+    file_path = 'aboutus.txt'  # Provide the full path to your text file
+
+    # Read the content of the text file
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            file_content = file.read()
+    except FileNotFoundError:
+        file_content = "File not found."
+    except Exception as e:
+        file_content = f"An error occurred: {e}"
+
+    return render(request, 'aboutus.html', {'file_content': file_content})
+
 
 # Views for Decree Model
 #####################################################################
