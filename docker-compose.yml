@@ -7,7 +7,7 @@ x-environment: &default-environment
   REDIS_URL_DB: redis://redis:6379/1
   ALLOWED_HOSTS: "*"
   DEBUG_STATUS: "True"
-  POSTGRESS_PASSWORD: de3094
+  POSTGRES_PASSWORD: de3094
   DJANGO_SECRET_KEY: a93f6b0216523d059ee5d1cf5217fc1484a5fd2dc460344f2ad4a054723147f7
 
 services:

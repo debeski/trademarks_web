@@ -27,10 +27,14 @@ WORKDIR /app
 
 # Copy requirements FIRST for layer caching
 COPY requirements.txt .
-RUN pip install --user --no-warn-script-location -r requirements.txt
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt  # Removed --user flag
 
 # Copy application files with proper ownership
 COPY --chown=micro:micro . .
+
+# Create directories for volumes
+RUN mkdir -p /app/media /app/staticfiles /app/logs
 
 # Final permissions fix
 RUN chmod 755 /app && \
@@ -38,9 +42,6 @@ RUN chmod 755 /app && \
 
 # Switch to non-root user
 USER micro
-
-# Create directories for volumes
-RUN mkdir -p /app/media /app/staticfiles /app/logs
 
 # Single entrypoint copy with exec permissions
 COPY --chown=micro:micro entrypoint.sh /app/entrypoint.sh
