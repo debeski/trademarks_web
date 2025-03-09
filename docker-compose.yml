@@ -37,6 +37,25 @@ services:
     networks:
       - app-net
 
+  # This is an on-call service, which collects static, runs migrations, and then exits.
+  migrator:
+    image: debeski/trademarks:swarm
+    command: >
+      /bin/sh -c '
+      python manage.py migrator'
+    entrypoint: ["/app/entrypoint.sh"]
+    environment:
+      <<: *default-environment
+    networks:
+      - app-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: none
+    depends_on:
+      - db
+      - redis
+
   web:
     image: debeski/trademarks:swarm  # Build and push this image
     deploy:
@@ -60,6 +79,7 @@ services:
     # secrets:
     #   - DJANGO_SECRET_KEY
     #   - POSTGRES_PASSWORD
+    entrypoint: ["/app/entrypoint.sh"]
     environment:
       <<: *default-environment
       INIT_DELAY: 10  # Random delay for initialization
@@ -88,6 +108,7 @@ services:
     # secrets:
     #   - DJANGO_SECRET_KEY
     #   - POSTGRES_PASSWORD
+    entrypoint: ["/app/entrypoint.sh"]
     environment:
       <<: *default-environment
     networks:
@@ -96,7 +117,7 @@ services:
       - db
       - redis
 
-  postgres-backup:
+  db-backup:
     image: postgres:17
     deploy:
       replicas: 1
@@ -105,7 +126,7 @@ services:
     networks:
       - app-net
     volumes:
-      - postgres_backups:/backups
+      - db_backups:/backups
     environment:
       <<: *default-environment
       BACKUP_INTERVAL: "86400"  # 24 hours in seconds
@@ -140,7 +161,7 @@ volumes:
   media_volume:
   static_volume:
   logs_volume:
-  postgres_backups:
+  db_backups:
 
 # secrets:
 #   DJANGO_SECRET_KEY:

@@ -1,29 +1,29 @@
 # Ignore all pycache folders
 **/__pycache__/
 
-
-# Ignore all migrations folders
-**/migrations/
-
-# Ignore command run logs
-.commands_run
+# Ignore all macOS created files
+**/.DS_Store
 
 # Ignore media + logs + static folders
 /media/
 /logs/
 staticfiles
 xpose
-# Ignore all macOS created files
-**/.DS_Store
 
-# Ignore trademarks-base (python) Dockerfile
-pyDockerfile
+# Ignore all migrations folders
+# **/migrations/
 
-# Ignore trademarks-base (python) requirements.txt file
-requirements.txt
+# # Ignore command run logs
+# .commands_run
 
-# Ignore environment files
-.env
+# # Ignore trademarks-base (python) Dockerfile
+# pyDockerfile
+
+# # Ignore trademarks-base (python) requirements.txt file
+# requirements.txt
+
+# # Ignore environment files
+# .env
 
 # # Ignore dev container config
 # .devcontainer.json

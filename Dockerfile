@@ -2,16 +2,21 @@
 FROM python:3.13-slim
 
 # Install required system dependencies
-RUN apt update && apt install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
-    gcc \
-    python3-dev \
-    python3-click \
+    libffi-dev \
+    libssl-dev \
     postgresql-client \
     netcat-openbsd \
+    libjpeg-dev \
+    zlib1g-dev \
+    tzdata \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
+
+# Set time zone
+ENV TZ=Africa/Tripoli
 
 # Create restricted user FIRST to ensure proper ownership
 RUN addgroup --system --gid 1001 micro && \
@@ -28,7 +33,7 @@ WORKDIR /app
 # Copy requirements FIRST for layer caching
 COPY requirements.txt .
 RUN pip install --upgrade pip && \
-    pip install -r requirements.txt  # Removed --user flag
+    pip install -r requirements.txt
 
 # Copy application files with proper ownership
 COPY --chown=micro:micro . .

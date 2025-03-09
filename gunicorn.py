@@ -1,5 +1,5 @@
 # Number of worker processes
-workers = 4
+workers = 3
 
 # Number of threads per worker
 threads = 2

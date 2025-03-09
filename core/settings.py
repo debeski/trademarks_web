@@ -72,17 +72,20 @@ SILENCED_SYSTEM_CHECKS = ["security.W019"]
 # List of installed applications in the Django project.
 # This includes Django apps and third-party apps that contribute functionality to the project.
 INSTALLED_APPS = [
+    'users',
+    'documents',
+
     "admin_interface",
     "colorfield",
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'django_celery_beat',
-    'documents',
-    'users',
     'crispy_forms',
     "crispy_bootstrap5",
     'django_tables2',
