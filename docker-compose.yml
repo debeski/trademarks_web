@@ -49,7 +49,7 @@ services:
     user: "1001:1001"
     command: >
       /bin/sh -c '
-      if [ "$${DEBUG_STATUS,,}" = "true" ]; then
+      if [ "$(echo "$DEBUG_STATUS" | tr '[:upper:]' '[:lower:]')" = "true" ]; then
         python manage.py runserver 0.0.0.0:8000
       else
         gunicorn -c gunicorn.py
