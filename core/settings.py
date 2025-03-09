@@ -44,7 +44,7 @@ LOGOUT_REDIRECT_URL = 'index'
 #########################################################################################################
 # SECURITY WARNING: keep the secret key used in production secret!
 # The SECRET_KEY is used for cryptographic signing and should be kept private in production.
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'a93f6b0216523d059ee5d1cf5217fc1484a5fd2dc460344f2ad4a054723147f7')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG should be set to False in production to prevent sensitive data exposure in errors.
@@ -132,7 +132,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('POSTGRES_DB'),  # This should match your .env variable
         'USER': os.getenv('POSTGRES_USER'),  # This should match your .env variable
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),  # This should match your .env variable
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'de3094'),  # This should match your .env variable
         'HOST': 'db',  # This should match the service name in Docker Compose
         'PORT': os.getenv('POSTGRES_PORT', '5432'),
     }

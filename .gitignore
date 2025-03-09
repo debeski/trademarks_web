@@ -12,7 +12,7 @@
 /media/
 /logs/
 staticfiles
-
+xpose
 # Ignore all macOS created files
 **/.DS_Store
 

@@ -1,56 +1,89 @@
+x-environment: &default-environment
+  POSTGRES_DB: trademarks
+  POSTGRES_USER: micro
+  POSTGRES_PORT: 5432
+  CELERY_BROKER_URL: redis://redis:6379/0
+  REDIS_URL: redis://redis:6379/0
+  REDIS_URL_DB: redis://redis:6379/1
+  ALLOWED_HOSTS: "*"
+  DEBUG_STATUS: "True"
+  POSTGRESS_PASSWORD: de3094
+  DJANGO_SECRET_KEY: a93f6b0216523d059ee5d1cf5217fc1484a5fd2dc460344f2ad4a054723147f7
+
 services:
   db:
     image: postgres:17
-    container_name: postgres_db
-    restart: unless-stopped
-    env_file:
-      - .env
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      <<: *default-environment
+      # POSTGRES_PASSWORD_FILE: /run/secrets/POSTGRES_PASSWORD
+    # secrets:
+    #   - POSTGRES_PASSWORD
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+    networks:
+      - app-net
 
   redis:
     image: redis:7
-    container_name: redis_cache
-    restart: unless-stopped
+    deploy:
+      replicas: 1
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis_data:/data
-    ports:
-      - "6379:6379"
+    networks:
+      - app-net
 
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - USER_ID=1001  # Match your host user's UID
-        - GROUP_ID=1001 # Match your host user's GID
+    image: debeski/trademarks:swarm  # Build and push this image
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
     user: "1001:1001"
-    container_name: trademarks_app
-    restart: unless-stopped
-    depends_on:
-      - db
-      - redis
-    env_file:
-      - .env
+    command: >
+      /bin/sh -c '
+      if [ "$${DEBUG_STATUS,,}" = "true" ]; then
+        python manage.py runserver 0.0.0.0:8000
+      else
+        gunicorn -c gunicorn.py
+      fi'
+    # secrets:
+    #   - DJANGO_SECRET_KEY
+    #   - POSTGRES_PASSWORD
     environment:
-      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-      REDIS_URL: ${REDIS_URL}
-      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
-      CELERY_RESULT_BACKEND: ${CELERY_BROKER_URL}
+      <<: *default-environment
     volumes:
-      - ./:/app  # Mounts your project files inside the container
       - media_volume:/app/media
       - static_volume:/app/staticfiles
       - logs_volume:/app/logs
-    ports:
-      - "9430:8000"
+    networks:
+      - app-net
+    depends_on:
+      - db
+      - redis
+
+  celery:
+    image: debeski/trademarks:swarm
+    deploy:
+      replicas: 2
+    command: ["python", "-m", "celery", "-A", "core", "worker", "--loglevel=info"]
+    # secrets:
+    #   - DJANGO_SECRET_KEY
+    #   - POSTGRES_PASSWORD
+    environment:
+      <<: *default-environment
+    networks:
+      - app-net
+    depends_on:
+      - db
+      - redis
 
 volumes:
   postgres_data:
@@ -58,3 +91,14 @@ volumes:
   media_volume:
   static_volume:
   logs_volume:
+
+# secrets:
+#   DJANGO_SECRET_KEY:
+#     external: true
+#   POSTGRES_PASSWORD:
+#     external: true
+
+
+networks:
+  app-net:
+    driver: overlay

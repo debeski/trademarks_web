@@ -6,7 +6,10 @@ RUN apt update && apt install -y \
     build-essential \
     libpq-dev \
     gcc \
-    python3-dev\
+    python3-dev \
+    python3-click \
+    postgresql-client \
+    netcat-openbsd \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
