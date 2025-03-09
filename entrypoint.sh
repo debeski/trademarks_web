@@ -8,89 +8,87 @@ set -eo pipefail
 # Construct DATABASE_URL using environment variables from default-environment
 export DATABASE_URL="postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}"
 
-LOCK_TIMEOUT=60
-# COMMANDS_RUN_FILE="/app/.commands_run"
+LOCK_TIMEOUT=300
+INIT_LOCK_FILE="/app/.init.lock"
 
+# Distributed lock using PostgreSQL advisory lock
 acquire_lock() {
-    local timeout=30
-    local start_time=$(date +%s)
-    
-    while ! psql "$DATABASE_URL" -c "SELECT pg_try_advisory_lock(123456)" | grep -q 't'; do
-        echo "Waiting for database lock..."
-        sleep 1
-        
-        if [ $(($(date +%s) - start_time)) -ge $timeout ]; then
-            echo "Lock acquisition timeout reached. Proceeding anyway."
-            break
+    echo "Attempting to acquire initialization lock..."
+    while true; do
+        # Use transaction-level lock with timeout
+        if psql "$DATABASE_URL" -c "SET statement_timeout = 5000; SELECT pg_try_advisory_xact_lock(123456)"; then
+            if psql "$DATABASE_URL" -t -c "SELECT pg_try_advisory_xact_lock(123456)" | grep -q 't'; then
+                echo "Lock acquired"
+                return 0
+            fi
         fi
+        echo "Waiting for initialization lock..."
+        sleep 5
     done
 }
 
 release_lock() {
+    echo "Releasing lock"
     psql "$DATABASE_URL" -c "SELECT pg_advisory_unlock(123456)" || true
 }
 
-check_initialization() {
-    psql "$DATABASE_URL" <<-EOSQL
-    CREATE TABLE IF NOT EXISTS app_initialization (
-        id SERIAL PRIMARY KEY,
-        initialized BOOLEAN NOT NULL DEFAULT false,
-        initialized_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
-    );
-    INSERT INTO app_initialization (initialized) 
-    SELECT false
-    WHERE NOT EXISTS (SELECT 1 FROM app_initialization);
-EOSQL
-
-    psql "$DATABASE_URL" -t -c "SELECT initialized FROM app_initialization LIMIT 1" | grep -q 't'
+check_migrations() {
+    python manage.py showmigrations --plan | grep -q '\[ \]'
 }
 
-mark_initialized() {
-    psql "$DATABASE_URL" -c "UPDATE app_initialization SET initialized = true"
+perform_initialization() {
+    echo "----- PERFORMING INITIALIZATION -----"
+    
+    # Collect static files with atomic operation
+    python manage.py collectstatic --noinput --clear
+    
+    # Create migrations if needed
+    if ! python manage.py makemigrations --check --noinput; then
+        python manage.py makemigrations users documents --noinput
+        python manage.py makemigrations --noinput
+    fi
+    
+    # Apply migrations
+    python manage.py migrate --noinput
+    
+    # Create superuser
+    python manage.py create_su
+    
+    # Populate initial data
+    python manage.py populate
+    
+    touch $INIT_LOCK_FILE
 }
 
 wait_for_services() {
     for service in "db:5432" "redis:6379"; do
-        until nc -z "${service%:*}" "${service#*:}"; do
+        until nc -zw 2 "${service%:*}" "${service#*:}"; do
             echo "Waiting for $service..."
-            sleep 1
+            sleep 2
         done
     done
 }
 
 main() {
-    trap release_lock EXIT
     wait_for_services
-    acquire_lock
-
-    if ! check_initialization; then
-        echo "----- FIRST RUN INITIALIZATION -----"
-        python manage.py collectstatic --noinput --clear
-
-        # Conditional makemigrations
-        if ! python manage.py showmigrations | grep -q '\[X\]'; then
-            echo "Creating missing migrations..."
-            python manage.py makemigrations users documents --noinput
-            python manage.py makemigrations
+    
+    # Only perform initialization once across all replicas
+    if [ ! -f $INIT_LOCK_FILE ]; then
+        acquire_lock
+        trap release_lock EXIT
+    
+        # Double-check after acquiring lock
+        if [ ! -f $INIT_LOCK_FILE ]; then
+            perform_initialization
+        else
+            echo "Initialization already completed by another instance"
         fi
-        # Apply migrations
-        python manage.py migrate --noinput
-        
-        # Create superuser
-        echo "Creating superuser..."
-        python manage.py create_su
-        
-        # Populate initial data
-        echo "Populating initial data..."
-        python manage.py populate
-        
-        mark_initialized
+    else
+        echo "Initialization already completed"
     fi
 
-    echo "----- ROUTINE MIGRATIONS -----"
-    python manage.py migrate --noinput
-
-    # Execute the command passed to the container
+    # Regular startup
+    echo "----- STARTING APPLICATION -----"
     exec "$@"
 }
 

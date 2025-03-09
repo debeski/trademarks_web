@@ -42,10 +42,13 @@ services:
     deploy:
       replicas: 3
       update_config:
-        parallelism: 2
-        delay: 10s
+        parallelism: 1
+        delay: 30s
       restart_policy:
         condition: on-failure
+        max_attempts: 3
+    ports:
+      - "8420:8000"
     user: "1001:1001"
     command: >
       /bin/sh -c '
@@ -59,6 +62,12 @@ services:
     #   - POSTGRES_PASSWORD
     environment:
       <<: *default-environment
+      INIT_DELAY: 10  # Random delay for initialization
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     volumes:
       - media_volume:/app/media
       - static_volume:/app/staticfiles
@@ -73,6 +82,8 @@ services:
     image: debeski/trademarks:swarm
     deploy:
       replicas: 2
+      restart_policy:
+        condition: on-failure
     command: ["python", "-m", "celery", "-A", "core", "worker", "--loglevel=info"]
     # secrets:
     #   - DJANGO_SECRET_KEY
@@ -85,12 +96,51 @@ services:
       - db
       - redis
 
+  postgres-backup:
+    image: postgres:17
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - app-net
+    volumes:
+      - postgres_backups:/backups
+    environment:
+      <<: *default-environment
+      BACKUP_INTERVAL: "86400"  # 24 hours in seconds
+      RETENTION_DAYS: "7"
+    # secrets:
+    #   - POSTGRES_PASSWORD
+    command: >
+      bash -c '
+      while true; do
+          export PGPASSWORD=$$POSTGRES_PASSWORD
+          backup_file="/backups/backup_$$(date +%Y-%m-%d_%H-%M-%S).pgdump"
+          
+          echo "Starting backup: $$backup_file"
+          pg_dump -Fc -h db -U $$POSTGRES_USER $$POSTGRES_DB -f $$backup_file
+          
+          if [ $$? -eq 0 ]; then
+              echo "Backup successful: $$backup_file"
+              find /backups -name "*.pgdump" -mtime +$$RETENTION_DAYS -delete
+          else
+              echo "Backup failed!" >&2
+              rm -f $$backup_file
+          fi
+          
+          sleep $$BACKUP_INTERVAL
+      done'
+    depends_on:
+      - db
+
 volumes:
   postgres_data:
   redis_data:
   media_volume:
   static_volume:
   logs_volume:
+  postgres_backups:
 
 # secrets:
 #   DJANGO_SECRET_KEY:
