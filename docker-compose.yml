@@ -71,10 +71,10 @@ services:
     user: "1001:1001"
     command: >
       /bin/sh -c '
-      if [ "$(echo "$DEBUG_STATUS" | tr '[:upper:]' '[:lower:]')" = "true" ]; then
+      if [ "$DEBUG_STATUS" = "True" ]; then
         python manage.py runserver 0.0.0.0:8000
       else
-        gunicorn -c gunicorn.py
+        gunicorn -c /app/gunicorn.py
       fi'
     # secrets:
     #   - DJANGO_SECRET_KEY
