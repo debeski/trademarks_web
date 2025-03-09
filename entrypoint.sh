@@ -15,12 +15,11 @@ INIT_LOCK_FILE="/app/.init.lock"
 acquire_lock() {
     echo "Attempting to acquire initialization lock..."
     while true; do
-        # Use transaction-level lock with timeout
-        if psql "$DATABASE_URL" -c "SET statement_timeout = 5000; SELECT pg_try_advisory_xact_lock(123456)"; then
-            if psql "$DATABASE_URL" -t -c "SELECT pg_try_advisory_xact_lock(123456)" | grep -q 't'; then
-                echo "Lock acquired"
-                return 0
-            fi
+        echo "Checking lock..."
+        psql "$DATABASE_URL" -c "SET statement_timeout = 5000; SELECT pg_try_advisory_xact_lock(123456)"
+        if psql "$DATABASE_URL" -t -c "SELECT pg_try_advisory_xact_lock(123456)" | grep -q 't'; then
+            echo "Lock acquired"
+            return 0
         fi
         echo "Waiting for initialization lock..."
         sleep 5

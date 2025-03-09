@@ -401,7 +401,7 @@ def core_models_view(request):
     return render(request, 'manage_sections.html', context)
 
 def read_txt_file(request):
-    file_path = 'aboutus.txt'  # Provide the full path to your text file
+    file_path = '/aboutus.txt'  # Provide the full path to your text file
 
     # Read the content of the text file
     try:
