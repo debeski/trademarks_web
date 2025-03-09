@@ -65,16 +65,25 @@ main() {
 
     if ! check_initialization; then
         echo "----- FIRST RUN INITIALIZATION -----"
-        python manage.py collectstatic --noinput
+        python manage.py collectstatic --noinput --clear
 
         # Conditional makemigrations
-        python manage.py makemigrations --noinput --check || {
+        if ! python manage.py showmigrations | grep -q '\[X\]'; then
             echo "Creating missing migrations..."
             python manage.py makemigrations users documents --noinput
-        }
+            python manage.py makemigrations
+        fi
+        # Apply migrations
         python manage.py migrate --noinput
+        
+        # Create superuser
+        echo "Creating superuser..."
         python manage.py create_su
+        
+        # Populate initial data
+        echo "Populating initial data..."
         python manage.py populate
+        
         mark_initialized
     fi
 

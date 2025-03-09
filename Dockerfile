@@ -33,15 +33,15 @@ RUN pip install --upgrade pip && \
 # Copy application files with proper ownership
 COPY --chown=micro:micro . .
 
-# Create directories for volumes
-RUN mkdir -p /app/media /app/staticfiles /app/logs
-
 # Final permissions fix
 RUN chmod 755 /app && \
     chown -R micro:micro /app
 
 # Switch to non-root user
 USER micro
+
+# Create directories for volumes
+RUN mkdir -p /app/media /app/staticfiles /app/logs
 
 # Single entrypoint copy with exec permissions
 COPY --chown=micro:micro entrypoint.sh /app/entrypoint.sh
