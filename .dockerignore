@@ -1,0 +1,16 @@
+# Ignore Python bytecode files
+*.pyc
+*.pyo
+__pycache__/
+
+
+# Ignore Docker-related files
+Dockerfile
+docker-compose.yml
+
+# Ignore git directory
+.git/
+.gitignore
+.gitattributes
+
+xpose/
