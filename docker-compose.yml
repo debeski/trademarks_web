@@ -3,12 +3,11 @@ x-environment: &default-environment
   POSTGRES_USER: micro
   POSTGRES_PORT: 5432
   CELERY_BROKER_URL: redis://redis:6379/0
-  REDIS_URL: redis://redis:6379/0
   REDIS_URL_DB: redis://redis:6379/1
   ALLOWED_HOSTS: "*"
   DEBUG_STATUS: "True"
-  POSTGRES_PASSWORD: de3094
-  DJANGO_SECRET_KEY: a93f6b0216523d059ee5d1cf5217fc1484a5fd2dc460344f2ad4a054723147f7
+  # POSTGRES_PASSWORD: de3094
+  # DJANGO_SECRET_KEY: a93f6b0216523d059ee5d1cf5217fc1484a5fd2dc460344f2ad4a054723147f7
 
 services:
   db:
@@ -19,9 +18,9 @@ services:
         constraints: [node.role == manager]
     environment:
       <<: *default-environment
-      # POSTGRES_PASSWORD_FILE: /run/secrets/POSTGRES_PASSWORD
-    # secrets:
-    #   - POSTGRES_PASSWORD
+      POSTGRES_PASSWORD_FILE: /run/secrets/POSTGRES_PASSWORD
+    secrets:
+      - POSTGRES_PASSWORD
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -52,12 +51,15 @@ services:
       replicas: 1
       restart_policy:
         condition: none
+    volumes:
+      - ./users/migrations:/app/users/migrations
+      - ./documents/migrations:/app/documents/migrations
     depends_on:
       - db
       - redis
 
   web:
-    image: debeski/trademarks:swarm  # Build and push this image
+    image: debeski/trademarks:swarm
     deploy:
       replicas: 3
       update_config:
@@ -69,22 +71,25 @@ services:
     ports:
       - "8420:8000"
     user: "1001:1001"
-    command: >
-      /bin/sh -c '
-      if [ "$DEBUG_STATUS" = "True" ]; then
-        python manage.py runserver 0.0.0.0:8000
-      else
-        gunicorn -c /app/gunicorn.py
-      fi'
-    # secrets:
-    #   - DJANGO_SECRET_KEY
-    #   - POSTGRES_PASSWORD
-    entrypoint: ["/app/entrypoint.sh"]
     environment:
       <<: *default-environment
-      INIT_DELAY: 10  # Random delay for initialization
+      INIT_DELAY: 10
+    command: >
+      /bin/bash -c '
+      echo "DEBUG_STATUS: $DEBUG_STATUS";  # Debug the environment variable
+      if [ "$DEBUG_STATUS" = "True" ]; then
+        echo "Starting Django development server...";
+        python manage.py runserver 0.0.0.0:8000;
+      else
+        echo "Starting Gunicorn...";
+        gunicorn -c gunicorn.py;
+      fi'
+    secrets:
+      - DJANGO_SECRET_KEY
+      - POSTGRES_PASSWORD
+    entrypoint: ["/app/entrypoint.sh"]
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail http://localhost:8000/health || exit 1"]
+      test: ["CMD-SHELL", "curl --fail http://localhost:8000/manage/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -92,6 +97,8 @@ services:
       - media_volume:/app/media
       - static_volume:/app/staticfiles
       - logs_volume:/app/logs
+      - ./users/migrations:/app/users/migrations
+      - ./documents/migrations:/app/documents/migrations
     networks:
       - app-net
     depends_on:
@@ -105,9 +112,9 @@ services:
       restart_policy:
         condition: on-failure
     command: ["python", "-m", "celery", "-A", "core", "worker", "--loglevel=info"]
-    # secrets:
-    #   - DJANGO_SECRET_KEY
-    #   - POSTGRES_PASSWORD
+    secrets:
+      - DJANGO_SECRET_KEY
+      - POSTGRES_PASSWORD
     entrypoint: ["/app/entrypoint.sh"]
     environment:
       <<: *default-environment
@@ -131,8 +138,8 @@ services:
       <<: *default-environment
       BACKUP_INTERVAL: "86400"  # 24 hours in seconds
       RETENTION_DAYS: "7"
-    # secrets:
-    #   - POSTGRES_PASSWORD
+    secrets:
+      - POSTGRES_PASSWORD
     command: >
       bash -c '
       while true; do
@@ -163,11 +170,11 @@ volumes:
   logs_volume:
   db_backups:
 
-# secrets:
-#   DJANGO_SECRET_KEY:
-#     external: true
-#   POSTGRES_PASSWORD:
-#     external: true
+secrets:
+  DJANGO_SECRET_KEY:
+    external: true
+  POSTGRES_PASSWORD:
+    external: true
 
 
 networks:

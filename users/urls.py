@@ -15,4 +15,6 @@ urlpatterns = [
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path("logs/", views.UserActivityLogView.as_view(), name="user_activity_log"),
     path('reset_password/<int:user_id>/', views.reset_password, name="reset_password"),
+    path("health/", views.health_check, name="health_check"),
+
 ]

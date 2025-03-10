@@ -14,9 +14,15 @@ from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils import timezone
 from users.signals import get_client_ip
+from django.http import JsonResponse
 
 User = get_user_model() # Use custom user model
 
+def health_check(request):
+    """
+    A simple health check endpoint that returns a 200 OK response.
+    """
+    return JsonResponse({"status": "ok"})
 
 # Function to recognize staff
 def is_staff(user):

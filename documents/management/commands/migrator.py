@@ -18,6 +18,7 @@ class Command(BaseCommand):
 
         # Makw migrations
         self.stdout.write("Making migrations...")
+        call_command('makemigrations', 'users', '--noinput')
         call_command('makemigrations', '--noinput')
 
         # Run migrations
